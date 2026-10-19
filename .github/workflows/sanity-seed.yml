@@ -35,4 +35,12 @@ jobs:
       - name: Import content
         env:
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
-        run: npm run seed
+        run: |
+          set -o pipefail
+          npm run seed 2>&1 | tee seed-output.txt
+
+      - name: Report result
+        if: always()
+        run: |
+          tail -c 1500 seed-output.txt | tr '\r\n' '  ' > tail.txt || true
+          echo "::notice title=Import output::$(cat tail.txt)"

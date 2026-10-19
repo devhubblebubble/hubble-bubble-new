@@ -67,6 +67,9 @@ for (const r of result.results ?? []) {
   if (r.operation === "create") created += 1;
   else skipped += 1;
 }
-console.log(
-  `Done. Created ${created} document(s), left ${skipped} existing document(s) untouched.`,
-);
+const summary = `Created ${created} document(s), left ${skipped} existing document(s) untouched.`;
+console.log(`Done. ${summary}`);
+// Surfaces the result in the GitHub Actions run summary and annotations.
+if (process.env.GITHUB_ACTIONS) {
+  console.log(`::notice title=Sanity import::${summary}`);
+}

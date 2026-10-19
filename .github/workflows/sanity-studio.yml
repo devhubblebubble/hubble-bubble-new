@@ -37,4 +37,12 @@ jobs:
       - name: Build and deploy the Studio
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_TOKEN }}
-        run: npx sanity deploy --url hubblebubble --yes
+        run: |
+          set -o pipefail
+          npx sanity deploy --url hubblebubble --yes 2>&1 | tee deploy-output.txt
+
+      - name: Report result
+        if: always()
+        run: |
+          tail -c 1500 deploy-output.txt | tr '\r\n' '  ' > tail.txt || true
+          echo "::notice title=Studio deploy::$(cat tail.txt)"
