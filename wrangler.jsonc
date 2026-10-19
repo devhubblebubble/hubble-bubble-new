@@ -1,0 +1,18 @@
+// Cloudflare Workers config: serves the static export in ./out as plain files.
+// No Worker code runs; Cloudflare's static asset hosting serves everything.
+// Docs: https://developers.cloudflare.com/workers/static-assets/
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hubble-bubble-new",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./out",
+    // /recruitment/ -> recruitment/index.html; /recruitment redirects to /recruitment/
+    "html_handling": "auto-trailing-slash",
+    // Serve Next.js's exported 404.html for unknown addresses
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

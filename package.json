@@ -11,6 +11,10 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@portabletext/react": "^8.0.1",
+    "@portabletext/to-html": "^6.0.0",
+    "@portabletext/types": "^4.0.2",
+    "@sanity/client": "^8.9.0",
     "@types/three": "^0.182.0",
     "d3": "^7.9.0",
     "framer-motion": "^12.29.2",
@@ -46,7 +50,8 @@
     "storybook": "^10.1.10",
     "typescript": "^5",
     "vite": "^7.3.0",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "wrangler": "^4.151.2"
   },
   "optionalDependencies": {
     "@next/swc-darwin-arm64": "16.1.1"

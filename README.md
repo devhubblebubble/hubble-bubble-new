@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hubble Bubble website
 
-## Getting Started
+Next.js site built as plain static HTML, with content edited in Sanity and
+hosted on Cloudflare Workers (static assets).
 
-First, run the development server:
+## How content gets onto the site
+
+1. Editors change content in the Sanity Studio (hosted by Sanity, code in `studio/`).
+2. Pressing **Publish** fires a Sanity webhook to a Cloudflare deploy hook.
+3. Cloudflare runs `npm run build` (Next.js static export into `out/`) and
+   `npx wrangler deploy`, which uploads the files. The site is live a few minutes later.
+
+The site reads **published** content only, with no API token, because the
+dataset is public.
+
+## Folders
+
+- `src/app` - pages (App Router). `src/app/recruitment/[slug]` is one page per job role.
+- `src/components` - page sections and components (SCSS modules).
+- `src/lib/sanity` - Sanity client, GROQ queries, types and the offline fixture.
+- `src/lib/jobs` - formatting helpers and Google JobPosting structured data.
+- `studio/` - Sanity Studio: schema, editor layout, import script. See `studio/README.md`.
+- `content/seed/` - starting content imported into Sanity once; also used by offline test builds.
+- `.github/workflows/` - deploys the Studio and imports the starting content.
+- `wrangler.jsonc` - Cloudflare config (serves `out/`).
+
+## Local development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # site at http://localhost:3000, reads live Sanity content
+npm run build      # static export into out/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To build without network access to Sanity (test machines), use the seed content:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+SANITY_OFFLINE=1 npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Settings read from the environment (all optional):
 
-## Learn More
+- `NEXT_PUBLIC_SANITY_PROJECT_ID` (default `qstbrsll`), `NEXT_PUBLIC_SANITY_DATASET` (default `production`)
+- `NEXT_PUBLIC_SITE_URL` - public address used for canonical links and structured data
 
-To learn more about Next.js, take a look at the following resources:
+## Fonts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Poppins is self-hosted from `src/app/fonts` (SIL Open Font License), so builds
+do not depend on Google Fonts.

@@ -1,0 +1,254 @@
+// Single job role page.
+
+.page {
+  width: 100%;
+  padding-top: 160px;
+  padding-bottom: 120px;
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 64px var(--pad-x) 0;
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.header {
+  margin-bottom: 40px;
+}
+
+.eyebrow {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--mint);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.meta {
+  font-size: var(--fs-sm);
+  color: var(--dim);
+  margin-bottom: 24px;
+}
+
+.ref {
+  white-space: nowrap;
+}
+
+.summary {
+  font-size: var(--fs-body);
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 760px;
+  margin-bottom: 32px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.apply {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 32px;
+  border-radius: 8px;
+  background: var(--orange);
+  color: #000;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.back {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: var(--white);
+  }
+}
+
+// ── Key facts ────────────────────────────────────────────────────────────────
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 24px;
+  padding: 28px 32px;
+  margin-bottom: 56px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+
+  dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    margin-bottom: 4px;
+  }
+
+  dd {
+    font-size: var(--fs-sm);
+    color: var(--white);
+    line-height: 1.5;
+  }
+}
+
+// ── Sections ─────────────────────────────────────────────────────────────────
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.section {
+  scroll-margin-top: 100px;
+}
+
+.sectionTitle {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.richText {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: var(--fs-body);
+  color: var(--muted);
+  line-height: 1.75;
+
+  h3,
+  h4 {
+    color: var(--white);
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  h3 {
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  }
+
+  h4 {
+    font-size: var(--fs-body);
+  }
+
+  ul,
+  ol {
+    padding-left: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  a {
+    color: var(--orange);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: var(--fs-body);
+  color: var(--muted);
+  line-height: 1.6;
+
+  li {
+    position: relative;
+    padding-left: 24px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
+  }
+}
+
+// ── Apply box ────────────────────────────────────────────────────────────────
+.applyBox {
+  margin-top: 72px;
+  padding: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 79, 0, 0.12), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 79, 0, 0.25);
+
+  h2 {
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: var(--fs-body);
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 640px;
+  }
+}
+
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .page {
+    padding-top: 120px;
+    padding-bottom: 80px;
+  }
+
+  .inner {
+    padding: 40px var(--pad-x) 0;
+  }
+
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 22px 20px;
+  }
+
+  .applyBox {
+    padding: 28px 22px;
+  }
+}

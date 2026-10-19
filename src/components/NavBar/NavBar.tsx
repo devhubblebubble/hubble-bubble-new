@@ -7,9 +7,10 @@ import { usePathname } from "next/navigation";
 import styles from "./NavBar.module.scss";
 
 const NAV_LINKS = [
-  { href: "/services", label: "Services" },
-  { href: "/stories",  label: "Stories"  },
-  { href: "/about",    label: "About us"  },
+  { href: "/services",    label: "Services" },
+  { href: "/recruitment", label: "Jobs"     },
+  { href: "/stories",     label: "Stories"  },
+  { href: "/about",       label: "About us" },
 ];
 
 export default function NavBar() {

@@ -1,0 +1,38 @@
+# Imports the starting content (content/seed/*.json) into Sanity.
+# Safe to run more than once: documents that already exist are left untouched,
+# so edits made in the Studio are never overwritten.
+# Needs the repository secret SANITY_WRITE_TOKEN (a Sanity API token with Editor permission).
+
+name: Import starting content into Sanity
+
+on:
+  push:
+    branches: [sanity-cms]
+    paths:
+      - "content/seed/**"
+      - "studio/scripts/seed.mjs"
+      - ".github/workflows/sanity-seed.yml"
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Import content
+        env:
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+        run: npm run seed

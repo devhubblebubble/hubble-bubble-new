@@ -1,14 +1,22 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import localFont from 'next/font/local';
 import '../style/globals.scss';
 import ParallaxStars from '@/components/Background/ParallaxStars';
 import ShootingStars from '@/components/Background/ShootingStars';
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
 import TransitionProvider from '@/providers/TransitionProvider';
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+// Poppins is self-hosted (files in ./fonts, SIL Open Font License) so the
+// build never depends on Google Fonts being reachable.
+const poppins = localFont({
+  src: [
+    { path: './fonts/poppins-latin-300-normal.woff2', weight: '300', style: 'normal' },
+    { path: './fonts/poppins-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/poppins-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/poppins-latin-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/poppins-latin-700-normal.woff2', weight: '700', style: 'normal' },
+  ],
+  display: 'swap',
   variable: '--font-poppins',
 });
 

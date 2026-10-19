@@ -1,0 +1,24 @@
+{
+  "name": "hubble-bubble-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sanity Studio (content editor) for the Hubble Bubble website",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy --url hubblebubble --yes",
+    "seed": "node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "@sanity/client": "^8.9.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}

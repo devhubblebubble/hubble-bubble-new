@@ -1,0 +1,40 @@
+# Puts the content editor (Sanity Studio) online at https://hubblebubble.sanity.studio
+# whenever the studio code changes. Needs the repository secret SANITY_DEPLOY_TOKEN
+# (a Sanity API token with "Deploy Studio" permission).
+
+name: Deploy Sanity Studio
+
+on:
+  push:
+    branches: [sanity-cms, new_token_change]
+    paths:
+      - "studio/**"
+      - ".github/workflows/sanity-studio.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: sanity-studio
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Build and deploy the Studio
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_TOKEN }}
+        run: npx sanity deploy --url hubblebubble --yes
