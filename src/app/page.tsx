@@ -10,24 +10,40 @@ import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSe
 import OriginSection from "@/components/OriginSection/OriginSection";
 import CtaSection from "@/components/CtaSection/CtaSection";
 import FooterSection from "@/components/FooterSection/FooterSection";
+import { getHomePage } from "@/lib/sanity/data";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getHomePage();
+  return {
+    ...(page.seoTitle ? { title: page.seoTitle } : {}),
+    ...(page.seoDescription ? { description: page.seoDescription } : {}),
+    alternates: { canonical: "/" },
+  };
+}
 
-export default function Home() {
+export default async function Home() {
+  const page = await getHomePage();
+
   return (
     <main>
       <OrganizationJsonLd />
       <NavBar />
-      <HeroSection />
-      <WorldMapSection />
-      <PartnerCardsSection />
-      <StoriesSection />
-      <JourneySection />
-      <TestimonialsSection />
-      <OriginSection />
-      <CtaSection />
+      <HeroSection data={page} />
+      <WorldMapSection headline={page.worldMapHeadline} />
+      <PartnerCardsSection data={page} />
+      <StoriesSection
+        title={page.storiesTitle}
+        viewAllLabel={page.storiesViewAllLabel}
+        stories={page.featuredStories ?? []}
+      />
+      <JourneySection steps={page.journeySteps} outputsLabel={page.journeyOutputsLabel} />
+      <TestimonialsSection
+        title={page.testimonialsTitle}
+        lead={page.testimonialsLead}
+        testimonials={page.testimonials}
+      />
+      <OriginSection data={page} />
+      <CtaSection data={page} />
       <FooterSection />
     </main>
   );

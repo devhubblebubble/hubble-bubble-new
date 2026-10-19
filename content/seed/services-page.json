@@ -1,0 +1,28 @@
+{
+  "_id": "servicesPage",
+  "_type": "servicesPage",
+  "heroEyebrow": "Our Services",
+  "heroTitle": "Where Help Meets Intention",
+  "heroSubtitle": "Whether it's us or our partners, everything here serves a meaningful goal.",
+  "tabPrimaryLabel": "Hubble Bubble Services",
+  "primaryServices": [
+    { "title": "Study Abroad Planning", "description": "Make your study abroad journey more than just a relocation — it makes it a launchpad." },
+    { "title": "Pre-departure Preparation", "description": "From what to carry to what to expect, this prepares students mentally and practically." },
+    { "title": "Cultural Immersion Workshops", "description": "Designed to connect students with the local culture." },
+    { "title": "Language Support Programs", "description": "Enhance your language skills with tailored programs that boost confidence and fluency." },
+    { "title": "Post-arrival Support", "description": "Ongoing assistance to help you navigate your new environment and settle in." }
+  ],
+  "tabSecondaryLabel": "Add On Services",
+  "addOnServices": [
+    { "title": "Master UK University Like a Pro", "description": "From Confused International Student to Top Graduate in Just 9 Months of Focused Hustle." },
+    { "title": "Networking for Success", "description": "Building connections with peers and professors that can last a lifetime, fueling your career." },
+    { "title": "Cultural Immersion Strategies", "description": "Engage with the local culture through events, communities, and activities to enrich your experience." },
+    { "title": "Job Hunt Essentials", "description": "Master the art of CV writing and interview preparation to land your dream job after graduation." }
+  ],
+  "ctaTitle": "Not sure which service is right for you?",
+  "ctaText": "Book a free discovery call. We'll figure it out together.",
+  "ctaPrimaryLabel": "Book a call",
+  "ctaSecondaryLabel": "Take the eligibility Test",
+  "seoTitle": "Services | Hubble Bubble",
+  "seoDescription": "Explore what Hubble Bubble offers, from career mapping and university applications to visa guidance and scholarship support."
+}

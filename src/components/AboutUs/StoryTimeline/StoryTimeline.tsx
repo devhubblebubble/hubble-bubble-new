@@ -3,10 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { timelineItems } from "../aboutUs.data";
+import { StyledText } from "@/components/RichText/StyledText";
+import type { Styled, TimelineItem } from "@/lib/sanity/types";
 import styles from "./StoryTimeline.module.scss";
 
-export default function StoryTimeline() {
+type Props = { heading?: Styled; buttonLabel?: string; items: TimelineItem[] };
+
+export default function StoryTimeline({ heading, buttonLabel, items: timelineItems }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const prevIdx = useRef(0);
 
@@ -17,7 +20,7 @@ export default function StoryTimeline() {
   const rafRef = useRef<number | null>(null);
 
   const total = timelineItems.length;
-  const item = timelineItems[idx];
+  const item = timelineItems[Math.min(idx, Math.max(total - 1, 0))];
   /* Rocket / fill follow scroll continuously so motion doesn’t “step” at each year */
   const progressVisual = scrollPct;
 
@@ -60,6 +63,8 @@ export default function StoryTimeline() {
     };
   }, [total]);
 
+  if (!item) return null;
+
   return (
     /* Scroll length per step — lower multiplier = less empty scroll after the block */
     <section
@@ -73,14 +78,12 @@ export default function StoryTimeline() {
 
           {/* ── Left — heading ──────────────────────────────────── */}
           <div className={styles.left}>
-            <h2 className={styles.heading}>
-              From Stardust to Students:{" "}
-              <span className={styles.mint}>The Hubble Bubble</span>{" "}
-              Story
-            </h2>
-            <Link href="/about" className={styles.btn}>
-              Read our Big Bang Theory
-            </Link>
+            <StyledText as="h2" className={styles.heading} value={heading} marks={{ mint: styles.mint }} />
+            {buttonLabel && (
+              <Link href="/about" className={styles.btn}>
+                {buttonLabel}
+              </Link>
+            )}
           </div>
 
           {/* ── Right — slide content + rocket ──────────────────── */}

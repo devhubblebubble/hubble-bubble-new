@@ -1,9 +1,29 @@
 import type { StructureResolver } from "sanity/structure";
 
+const page = (S: Parameters<StructureResolver>[0], type: string, title: string) =>
+  S.listItem()
+    .title(title)
+    .id(type)
+    .child(S.document().schemaType(type).documentId(type));
+
 export const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
+      S.listItem()
+        .title("Pages")
+        .child(
+          S.list()
+            .title("Pages")
+            .items([
+              page(S, "homePage", "Home page"),
+              page(S, "aboutPage", "About page"),
+              page(S, "servicesPage", "Services page"),
+              page(S, "storiesPage", "Stories page"),
+              page(S, "privacyPage", "Privacy policy page"),
+            ]),
+        ),
+      S.divider(),
       S.listItem()
         .title("Job roles")
         .schemaType("jobRole")
@@ -15,11 +35,22 @@ export const structure: StructureResolver = (S) =>
               { field: "datePosted", direction: "desc" },
             ]),
         ),
-      S.divider(),
       S.listItem()
-        .title("Site settings")
-        .id("siteSettings")
+        .title("Student stories")
+        .schemaType("story")
         .child(
-          S.document().schemaType("siteSettings").documentId("siteSettings"),
+          S.documentTypeList("story")
+            .title("Student stories")
+            .defaultOrdering([{ field: "order", direction: "asc" }]),
         ),
+      S.listItem()
+        .title("Team members")
+        .schemaType("teamMember")
+        .child(
+          S.documentTypeList("teamMember")
+            .title("Team members")
+            .defaultOrdering([{ field: "order", direction: "asc" }]),
+        ),
+      S.divider(),
+      page(S, "siteSettings", "Site settings"),
     ]);

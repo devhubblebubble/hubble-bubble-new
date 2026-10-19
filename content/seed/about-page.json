@@ -1,0 +1,46 @@
+{
+  "_id": "aboutPage",
+  "_type": "aboutPage",
+
+  "intro1HeadingStyled": "We didn't [mint]start[/mint] this\nto send students abroad.",
+  "intro1BodyStyled": "Too many students pick study destinations like they pick socks in the dark.\n**We're here to fix that.**\nWith clarity and maybe a dash of cosmic stardust.",
+  "intro2HeadingStyled": "We started it so they\nland in the right [mint]galaxy.[/mint]",
+  "intro2BodyStyled": "Because education isn't just a destination. **It's an orbit worth calculating.**",
+
+  "teamHeadingStyled": "Meet the [mint]Team on Deck[/mint]",
+  "teamSubStyled": "We're mentors, misfits, and former international students who've made the mistakes—**so you don't have to**. We keep things real. And ridiculously supportive.",
+  "team": [
+    { "_type": "reference", "_ref": "teamMember-jevin-zac" },
+    { "_type": "reference", "_ref": "teamMember-fayzul-choudhury" }
+  ],
+
+  "timelineHeadingStyled": "From Stardust to Students: [mint]The Hubble Bubble[/mint] Story",
+  "timelineButtonLabel": "Read our Big Bang Theory",
+  "timeline": [
+    { "year": "2018", "title": "The Spark", "description": "Jevin has an 'aha' moment after seeing friends frustrated abroad. Lightbulb goes off. So does the first Google Doc." },
+    { "year": "2019", "title": "Takeoff", "description": "Hubble Bubble is officially born. First few students mentored. Zero marketing. Just word-of-mouth and good vibes." },
+    { "year": "2022", "title": "The First Broadcast", "description": "Weekly Instagram webinars begin — answering student questions with no sales pitch. Attendance grows fast." },
+    { "year": "2023", "title": "YouHaveJZ is Born", "description": "The mentoring project turns into a platform. Honest advice, passion-first alignment, and zero shady commissions." },
+    { "year": "2025", "title": "Hubble Goes Global", "description": "HubbleX launches — a full-stack platform for international students. One place for guidance, planning, and community across borders." }
+  ],
+
+  "missionLabelStyled": "why [mint]we[/mint] are here?",
+  "missionAlias": "a. k. a the mission",
+  "missionBodyStyled": "To help students discover their dream—not just go abroad, but go in the [orange]right direction.[/orange] No fake promises, no fine print, just honest mentoring.",
+  "visionLabelStyled": "and where we are [mint]headed?[/mint]",
+  "visionAlias": "a. k. a the vision",
+  "visionBodyStyled": "A future where every student gets real guidance, not a sales pitch.\nOne where [orange]purpose[/orange] leads the way, and [orange]passion[/orange] powers the journey.",
+
+  "ctaEyebrowStyled": "Feels right? [mint]Let's Talk![/mint]",
+  "ctaTitle": "We might just be the crew you need.",
+  "ctaSubStyled": "Whether you're still figuring things out or already have a course in mind, **we're here to guide the next move.**",
+  "ctaPrimaryLabel": "Take the eligibility Test",
+  "ctaSecondaryLabel": "Book a call",
+  "collabHeadingStyled": "Not here to study?\nLet's talk [mint]Ideas.[/mint]",
+  "collabSubStyled": "Have a unique vision or a partnership we should hear about?\n**We're always open to fresh synergies and meaningful collaborations!**",
+  "collabButtonLabel": "Pitch your idea",
+  "collabEmailLabel": "Or write to us directly at:",
+
+  "seoTitle": "About Us | Hubble Bubble",
+  "seoDescription": "We didn't start this to send students abroad. Meet the team, read our story, and understand why we exist."
+}

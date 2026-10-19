@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import EligibilityModal from "@/components/EligibilityModal";
+import type { HomePage } from "@/lib/sanity/types";
 import styles from "./CtaSection.module.scss";
 
-export default function CtaSection() {
+type Props = { data: HomePage };
+
+export default function CtaSection({ data }: Props) {
+  const leadLines = (data.ctaTitleLead ?? "Still not sure\nwhere to start?").split("\n").filter(Boolean);
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
 
   return (
@@ -16,23 +20,25 @@ export default function CtaSection() {
           <div className={`${styles.text} reveal`}>
             <h2 className={styles.title}>
               <span className={styles.titleLead}>
-                Still not sure
-                <br />
-                where to start?
-                <br />
+                {leadLines.map((line) => (
+                  <span key={line}>
+                    {line}
+                    <br />
+                  </span>
+                ))}
               </span>
-              <span className={styles.titleAccent}>That&apos;s why we&apos;re here!</span>
+              <span className={styles.titleAccent}>{data.ctaTitleAccent ?? "That's why we're here!"}</span>
             </h2>
-            <p>Our experts have guided hundreds of students from uncertainty to success. Now it&apos;s your turn.</p>
+            {data.ctaText && <p>{data.ctaText}</p>}
             <div className={styles.buttons}>
               <button
                 className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={() => setEligibilityOpen(true)}
               >
-                Take the eligibility Test
+                {data.ctaPrimaryLabel ?? "Take the eligibility Test"}
               </button>
               <Link href="/contact" className={`${styles.btn} ${styles.btnGhost}`}>
-                Book a call
+                {data.ctaSecondaryLabel ?? "Book a call"}
               </Link>
             </div>
           </div>

@@ -2,12 +2,18 @@
 
 import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb/Breadcrumb";
-import styles from "./AboutUsPage.module.scss";
-import { teamMembers } from "./aboutUs.data";
+import { StyledText } from "@/components/RichText/StyledText";
 import { TeamCard } from "@/components/MeetTheTeam";
+import { imageUrl } from "@/lib/sanity/image";
+import type { AboutPage, SiteSettings } from "@/lib/sanity/types";
+import styles from "./AboutUsPage.module.scss";
 import StoryTimeline from "./StoryTimeline/StoryTimeline";
 
-export default function AboutUsPage() {
+type Props = { data: AboutPage; settings: SiteSettings };
+
+export default function AboutUsPage({ data, settings }: Props) {
+  const marks = { mint: styles.mint, orange: styles.orange };
+
   return (
     <div className={styles.page}>
 
@@ -15,151 +21,102 @@ export default function AboutUsPage() {
 
       {/* ── Intro block 1 ───────────────────────────────────────────────── */}
       <section className={`${styles.introSection} reveal`}>
-        <h1 className={styles.introH1}>
-          We didn&apos;t{" "}
-          <span className={styles.mint}>start</span>{" "}
-          this
-          <br />
-          to send students abroad.
-        </h1>
-        <p className={styles.introBod}>
-          Too many students pick study destinations like they pick socks in the dark.
-          <br />
-          <strong>We&apos;re here to fix that.</strong>
-          <br />
-          With clarity and maybe a dash of cosmic stardust.
-        </p>
+        <StyledText as="h1" className={styles.introH1} value={data.intro1HeadingStyled} marks={marks} />
+        <StyledText as="p" className={styles.introBod} value={data.intro1BodyStyled} marks={marks} />
       </section>
 
       {/* ── Intro block 2 ───────────────────────────────────────────────── */}
       <section className={`${styles.introSection} reveal`}>
-        <h2 className={styles.introH2}>
-          We started it so they
-          <br />
-          land in the right <span className={styles.mint}>galaxy.</span>
-        </h2>
-        <p className={styles.introBod}>
-          Because education isn&apos;t just a destination.{" "}
-          <strong>It&apos;s an orbit worth calculating.</strong>
-        </p>
+        <StyledText as="h2" className={styles.introH2} value={data.intro2HeadingStyled} marks={marks} />
+        <StyledText as="p" className={styles.introBod} value={data.intro2BodyStyled} marks={marks} />
       </section>
 
       {/* ── Team ────────────────────────────────────────────────────────── */}
       <section className={styles.teamSection}>
         <div className="reveal">
-          <h2 className={styles.teamHeading}>
-            Meet the{" "}
-            <span className={styles.mint}>Team on Deck</span>
-          </h2>
-          <p className={styles.teamSub}>
-            We&apos;re mentors, misfits, and former international students
-            who&apos;ve made the mistakes—<strong>so you don&apos;t have to</strong>.
-            We keep things real. And ridiculously supportive.
-          </p>
+          <StyledText as="h2" className={styles.teamHeading} value={data.teamHeadingStyled} marks={marks} />
+          <StyledText as="p" className={styles.teamSub} value={data.teamSubStyled} marks={marks} />
         </div>
 
         <div className={styles.teamGrid}>
-          {teamMembers.map((member) => (
-            <div key={member.id} className="reveal">
-              <TeamCard
-                topImage={member.image}
-                bottomImage={member.imageAlt ?? member.image}
-                name={member.name}
-                role={
-                  <>
-                    {member.title}{" "}
-                    <em>a.k.a</em>{" "}
-                    {member.aka}
-                  </>
-                }
-                aspectRatio="3 / 4"
-              />
-            </div>
-          ))}
+          {(data.team ?? []).map((member) => {
+            const top = imageUrl(member.photo, { width: 900 });
+            const bottom = imageUrl(member.photoAlt, { width: 900 }) ?? top;
+            if (!top) return null;
+            return (
+              <div key={member._id} className="reveal">
+                <TeamCard
+                  topImage={top}
+                  bottomImage={bottom ?? top}
+                  name={member.name}
+                  role={
+                    <>
+                      {member.title}
+                      {member.aka && (
+                        <>
+                          {" "}
+                          <em>a.k.a</em> {member.aka}
+                        </>
+                      )}
+                    </>
+                  }
+                  aspectRatio="3 / 4"
+                />
+              </div>
+            );
+          })}
         </div>
       </section>
 
       {/* ── Story / Timeline — interactive carousel with rocket ───────── */}
-      <StoryTimeline />
+      <StoryTimeline
+        heading={data.timelineHeadingStyled}
+        buttonLabel={data.timelineButtonLabel}
+        items={data.timeline ?? []}
+      />
 
       {/* ── Mission ─────────────────────────────────────────────────────── */}
       <section className={`${styles.missionSection} ${styles.missionAfterTimeline} reveal`}>
-        <h2 className={styles.missionLabel}>
-          why <span className={styles.mint}>we</span> are here?
-        </h2>
-        <p className={styles.missionAlias}>a. k. a the mission</p>
-        <p className={styles.missionBody}>
-          To help students discover their dream—not just go abroad, but go in
-          the{" "}
-          <span className={styles.orange}>right direction.</span>{" "}
-          No fake promises, no fine print, just honest mentoring.
-        </p>
+        <StyledText as="h2" className={styles.missionLabel} value={data.missionLabelStyled} marks={marks} />
+        {data.missionAlias && <p className={styles.missionAlias}>{data.missionAlias}</p>}
+        <StyledText as="p" className={styles.missionBody} value={data.missionBodyStyled} marks={marks} />
       </section>
 
       {/* ── Vision ──────────────────────────────────────────────────────── */}
       <section className={`${styles.missionSection} reveal`}>
-        <h2 className={styles.missionLabel}>
-          and where we are <span className={styles.mint}>headed?</span>
-        </h2>
-        <p className={styles.missionAlias}>a. k. a the vision</p>
-        <p className={styles.missionBody}>
-          A future where every student gets real guidance, not a sales pitch.
-          <br />
-          One where <span className={styles.orange}>purpose</span> leads the
-          way, and <span className={styles.orange}>passion</span> powers the
-          journey.
-        </p>
+        <StyledText as="h2" className={styles.missionLabel} value={data.visionLabelStyled} marks={marks} />
+        {data.visionAlias && <p className={styles.missionAlias}>{data.visionAlias}</p>}
+        <StyledText as="p" className={styles.missionBody} value={data.visionBodyStyled} marks={marks} />
       </section>
 
       {/* ── Student CTA ─────────────────────────────────────────────────── */}
       <section className={`${styles.ctaSection} reveal`}>
-        <p className={styles.ctaEyebrow}>
-          Feels right?{" "}
-          <span className={styles.mint}>Let&apos;s Talk!</span>
-        </p>
-        <h2 className={styles.ctaTitle}>
-          We might just be the crew you need.
-        </h2>
-        <p className={styles.ctaSub}>
-          Whether you&apos;re still figuring things out or already have a
-          course in mind,{" "}
-          <strong>we&apos;re here to guide the next move.</strong>
-        </p>
+        <StyledText as="p" className={styles.ctaEyebrow} value={data.ctaEyebrowStyled} marks={marks} />
+        {data.ctaTitle && <h2 className={styles.ctaTitle}>{data.ctaTitle}</h2>}
+        <StyledText as="p" className={styles.ctaSub} value={data.ctaSubStyled} marks={marks} />
         <div className={styles.ctaRow}>
           <Link href="/contact" className={styles.ctaPrimary}>
-            Take the eligibility Test
+            {data.ctaPrimaryLabel ?? "Take the eligibility Test"}
           </Link>
           <Link href="/contact" className={styles.ctaGhost}>
-            Book a call
+            {data.ctaSecondaryLabel ?? "Book a call"}
           </Link>
         </div>
       </section>
 
       {/* ── Collab CTA ──────────────────────────────────────────────────── */}
       <section className={`${styles.collabSection} reveal`}>
-        <h2 className={styles.ctaHeading}>
-          Not here to study?
-          <br />
-          Let&apos;s talk{" "}
-          <span className={styles.mint}>Ideas.</span>
-        </h2>
-        <p className={styles.ctaSub}>
-          Have a unique vision or a partnership we should hear about?
-          <br />
-          <strong>
-            We&apos;re always open to fresh synergies and meaningful
-            collaborations!
-          </strong>
-        </p>
+        <StyledText as="h2" className={styles.ctaHeading} value={data.collabHeadingStyled} marks={marks} />
+        <StyledText as="p" className={styles.ctaSub} value={data.collabSubStyled} marks={marks} />
         <div className={styles.ctaRow}>
           <Link href="/contact?type=collab" className={styles.ctaPrimary}>
-            Pitch your idea
+            {data.collabButtonLabel ?? "Pitch your idea"}
           </Link>
         </div>
         <p className={styles.ctaEmail}>
-          Or write to us directly at:{" "}
-          <a href="mailto:hello@hubblebubble.uk" className={styles.emailLink}>
-            hello@hubblebubble.uk
+          {data.collabEmailLabel ?? "Or write to us directly at:"}{" "}
+          <a href={`mailto:${settings.contactEmail}`} className={styles.emailLink}>
+            {settings.contactEmail}
           </a>
         </p>
       </section>

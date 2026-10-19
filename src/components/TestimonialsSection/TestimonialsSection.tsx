@@ -12,27 +12,12 @@ import "swiper/css/effect-cards";
 import Dots from "@/components/Dots/Dots";
 import styles from "./TestimonialsSection.module.scss";
 
-const testimonials = [
-  {
-    img: "/images/testimonial/student3.webp",
-    quote:
-      "I walked in with plans to study engineering. Through conversations and career mapping, I realised game design was where I truly belonged. I can't thank the team enough for helping me see my potential clearly and guiding me every step of the way — from building my portfolio to writing my personal statement.",
-    name: "Rhea Menon",
-    course: "BA (Hons) Game Design",
-    uni: "University of the Arts London",
-    large: false,
-  },
-  {
-    img: "/images/testimonial/student4.webp",
-    quote: "Hubble Bubble didn't just help with applications — they helped me discover why I was applying.",
-    name: "Priya Sinha",
-    course: "MSc Social Innovation and Entrepreneurship",
-    uni: "University of Sussex",
-    large: true,
-  },
-];
+import { imageUrl } from "@/lib/sanity/image";
+import type { Testimonial } from "@/lib/sanity/types";
 
-export default function TestimonialsSection() {
+type Props = { title?: string; lead?: string; testimonials?: Testimonial[] };
+
+export default function TestimonialsSection({ title, lead, testimonials = [] }: Props) {
   const [idx, setIdx] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -43,15 +28,14 @@ export default function TestimonialsSection() {
     swiperRef.current.slideTo(next);
   };
 
-  const t = testimonials[idx];
+  const t = testimonials[Math.min(idx, testimonials.length - 1)];
+  if (!t) return null;
 
   return (
     <section className={styles.section}>
       <div className="reveal">
-        <h2>They Made It. So Can You!</h2>
-        <p className={styles.lead}>
-          Hear from our students who turned uncertainty into confidence and found their place in the world.
-        </p>
+        <h2>{title ?? "They Made It. So Can You!"}</h2>
+        {lead && <p className={styles.lead}>{lead}</p>}
       </div>
 
       <div className={styles.grid}>
@@ -65,17 +49,22 @@ export default function TestimonialsSection() {
               onSlideChange={(s) => setIdx(s.activeIndex)}
               className={styles.swiper}
             >
-              {testimonials.map((tm) => (
-                <SwiperSlide key={tm.name} className={styles.card}>
-                  <Image
-                    src={tm.img}
-                    alt={tm.name}
-                    fill
-                    sizes="(max-width: 640px) 82vw, (max-width: 1100px) 76vw, min(440px, 48vw)"
-                    style={{ objectFit: "cover" }}
-                  />
-                </SwiperSlide>
-              ))}
+              {testimonials.map((tm, i) => {
+                const src = imageUrl(tm.photo, { width: 900 });
+                return (
+                  <SwiperSlide key={tm._key ?? i} className={styles.card}>
+                    {src && (
+                      <Image
+                        src={src}
+                        alt={tm.photo?.alt ?? tm.name ?? ""}
+                        fill
+                        sizes="(max-width: 640px) 82vw, (max-width: 1100px) 76vw, min(440px, 48vw)"
+                        style={{ objectFit: "cover" }}
+                      />
+                    )}
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </div>
         </div>
@@ -86,7 +75,7 @@ export default function TestimonialsSection() {
           </p>
           <div className={styles.name}>{t.name}</div>
           <div className={styles.course}>{t.course}</div>
-          <div className={styles.uni}>{t.uni}</div>
+          <div className={styles.uni}>{t.university}</div>
         </div>
       </div>
 

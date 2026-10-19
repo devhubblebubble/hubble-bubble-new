@@ -2,19 +2,26 @@ import type { Metadata } from "next";
 import NavBar from "@/components/NavBar/NavBar";
 import PrivacyPage from "@/components/PrivacyPage/PrivacyPage";
 import FooterSection from "@/components/FooterSection/FooterSection";
+import { getPrivacyPage } from "@/lib/sanity/data";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Hubble Bubble",
-  description:
-    "How Hubble Bubble collects, uses, and protects your personal information.",
-  alternates: { canonical: "/privacy/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPrivacyPage();
+  return {
+    title: page.seoTitle ?? "Privacy Policy | Hubble Bubble",
+    description:
+      page.seoDescription ??
+      "How Hubble Bubble collects, uses, and protects your personal information.",
+    alternates: { canonical: "/privacy/" },
+  };
+}
 
-export default function PrivacyPageRoute() {
+export default async function PrivacyPageRoute() {
+  const page = await getPrivacyPage();
+
   return (
     <main>
       <NavBar />
-      <PrivacyPage />
+      <PrivacyPage data={page} />
       <FooterSection />
     </main>
   );

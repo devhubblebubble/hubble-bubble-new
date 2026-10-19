@@ -11,46 +11,11 @@ const AtlasGlobeEmbed = dynamic(() => import("./AtlasGlobeEmbed"), {
 });
 
 
-interface Step {
-  id: string;
-  number: string;
-  title: string;
-  titleHighlight: string;
-  description: string;
-  tags: string[];
-}
+import type { JourneyStep } from "@/lib/sanity/types";
 
-const steps: Step[] = [
-  {
-    id: "01",
-    number: "01",
-    title: "Your journey starts with the",
-    titleHighlight: "real you.",
-    description:
-      'While other consultants shove random degrees down your Oesophagus, we actually care about who you are. Our Magic-Spell "Revelio" blends your passion, dreams, and skillset into one powerful profile so we can finally understand the complete, complex, amazing human that is you.',
-    tags: ["Personality Trait", "Skillset Audit", "Career Blueprint"],
-  },
-  {
-    id: "02",
-    number: "02",
-    title: "Find your",
-    titleHighlight: "real path.",
-    description:
-      "No more guessing games. We map your unique profile to the world's best-fit universities and courses. It's not about where everyone is going—it's about where you will thrive, grow, and conquer.",
-    tags: ["University Search", "Course Selection", "Application Strategy"],
-  },
-  {
-    id: "03",
-    number: "03",
-    title: "Fuel your",
-    titleHighlight: "real growth.",
-    description:
-      "From visas to pre-departure, we're with you till the very end. But our support doesn't stop at the airport. We provide career guidance and networking to ensure your international journey turns into a lifetime of success.",
-    tags: ["Visa Support", "Pre-departure", "Career Guidance"],
-  },
-];
+type Props = { steps?: JourneyStep[]; outputsLabel?: string };
 
-export default function JourneySection() {
+export default function JourneySection({ steps = [], outputsLabel }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -82,7 +47,7 @@ export default function JourneySection() {
       steps.length - 1,
     );
     setActiveIndex((prev) => (prev !== index ? index : prev));
-  }, []);
+  }, [steps.length]);
 
   const handleScroll = useCallback(() => {
     // Coalesce rapid scroll events into a single update per animation frame.
@@ -102,7 +67,8 @@ export default function JourneySection() {
     };
   }, [handleScroll, computeAndApplyProgress]);
 
-  const currentStep = steps[activeIndex];
+  const currentStep = steps[Math.min(activeIndex, steps.length - 1)];
+  if (!currentStep) return null;
 
   return (
     <section
@@ -135,11 +101,11 @@ export default function JourneySection() {
               </p>
 
               <span className={styles.keyOutputsLabel}>
-                Key Outputs
+                {outputsLabel ?? "Key Outputs"}
               </span>
 
               <div className={styles.tagCloud}>
-                {currentStep.tags.map((tag) => (
+                {(currentStep.tags ?? []).map((tag) => (
                   <span
                     key={tag}
                     className={styles.tagButton}
@@ -179,7 +145,7 @@ export default function JourneySection() {
         <div className={styles.paginationDots}>
           {steps.map((step, i) => (
             <div
-              key={step.id}
+              key={step._key ?? i}
               className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ''}`}
             />
           ))}

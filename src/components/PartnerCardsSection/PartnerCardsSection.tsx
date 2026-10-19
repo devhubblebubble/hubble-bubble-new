@@ -8,42 +8,51 @@ import styles from "./PartnerCardsSection.module.scss";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type CollabWithImage = {
-  name: string;
-  src: string;
-  width: number;
-  height: number;
-};
+import { imageDims, imageUrl } from "@/lib/sanity/image";
+import type { HomePage, LogoItem } from "@/lib/sanity/types";
 
-type CollabNameOnly = { name: string };
+type Props = { data: HomePage };
 
-type Collab = CollabWithImage | CollabNameOnly;
+const lines = (text?: string) => (text ?? "").split("\n").filter(Boolean);
 
-/** Order preserved for the marquee (UK business network narrative). */
-const COLLABS_DATA: Collab[] = [
-  { name: "Barclays Eagle Labs" },
-  { name: "Revolut bank", src: "/images/partner-cards/revolut.png", width: 270, height: 74 },
-  { name: "RBS Accelerator" },
-  { name: "Converge" },
-  { name: "Elevator Scotland" },
-  { name: "Asian Business Chamber Glasgow" },
-  {
-    name: "Scottish EDGE",
-    src: "/images/partner-cards/scottish-edge.png",
-    width: 543,
-    height: 198,
-  },
-  { name: "Scottish Gov" },
-  { name: "The Challenges Group" },
-  { name: "University of Dundee's Centre for Entrepreneurship" },
-  { name: "The UK Law Firm" },
-  { name: "Europe Enterprise Network" },
-];
+function Lines({ text }: { text?: string }) {
+  return (
+    <>
+      {lines(text).map((line, i) => (
+        <span key={line}>
+          {i > 0 && <br />}
+          {line}
+        </span>
+      ))}
+    </>
+  );
+}
 
-const collabs = COLLABS_DATA;
+function NetworkLogo({ item, hidden }: { item: LogoItem; hidden?: boolean }) {
+  const src = imageUrl(item.logo, { width: 600 });
+  const dims = imageDims(item.logo, { width: 270, height: 74 });
+  return (
+    <div className={styles.collabLogo} aria-hidden={hidden ? "true" : undefined}>
+      {src ? (
+        <Image
+          src={src}
+          alt={hidden ? "" : (item.logo?.alt ?? item.name ?? "")}
+          width={dims.width}
+          height={dims.height}
+          className={styles.collabLogoImage}
+        />
+      ) : (
+        <span>{item.name}</span>
+      )}
+    </div>
+  );
+}
 
-export default function PartnerCardsSection() {
+export default function PartnerCardsSection({ data }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
+  const collabs = data.networkItems ?? [];
+  const backingLogo = imageUrl(data.backingLogo, { width: 1100 });
+  const backingDims = imageDims(data.backingLogo, { width: 543, height: 198 });
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -143,25 +152,20 @@ export default function PartnerCardsSection() {
       {/* ── Card 1 — Scottish EDGE / government backing ───── */}
       <article className={`${styles.card} ${styles.cardEdge}`}>
         <div className={styles.cardGrid}>
-          <p className={styles.text}>
-            We won the UK&apos;s biggest start-up competition (Scottish EDGE) for
-            disrupting a broken industry. Supported by TheVenturesLab as an official
-            Social Enterprise, we are backed by national institutions because we
-            prioritise your long-term career over short-term commissions.
-          </p>
+          <p className={styles.text}>{data.backingText}</p>
           <div className={styles.partnerBlock}>
             <h3 className={styles.heading}>
-              Backed by the
-              <br />
-              Scottish Government
+              <Lines text={data.backingHeading} />
             </h3>
-            <Image
-              src="/images/partner-cards/scottish-edge.png"
-              alt="Scottish EDGE"
-              width={543}
-              height={198}
-              className={styles.partnerLogo}
-            />
+            {backingLogo && (
+              <Image
+                src={backingLogo}
+                alt={data.backingLogo?.alt ?? ""}
+                width={backingDims.width}
+                height={backingDims.height}
+                className={styles.partnerLogo}
+              />
+            )}
           </div>
         </div>
       </article>
@@ -171,33 +175,27 @@ export default function PartnerCardsSection() {
         <div className={`${styles.cardGrid} ${styles.flip}`}>
           <div className={styles.partnerBlock}>
             <h3 className={styles.heading}>
-              Certified by
-              <br />
-              British Council and ICEF
+              <Lines text={data.certifiedHeading} />
             </h3>
-            <div className={styles.partnerLogoRow} aria-label="British Council and ICEF">
-              <Image
-                src="/images/herosection/accreditations/british-council.png"
-                alt="British Council"
-                width={118}
-                height={34}
-                className={styles.partnerLogoDual}
-              />
-              <Image
-                src="/images/herosection/accreditations/icef.png"
-                alt="ICEF Accredited Agency"
-                width={99}
-                height={34}
-                className={styles.partnerLogoDual}
-              />
+            <div className={styles.partnerLogoRow} aria-label={lines(data.certifiedHeading).join(" ")}>
+              {(data.certifiedLogos ?? []).map((item) => {
+                const src = imageUrl(item.logo, { width: 360 });
+                if (!src) return null;
+                const dims = imageDims(item.logo, { width: 118, height: 34 });
+                return (
+                  <Image
+                    key={item._key ?? item.name}
+                    src={src}
+                    alt={item.logo?.alt ?? item.name ?? ""}
+                    width={Math.round((dims.width * 34) / dims.height)}
+                    height={34}
+                    className={styles.partnerLogoDual}
+                  />
+                );
+              })}
             </div>
           </div>
-          <p className={`${styles.text} ${styles.textRight}`}>
-            Our entire team is trained and certified by the world&apos;s leading
-            international education authorities. You get expert, unbiased guidance
-            on universities and visas, ensuring your application meets the highest
-            global standards.
-          </p>
+          <p className={`${styles.text} ${styles.textRight}`}>{data.certifiedText}</p>
         </div>
       </article>
 
@@ -205,57 +203,21 @@ export default function PartnerCardsSection() {
       <article className={`${styles.card} ${styles.cardCollab}`}>
         <div className={styles.collabInner}>
           <h3 className={styles.heading}>
-            Embedded in the UK&apos;s
-            <br />
-            Elite Business Network.
+            <Lines text={data.networkHeading} />
           </h3>
-          <p className={styles.text}>
-            We aren&apos;t just an agency; we are a high-growth UK enterprise. Backed
-            by top-tier accelerators (Barclays Eagle Labs, RBS), leading universities,
-            and national business chambers, our global infrastructure is built on the
-            same institutional trust and rigorous standards as the companies we
-            partner with.
-          </p>
+          <p className={styles.text}>{data.networkText}</p>
           <div
             className={styles.strip}
             aria-label="Accelerators, institutions, and enterprise partners"
           >
             <div className={styles.stripTrack}>
-              {collabs.map((collab) => (
-                <div key={collab.name} className={styles.collabLogo}>
-                  {"src" in collab ? (
-                    <Image
-                      src={collab.src}
-                      alt={collab.name}
-                      width={collab.width}
-                      height={collab.height}
-                      className={styles.collabLogoImage}
-                    />
-                  ) : (
-                    <span>{collab.name}</span>
-                  )}
-                </div>
+              {collabs.map((item, i) => (
+                <NetworkLogo key={item._key ?? i} item={item} />
               ))}
 
               {/* Duplicate set for seamless loop (hidden from screen readers) */}
-              {collabs.map((collab) => (
-                <div
-                  key={`${collab.name}-dup`}
-                  className={styles.collabLogo}
-                  aria-hidden="true"
-                >
-                  {"src" in collab ? (
-                    <Image
-                      src={collab.src}
-                      alt=""
-                      width={collab.width}
-                      height={collab.height}
-                      className={styles.collabLogoImage}
-                    />
-                  ) : (
-                    <span>{collab.name}</span>
-                  )}
-                </div>
+              {collabs.map((item, i) => (
+                <NetworkLogo key={`${item._key ?? i}-dup`} item={item} hidden />
               ))}
             </div>
           </div>

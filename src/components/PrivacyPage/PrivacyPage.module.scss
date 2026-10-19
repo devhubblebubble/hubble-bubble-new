@@ -107,15 +107,45 @@
   flex-direction: column;
   gap: 14px;
 
-  p {
+  p,
+  li {
     font-size: var(--fs-body);
     color: var(--muted);
     line-height: 1.75;
+  }
 
-    // Render bullet points properly
-    &:has(•) {
-      padding-left: 0;
-    }
+  ul,
+  ol {
+    padding-left: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  h3 {
+    font-size: var(--fs-body);
+    font-weight: 600;
+    color: var(--white);
+    margin-top: 8px;
+  }
+
+  a {
+    color: var(--orange);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  strong {
+    color: var(--white);
+    font-weight: 600;
   }
 }
 

@@ -1,0 +1,152 @@
+{
+  "_id": "homePage",
+  "_type": "homePage",
+
+  "headlineLead": "We are the",
+  "headlineAccent": "Anti-Agent Agents!",
+  "headlineRest": "We Actually Care\nWhere You End Up.",
+  "subLead": "So stop guessing.",
+  "subHighlight": "Let's find the degree",
+  "subRest": "that fits your personality and passion!",
+  "accreditationsLabel": "Accredited by:",
+  "accreditations": [
+    { "name": "UCAS", "logo": { "_upload": "public/images/herosection/accreditations/ucas.png", "alt": "UCAS" } },
+    { "name": "British Council", "logo": { "_upload": "public/images/herosection/accreditations/british-council.png", "alt": "British Council" } },
+    { "name": "ICEF", "logo": { "_upload": "public/images/herosection/accreditations/icef.png", "alt": "ICEF Accredited Agency" } }
+  ],
+  "primaryCtaLabel": "Take the eligibility Test",
+  "secondaryCtaLabel": "Book a call",
+  "secondaryCtaHref": "/contact",
+  "heroStudents": [
+    {
+      "name": "Jagadesh Kaliappan",
+      "course": "MSc. Artificial Intelligence in Games",
+      "flag": "🇬🇧",
+      "photo": { "_upload": "public/images/impact/dp.png", "alt": "Jagadesh Kaliappan" },
+      "admits": [
+        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
+        { "label": "NORTHUMBRIA" },
+        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
+        { "label": "Durham", "logo": { "_upload": "public/images/impact/dundee.png", "alt": "Durham" } }
+      ]
+    },
+    {
+      "name": "Rupsee Padhi",
+      "course": "MSc. Social Innovation & Entrepreneurship",
+      "flag": "🇬🇧",
+      "photo": { "_upload": "public/images/impact/dp.png", "alt": "Rupsee Padhi" },
+      "admits": [
+        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
+        { "label": "ST ANDREWS" },
+        { "label": "Durham", "logo": { "_upload": "public/images/impact/dundee.png", "alt": "Durham" } },
+        { "label": "SUSSEX" }
+      ]
+    },
+    {
+      "name": "Amir Shah",
+      "course": "BA (Hons) Game Design",
+      "flag": "🇬🇧",
+      "photo": { "_upload": "public/images/impact/dp.png", "alt": "Amir Shah" },
+      "admits": [
+        { "label": "Durham", "logo": { "_upload": "public/images/impact/dundee.png", "alt": "Durham" } },
+        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
+        { "label": "UAL" },
+        { "label": "GOLDSMITHS" }
+      ]
+    }
+  ],
+  "worldMapHeadline": "Whatever your path, we are here for you!",
+
+  "backingText": "We won the UK's biggest start-up competition (Scottish EDGE) for disrupting a broken industry. Supported by TheVenturesLab as an official Social Enterprise, we are backed by national institutions because we prioritise your long-term career over short-term commissions.",
+  "backingHeading": "Backed by the\nScottish Government",
+  "backingLogo": { "_upload": "public/images/partner-cards/scottish-edge.png", "alt": "Scottish EDGE" },
+  "certifiedHeading": "Certified by\nBritish Council and ICEF",
+  "certifiedLogos": [
+    { "name": "British Council", "logo": { "_upload": "public/images/herosection/accreditations/british-council.png", "alt": "British Council" } },
+    { "name": "ICEF", "logo": { "_upload": "public/images/herosection/accreditations/icef.png", "alt": "ICEF Accredited Agency" } }
+  ],
+  "certifiedText": "Our entire team is trained and certified by the world's leading international education authorities. You get expert, unbiased guidance on universities and visas, ensuring your application meets the highest global standards.",
+  "networkHeading": "Embedded in the UK's\nElite Business Network.",
+  "networkText": "We aren't just an agency; we are a high-growth UK enterprise. Backed by top-tier accelerators (Barclays Eagle Labs, RBS), leading universities, and national business chambers, our global infrastructure is built on the same institutional trust and rigorous standards as the companies we partner with.",
+  "networkItems": [
+    { "name": "Barclays Eagle Labs" },
+    { "name": "Revolut bank", "logo": { "_upload": "public/images/partner-cards/revolut.png", "alt": "Revolut" } },
+    { "name": "RBS Accelerator" },
+    { "name": "Converge" },
+    { "name": "Elevator Scotland" },
+    { "name": "Asian Business Chamber Glasgow" },
+    { "name": "Scottish EDGE", "logo": { "_upload": "public/images/partner-cards/scottish-edge.png", "alt": "Scottish EDGE" } },
+    { "name": "Scottish Gov" },
+    { "name": "The Challenges Group" },
+    { "name": "University of Dundee's Centre for Entrepreneurship" },
+    { "name": "The UK Law Firm" },
+    { "name": "Europe Enterprise Network" }
+  ],
+
+  "journeySteps": [
+    {
+      "number": "01",
+      "title": "Your journey starts with the",
+      "titleHighlight": "real you.",
+      "description": "While other consultants shove random degrees down your Oesophagus, we actually care about who you are. Our Magic-Spell \"Revelio\" blends your passion, dreams, and skillset into one powerful profile so we can finally understand the complete, complex, amazing human that is you.",
+      "tags": ["Personality Trait", "Skillset Audit", "Career Blueprint"]
+    },
+    {
+      "number": "02",
+      "title": "Find your",
+      "titleHighlight": "real path.",
+      "description": "No more guessing games. We map your unique profile to the world's best-fit universities and courses. It's not about where everyone is going—it's about where you will thrive, grow, and conquer.",
+      "tags": ["University Search", "Course Selection", "Application Strategy"]
+    },
+    {
+      "number": "03",
+      "title": "Fuel your",
+      "titleHighlight": "real growth.",
+      "description": "From visas to pre-departure, we're with you till the very end. But our support doesn't stop at the airport. We provide career guidance and networking to ensure your international journey turns into a lifetime of success.",
+      "tags": ["Visa Support", "Pre-departure", "Career Guidance"]
+    }
+  ],
+  "journeyOutputsLabel": "Key Outputs",
+
+  "storiesTitle": "Student Stories",
+  "storiesViewAllLabel": "View all stories",
+  "featuredStories": [
+    { "_type": "reference", "_ref": "story-nihal" },
+    { "_type": "reference", "_ref": "story-serah" }
+  ],
+  "testimonialsTitle": "They Made It. So Can You!",
+  "testimonialsLead": "Hear from our students who turned uncertainty into confidence and found their place in the world.",
+  "testimonials": [
+    {
+      "photo": { "_upload": "public/images/testimonial/student3.webp", "alt": "Rhea Menon" },
+      "quote": "I walked in with plans to study engineering. Through conversations and career mapping, I realised game design was where I truly belonged. I can't thank the team enough for helping me see my potential clearly and guiding me every step of the way — from building my portfolio to writing my personal statement.",
+      "name": "Rhea Menon",
+      "course": "BA (Hons) Game Design",
+      "university": "University of the Arts London",
+      "large": false
+    },
+    {
+      "photo": { "_upload": "public/images/testimonial/student4.webp", "alt": "Priya Sinha" },
+      "quote": "Hubble Bubble didn't just help with applications — they helped me discover why I was applying.",
+      "name": "Priya Sinha",
+      "course": "MSc Social Innovation and Entrepreneurship",
+      "university": "University of Sussex",
+      "large": true
+    }
+  ],
+
+  "originTitleLead": "How It All",
+  "originTitleAccent": "Began",
+  "originLead": "From one spark came a constellation - our very own",
+  "originLeadAccent": "Big Bang Theory",
+  "originButtonLabel": "Read now!",
+  "originButtonHref": "/about",
+  "ctaTitleLead": "Still not sure\nwhere to start?",
+  "ctaTitleAccent": "That's why we're here!",
+  "ctaText": "Our experts have guided hundreds of students from uncertainty to success. Now it's your turn.",
+  "ctaPrimaryLabel": "Take the eligibility Test",
+  "ctaSecondaryLabel": "Book a call",
+
+  "seoTitle": "Hubble Bubble: free guidance for international students",
+  "seoDescription": "A Scottish social enterprise giving international students free, independent guidance on universities, visas and careers. No commission, no agency fees."
+}

@@ -1,0 +1,56 @@
+{
+  "_id": "privacyPage",
+  "_type": "privacyPage",
+  "eyebrow": "Legal",
+  "title": "Privacy Policy",
+  "lastUpdated": "April 2025",
+  "intro": "At Hubble Bubble, we take your privacy seriously. This policy explains what personal data we collect, why we collect it, how we use it, and your rights under UK data protection law.",
+  "sections": [
+    {
+      "title": "Who We Are",
+      "bodyRich": "Hubble Bubble is an educational consultancy based in Edinburgh, Scotland, UK. We help students discover their study destinations and navigate the university application process. Our registered address is 9 Sighthill Ct, Edinburgh, EH11 4BN, United Kingdom. You can contact us at hello@hubblebubble.uk."
+    },
+    {
+      "title": "What Information We Collect",
+      "bodyRich": "We collect information you give us directly — such as your name, email address, phone number, educational background, and study preferences — when you fill in our contact form, take the eligibility test, or book a call with us.\n\nWe may also collect anonymised usage data (such as pages visited and session duration) through analytics tools to help us improve our website. This data cannot be used to identify you personally."
+    },
+    {
+      "title": "How We Use Your Information",
+      "bodyRich": "We use your personal information to:\n\n• Respond to your enquiries and provide the guidance you've asked for\n• Send you relevant information about our services (only if you've opted in)\n• Improve our website and service based on anonymised usage patterns\n• Comply with any legal obligations\n\nWe will never use your data for automated decision-making or profiling in a way that significantly affects you."
+    },
+    {
+      "title": "Our Legal Basis for Processing",
+      "bodyRich": "We process your data on the following legal bases under UK GDPR:\n\n• Consent — when you submit a form or opt into communications\n• Legitimate interests — when we analyse anonymised site usage to improve our services\n• Contract — when you engage us for our services\n\nYou can withdraw your consent at any time by emailing hello@hubblebubble.uk."
+    },
+    {
+      "title": "Who We Share Your Data With",
+      "bodyRich": "We do not sell, rent, or trade your personal information. We may share your data with trusted third-party service providers who help us operate our business (such as email platforms or analytics tools), but only to the extent necessary and under strict data processing agreements.\n\nAll third parties are required to keep your information secure and use it only for the purpose it was shared."
+    },
+    {
+      "title": "How Long We Keep Your Data",
+      "bodyRich": "We keep your personal data only for as long as necessary for the purposes described in this policy, or as required by law. If you are a client, we retain records for up to 7 years after your last interaction with us. If you submitted an enquiry but didn't become a client, we typically retain your data for up to 2 years."
+    },
+    {
+      "title": "Your Rights",
+      "bodyRich": "Under UK data protection law, you have the right to:\n\n• Access the personal data we hold about you\n• Correct any inaccurate data\n• Request deletion of your data (\"right to be forgotten\")\n• Object to or restrict how we process your data\n• Request portability of your data\n• Withdraw consent at any time\n\nTo exercise any of these rights, contact us at hello@hubblebubble.uk. We will respond within one calendar month."
+    },
+    {
+      "title": "Cookies",
+      "bodyRich": "Our website uses cookies to improve your experience. Essential cookies are required for the site to function. We may also use analytics cookies to understand how visitors use our site — these are only set with your consent.\n\nYou can manage cookie preferences through your browser settings at any time."
+    },
+    {
+      "title": "Security",
+      "bodyRich": "We take appropriate technical and organisational measures to protect your personal data against unauthorised access, loss, or disclosure. However, no internet transmission is ever completely secure. We encourage you to use a secure connection when submitting personal information."
+    },
+    {
+      "title": "Changes to This Policy",
+      "bodyRich": "We may update this Privacy Policy from time to time. When we do, we will revise the date at the top of this page. We encourage you to review this page periodically. Continued use of our services after changes are posted constitutes acceptance of the updated policy."
+    },
+    {
+      "title": "Contact & Complaints",
+      "bodyRich": "If you have questions or concerns about how we handle your data, please contact us at hello@hubblebubble.uk.\n\nIf you believe we have not addressed your concern satisfactorily, you have the right to lodge a complaint with the UK Information Commissioner's Office (ICO) at ico.org.uk."
+    }
+  ],
+  "seoTitle": "Privacy Policy | Hubble Bubble",
+  "seoDescription": "How Hubble Bubble collects, uses, and protects your personal information."
+}

@@ -4,7 +4,9 @@ import { WorldMapNetwork } from "@/components/WorldMapNetwork";
 
 import styles from "./WorldMapSection.module.scss";
 
-export default function WorldMapSection() {
+type Props = { headline?: string };
+
+export default function WorldMapSection({ headline }: Props) {
   return (
     <section
       className={styles.section}
@@ -27,7 +29,7 @@ export default function WorldMapSection() {
       </div>
 
       <h2 id="world-map-section-heading" className={styles.headline}>
-        Whatever your path, we are here for you!
+        {headline ?? "Whatever your path, we are here for you!"}
       </h2>
     </section>
   );

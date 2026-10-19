@@ -1,34 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
+import { imageUrl } from "@/lib/sanity/image";
+import type { Story } from "@/lib/sanity/types";
 import styles from "./StoryRow.module.scss";
 
-export interface StoryRowProps {
-  img: string;
-  headline: string;
-  body: string;
-  linkLabel: string;
-  href: string;
-}
+export default function StoryRow({ story }: { story: Story }) {
+  const src = imageUrl(story.photo, { width: 1200 });
+  const href = story.linkHref?.trim();
+  const external = /^https?:/i.test(href ?? "");
 
-export default function StoryRow({
-  img,
-  headline,
-  body,
-  linkLabel,
-  href,
-}: StoryRowProps) {
   return (
     <article className={`${styles.row} reveal`}>
 
       {/* ── Photo — border-radius: 32px 0 0 32px (Figma) ── */}
       <div className={styles.photoWrap}>
-        <Image
-          src={img}
-          alt={headline}
-          fill
-          sizes="(max-width: 900px) 100vw, 52vw"
-          style={{ objectFit: "cover", objectPosition: "center top" }}
-        />
+        {src && (
+          <Image
+            src={src}
+            alt={story.photo?.alt ?? story.name ?? story.headline}
+            fill
+            sizes="(max-width: 900px) 100vw, 52vw"
+            style={{ objectFit: "cover", objectPosition: "center top" }}
+          />
+        )}
         <div className={styles.fade} />
       </div>
 
@@ -37,16 +31,24 @@ export default function StoryRow({
 
         {/* Frame 186: heading + mint rule */}
         <div className={styles.headingBlock}>
-          <h2 className={styles.headline}>{headline}</h2>
+          <h2 className={styles.headline}>{story.headline}</h2>
           <div className={styles.rule} />
         </div>
 
         {/* Frame 304: body text + link */}
         <div className={styles.bodyBlock}>
-          <p className={styles.body}>{body}</p>
-          <Link href={href} className={styles.link}>
-            {linkLabel}
-          </Link>
+          <p className={styles.body}>{story.summary}</p>
+          {href && story.linkLabel && (
+            external ? (
+              <a href={href} className={styles.link} target="_blank" rel="noopener noreferrer">
+                {story.linkLabel}
+              </a>
+            ) : (
+              <Link href={href} className={styles.link}>
+                {story.linkLabel}
+              </Link>
+            )
+          )}
         </div>
       </div>
     </article>

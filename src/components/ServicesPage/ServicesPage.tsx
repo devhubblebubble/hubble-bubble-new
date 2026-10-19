@@ -3,18 +3,18 @@
 import Link from "next/link";
 import { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumb/Breadcrumb";
+import type { ServicesPage as ServicesPageData } from "@/lib/sanity/types";
 import styles from "./ServicesPage.module.scss";
-import {
-  addOnServiceCards,
-  hubbleServiceCards,
-  servicesPageCopy,
-} from "./servicesPage.data";
 
 type TabId = "hubble" | "addon";
 
-export default function ServicesPage() {
+type Props = { data: ServicesPageData };
+
+export default function ServicesPage({ data }: Props) {
   const [tab, setTab] = useState<TabId>("hubble");
-  const cards = tab === "hubble" ? hubbleServiceCards : addOnServiceCards;
+  const primary = data.primaryServices ?? [];
+  const addOn = data.addOnServices ?? [];
+  const cards = tab === "hubble" ? primary : addOn;
 
   return (
     <div className={styles.page}>
@@ -23,9 +23,9 @@ export default function ServicesPage() {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className={styles.hero}>
         <div className="reveal">
-          <p className={styles.eyebrow}>Our Services</p>
-          <h1>{servicesPageCopy.heroTitle}</h1>
-          <p className={styles.heroSub}>{servicesPageCopy.heroSubtitle}</p>
+          {data.heroEyebrow && <p className={styles.eyebrow}>{data.heroEyebrow}</p>}
+          <h1>{data.heroTitle}</h1>
+          {data.heroSubtitle && <p className={styles.heroSub}>{data.heroSubtitle}</p>}
         </div>
       </section>
 
@@ -43,7 +43,7 @@ export default function ServicesPage() {
             className={tab === "hubble" ? styles.tabActive : styles.tabInactive}
             onClick={() => setTab("hubble")}
           >
-            {servicesPageCopy.tabs.primary}
+            {data.tabPrimaryLabel ?? "Hubble Bubble Services"}
           </button>
           <button
             type="button"
@@ -52,13 +52,13 @@ export default function ServicesPage() {
             className={tab === "addon" ? styles.tabActive : styles.tabInactive}
             onClick={() => setTab("addon")}
           >
-            {servicesPageCopy.tabs.secondary}
+            {data.tabSecondaryLabel ?? "Add On Services"}
           </button>
         </div>
 
         <div className={styles.cardGrid} role="tabpanel">
-          {cards.map((card) => (
-            <article key={card.id} className={`${styles.card} reveal`}>
+          {cards.map((card, i) => (
+            <article key={card._key ?? i} className={`${styles.card} reveal`}>
               <div className={styles.cardBody}>
                 <h2>{card.title}</h2>
                 <p>{card.description}</p>
@@ -79,18 +79,14 @@ export default function ServicesPage() {
 
       {/* ── CTA ────────────────────────────────────────────────────────── */}
       <section className={`${styles.cta} reveal`}>
-        <h2 className={styles.ctaTitle}>
-          Not sure which service is right for you?
-        </h2>
-        <p className={styles.ctaText}>
-          Book a free discovery call. We&apos;ll figure it out together.
-        </p>
+        <h2 className={styles.ctaTitle}>{data.ctaTitle}</h2>
+        {data.ctaText && <p className={styles.ctaText}>{data.ctaText}</p>}
         <div className={styles.ctaRow}>
           <Link href="/contact" className={styles.ctaPrimary}>
-            Book a call
+            {data.ctaPrimaryLabel ?? "Book a call"}
           </Link>
           <Link href="/contact" className={styles.ctaGhost}>
-            Take the eligibility Test
+            {data.ctaSecondaryLabel ?? "Take the eligibility Test"}
           </Link>
         </div>
       </section>

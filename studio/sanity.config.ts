@@ -4,7 +4,14 @@ import { schemaTypes } from "./schemaTypes";
 import { structure } from "./structure";
 
 // Documents that exist exactly once (no "create new" and no delete).
-const SINGLETONS = new Set(["siteSettings"]);
+const SINGLETONS = new Set([
+  "siteSettings",
+  "homePage",
+  "aboutPage",
+  "servicesPage",
+  "storiesPage",
+  "privacyPage",
+]);
 
 export default defineConfig({
   name: "default",

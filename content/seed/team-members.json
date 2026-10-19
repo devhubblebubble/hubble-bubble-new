@@ -1,0 +1,21 @@
+[
+  {
+    "_id": "teamMember-jevin-zac",
+    "_type": "teamMember",
+    "name": "Jevin Zac",
+    "title": "Chief Pathfinder",
+    "aka": "Founder",
+    "photo": { "_upload": "public/images/Teams/jevin.png", "alt": "Jevin Zac" },
+    "photoAlt": { "_upload": "public/images/Teams/jevin-alt.png" },
+    "order": 1
+  },
+  {
+    "_id": "teamMember-fayzul-choudhury",
+    "_type": "teamMember",
+    "name": "Fayzul Choudhury",
+    "title": "Mission Engineer",
+    "aka": "CFO",
+    "photo": { "_upload": "public/images/Teams/fayzul.png", "alt": "Fayzul Choudhury" },
+    "order": 2
+  }
+]

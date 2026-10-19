@@ -1,0 +1,74 @@
+[
+  {
+    "_id": "story-nihal",
+    "_type": "story",
+    "name": "Nihal",
+    "headline": "Leaving Law Behind to Tell Stories That Matter and Impact.",
+    "summary": "Nihal thought law school was his only option. But his essays revealed something else — a writer's voice. Now he's studying literature and published in two journals.",
+    "photo": { "_upload": "public/images/testimonial/student1.webp", "alt": "Nihal" },
+    "linkLabel": "Read Nihal's story and journey →",
+    "linkHref": "/stories",
+    "order": 1,
+    "hidden": false
+  },
+  {
+    "_id": "story-serah",
+    "_type": "story",
+    "name": "Serah",
+    "headline": "Building a Mission-Driven Career from the Ground Up.",
+    "summary": "Serah came in considering an MBA. After career mapping sessions, she launched a social innovation project — and is now studying social entrepreneurship with a scholarship at University of St. Andrews.",
+    "photo": { "_upload": "public/images/testimonial/student2.webp", "alt": "Serah" },
+    "linkLabel": "Read Serah's story and journey →",
+    "linkHref": "/stories",
+    "order": 2,
+    "hidden": false
+  },
+  {
+    "_id": "story-jessica",
+    "_type": "story",
+    "name": "Jessica",
+    "headline": "Transforming Passion into Impactful Solutions.",
+    "summary": "Jessica always had a flair for design. With guidance from mentors, she pivoted from graphic design to creating sustainable fashion, and she is now enrolled in a program at the Fashion Institute of Technology focusing on eco-friendly practices.",
+    "photo": { "_upload": "public/images/testimonial/student3.webp", "alt": "Jessica" },
+    "linkLabel": "Discover Jessica's evolution and insights →",
+    "linkHref": "",
+    "order": 3,
+    "hidden": false
+  },
+  {
+    "_id": "story-amir",
+    "_type": "story",
+    "name": "Amir",
+    "headline": "Harnessing Technology for Social Good.",
+    "summary": "Amir had a background in computer science. Inspired by a hackathon, he developed an app that connects underserved communities with local services, and he is now pursuing a degree in social impact technology at Stanford University.",
+    "photo": { "_upload": "public/images/testimonial/student4.webp", "alt": "Amir" },
+    "linkLabel": "Explore Amir's project and vision →",
+    "linkHref": "",
+    "order": 4,
+    "hidden": false
+  },
+  {
+    "_id": "story-priya",
+    "_type": "story",
+    "name": "Priya",
+    "headline": "She Didn't Know What She Wanted. Until She Did.",
+    "summary": "Priya came in with no clear direction and a lot of pressure from home. We didn't push a path on her — we helped her discover one. The result? A course she's passionate about at a university that fits her perfectly.",
+    "photo": { "_upload": "public/images/testimonial/student5.webp", "alt": "Priya" },
+    "linkLabel": "Read Priya's story and journey →",
+    "linkHref": "",
+    "order": 5,
+    "hidden": false
+  },
+  {
+    "_id": "story-maya",
+    "_type": "story",
+    "name": "Maya",
+    "headline": "Three Countries, One Right Choice.",
+    "summary": "Maya had shortlisted universities across three countries and was completely overwhelmed. We mapped out her priorities and guided her toward the one destination that actually matched her goals — not just the rankings.",
+    "photo": { "_upload": "public/images/testimonial/student6.webp", "alt": "Maya" },
+    "linkLabel": "Read Maya's story and journey →",
+    "linkHref": "",
+    "order": 6,
+    "hidden": false
+  }
+]

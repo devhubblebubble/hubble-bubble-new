@@ -4,36 +4,28 @@ import Link from "next/link";
 import StoryRow from "@/components/StoryRow/StoryRow";
 import { useCarousel } from "@/hooks/useCarousel";
 import Dots from "@/components/Dots/Dots";
+import type { Story } from "@/lib/sanity/types";
 import styles from "./StoriesSection.module.scss";
 
-const storyCards = [
-  {
-    img: "/images/testimonial/student1.webp",
-    headline: "Leaving Law Behind to Tell Stories That Matter and Impact.",
-    body: "Nihal thought law school was his only option. But his essays revealed something else — a writer's voice. Now he's studying literature and published in two journals.",
-    linkLabel: "Read Nihal's story and journey →",
-    href: "/stories",
-  },
-  {
-    img: "/images/testimonial/student2.webp",
-    headline: "Building a Mission-Driven Career from the Ground Up.",
-    body: "Serah came in considering an MBA. After career mapping sessions, she launched a social innovation project — and is now studying social entrepreneurship with a scholarship at University of St. Andrews.",
-    linkLabel: "Read Serah's story and journey →",
-    href: "/stories",
-  },
-];
+type Props = {
+  title?: string;
+  viewAllLabel?: string;
+  stories: Story[];
+};
 
-export default function StoriesSection() {
-  const { idx, go, setPaused } = useCarousel(storyCards.length, 8000);
+export default function StoriesSection({ title, viewAllLabel, stories }: Props) {
+  const { idx, go, setPaused } = useCarousel(Math.max(stories.length, 1), 8000);
+
+  if (stories.length === 0) return null;
 
   return (
     <section className={styles.section} id="stories">
       <div className={styles.header}>
         <div className="reveal">
-          <h2>Student Stories</h2>
+          <h2>{title ?? "Student Stories"}</h2>
         </div>
         <Link href="/stories" className={styles.viewAll}>
-          View all stories
+          {viewAllLabel ?? "View all stories"}
         </Link>
       </div>
 
@@ -47,9 +39,9 @@ export default function StoriesSection() {
           className={styles.track}
           style={{ transform: `translateX(-${idx * 100}%)` }}
         >
-          {storyCards.map((s) => (
-            <div className={styles.slide} key={s.headline}>
-              <StoryRow {...s} />
+          {stories.map((s) => (
+            <div className={styles.slide} key={s._id}>
+              <StoryRow story={s} />
             </div>
           ))}
         </div>
@@ -58,7 +50,7 @@ export default function StoriesSection() {
       {/* Dots */}
       <div className={styles.dotsWrap}>
         <Dots
-          count={storyCards.length}
+          count={stories.length}
           idx={idx}
           onPrev={() => go(idx - 1)}
           onNext={() => go(idx + 1)}
