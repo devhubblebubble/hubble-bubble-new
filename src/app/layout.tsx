@@ -23,8 +23,16 @@ const poppins = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Hubble Works',
-  description: 'Fuel your passion with the perfect counsel',
+  title: 'Hubble Bubble: free guidance for international students',
+  description:
+    'A Scottish social enterprise giving international students free, independent guidance on universities, visas and careers. No commission, no agency fees.',
+  openGraph: {
+    siteName: 'Hubble Bubble',
+    type: 'website',
+    locale: 'en_GB',
+    images: [{ url: '/images/social/og-default.jpg', width: 1200, height: 630, alt: 'Hubble Bubble: free university and career guidance for international students' }],
+  },
+  twitter: { card: 'summary_large_image' },
   ...(noIndex ? { robots: { index: false, follow: false } } : {}),
 };
 

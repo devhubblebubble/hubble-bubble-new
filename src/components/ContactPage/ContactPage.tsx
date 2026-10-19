@@ -4,13 +4,24 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb/Breadcrumb";
+import type { SiteSettings } from "@/lib/sanity/types";
 import styles from "./ContactPage.module.scss";
 
 type FormType = "student" | "collab" | "general";
 
 const VALID_TYPES: FormType[] = ["student", "collab", "general"];
 
-export default function ContactPage() {
+type Props = { settings: SiteSettings };
+
+export default function ContactPage({ settings }: Props) {
+  const socials = [
+    ["Instagram", settings.instagram],
+    ["LinkedIn", settings.linkedin],
+    ["Facebook", settings.facebook],
+    ["YouTube", settings.youtube],
+    ["TikTok", settings.tiktok],
+    ["X", settings.x],
+  ].filter((s): s is [string, string] => Boolean(s[1]));
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type") as FormType | null;
   const initialType: FormType =
@@ -53,26 +64,28 @@ export default function ContactPage() {
             <span className={styles.infoIcon}>✉</span>
             <div>
               <p className={styles.infoLabel}>Email us directly</p>
-              <a href="mailto:hello@hubblebubble.uk" className={styles.infoLink}>
-                hello@hubblebubble.uk
+              <a href={`mailto:${settings.contactEmail}`} className={styles.infoLink}>
+                {settings.contactEmail}
               </a>
             </div>
           </div>
 
-          <div className={styles.infoCard}>
-            <span className={styles.infoIcon}>📅</span>
-            <div>
-              <p className={styles.infoLabel}>Book a call</p>
-              <a
-                href="https://calendly.com/hubblebubble"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.infoLink}
-              >
-                Schedule on Calendly
-              </a>
+          {settings.bookingUrl && (
+            <div className={styles.infoCard}>
+              <span className={styles.infoIcon}>📅</span>
+              <div>
+                <p className={styles.infoLabel}>Book a call</p>
+                <a
+                  href={settings.bookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.infoLink}
+                >
+                  Schedule a call
+                </a>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.infoCard}>
             <span className={styles.infoIcon}>📍</span>
@@ -82,27 +95,24 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className={styles.socialRow}>
-            <p className={styles.infoLabel}>Follow us</p>
-            <div className={styles.socialLinks}>
-              <a
-                href="https://instagram.com/hubblebubble.uk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.socialLink}
-              >
-                Instagram
-              </a>
-              <a
-                href="https://linkedin.com/company/hubblebubbleuk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.socialLink}
-              >
-                LinkedIn
-              </a>
+          {socials.length > 0 && (
+            <div className={styles.socialRow}>
+              <p className={styles.infoLabel}>Follow us</p>
+              <div className={styles.socialLinks}>
+                {socials.map(([label, href]) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.socialLink}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.eligBox}>
             <p className={styles.eligTitle}>Not sure where to start?</p>

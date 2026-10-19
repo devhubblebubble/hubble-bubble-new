@@ -41,5 +41,10 @@ export const openRolesQuery = /* groq */ `
 `;
 
 export const siteSettingsQuery = /* groq */ `
-  *[_type == "siteSettings"][0] { siteName, contactEmail, whatsappNumber }
+  *[_type == "siteSettings"][0] {
+    siteName, legalName, tagline,
+    contactEmail, phone, whatsappNumber, bookingUrl, address,
+    instagram, linkedin, facebook, youtube, tiktok, x,
+    googlePlayUrl, appStoreUrl
+  }
 `;

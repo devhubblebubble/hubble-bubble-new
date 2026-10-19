@@ -2,6 +2,19 @@
   "_id": "siteSettings",
   "_type": "siteSettings",
   "siteName": "Hubble Bubble",
+  "legalName": "Research in Dreams Ltd",
+  "tagline": "Free, independent university and career guidance for international students, from a Scottish social enterprise.",
   "contactEmail": "info@hubblebubble.club",
-  "whatsappNumber": ""
+  "phone": "",
+  "whatsappNumber": "",
+  "bookingUrl": "https://calendly.com/hubblebubble",
+  "address": "9 Sighthill Ct\nEdinburgh\nEH11 4BN, United Kingdom",
+  "instagram": "https://instagram.com/hubblebubble.uk",
+  "linkedin": "https://linkedin.com/company/hubblebubbleuk",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "x": "",
+  "googlePlayUrl": "",
+  "appStoreUrl": ""
 }

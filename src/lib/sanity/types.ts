@@ -42,6 +42,19 @@ export type JobRole = {
 
 export type SiteSettings = {
   siteName: string;
+  legalName?: string;
+  tagline?: string;
   contactEmail: string;
+  phone?: string;
   whatsappNumber?: string;
+  bookingUrl?: string;
+  address?: string;
+  instagram?: string;
+  linkedin?: string;
+  facebook?: string;
+  youtube?: string;
+  tiktok?: string;
+  x?: string;
+  googlePlayUrl?: string;
+  appStoreUrl?: string;
 };

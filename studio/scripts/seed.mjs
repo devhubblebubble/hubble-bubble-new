@@ -41,10 +41,13 @@ const toBlocks = (paragraphs = []) =>
     children: [{ _type: "span", _key: `s${i + 1}`, text, marks: [] }],
   }));
 
-// Sanity does not store null or undefined values, so drop them.
+// Sanity does not store null or undefined values, so drop them, and drop empty
+// strings too so an unfilled field is simply absent.
 const clean = (obj) =>
   Object.fromEntries(
-    Object.entries(obj).filter(([, v]) => v !== null && v !== undefined),
+    Object.entries(obj).filter(
+      ([, v]) => v !== null && v !== undefined && v !== "",
+    ),
   );
 
 const roles = (await readJson("job-roles.json")).map((r) =>
@@ -54,10 +57,19 @@ const roles = (await readJson("job-roles.json")).map((r) =>
     about: toBlocks(r.about),
   }),
 );
-const settings = clean(await readJson("site-settings.json"));
+
+// Single documents (site settings, pages). Created if missing; if they already
+// exist, only fields that are still empty get the seed value, so edits made in
+// the Studio are kept and newly added fields still get a starting value.
+const singletons = [clean(await readJson("site-settings.json"))];
 
 const tx = client.transaction();
-for (const doc of [...roles, settings]) tx.createIfNotExists(doc);
+for (const doc of roles) tx.createIfNotExists(doc);
+for (const doc of singletons) {
+  const { _id, _type, ...fields } = doc;
+  tx.createIfNotExists({ _id, _type, ...fields });
+  tx.patch(_id, (p) => p.setIfMissing(fields));
+}
 
 const result = await tx.commit({ returnDocuments: false });
 
@@ -65,9 +77,9 @@ let created = 0;
 let skipped = 0;
 for (const r of result.results ?? []) {
   if (r.operation === "create") created += 1;
-  else skipped += 1;
+  else if (r.operation === "none") skipped += 1;
 }
-const summary = `Created ${created} document(s), left ${skipped} existing document(s) untouched.`;
+const summary = `Created ${created} document(s), left ${skipped} existing document(s) untouched (new fields filled in where empty).`;
 console.log(`Done. ${summary}`);
 // Surfaces the result in the GitHub Actions run summary and annotations.
 if (process.env.GITHUB_ACTIONS) {
