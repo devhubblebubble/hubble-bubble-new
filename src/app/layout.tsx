@@ -5,6 +5,7 @@ import ParallaxStars from '@/components/Background/ParallaxStars';
 import ShootingStars from '@/components/Background/ShootingStars';
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
 import TransitionProvider from '@/providers/TransitionProvider';
+import { noIndex, siteUrl } from '@/lib/site';
 
 // Poppins is self-hosted (files in ./fonts, SIL Open Font License) so the
 // build never depends on Google Fonts being reachable.
@@ -21,8 +22,10 @@ const poppins = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Hubble Works',
   description: 'Fuel your passion with the perfect counsel',
+  ...(noIndex ? { robots: { index: false, follow: false } } : {}),
 };
 
 export default function RootLayout({
