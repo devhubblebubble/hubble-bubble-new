@@ -611,7 +611,7 @@ export default function FigmaHome() {
         <EligibilityModal
           isOpen={eligibilityOpen}
           onClose={() => setEligibilityOpen(false)}
-          contactEmail="hello@hubblebubble.uk"
+          contactEmail="hello@hubblebubble.club"
         />
       )}
     </>

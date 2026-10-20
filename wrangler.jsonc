@@ -21,7 +21,7 @@
   // Where contact form emails go, and the sender they appear to come from.
   // RESEND_API_KEY is a secret: it is set in the Cloudflare dashboard, never here.
   "vars": {
-    "CONTACT_TO": "hello@hubblebubble.uk",
+    "CONTACT_TO": "hello@hubblebubble.club",
     "CONTACT_FROM": "Hubble Bubble website <onboarding@resend.dev>"
   },
   "observability": {

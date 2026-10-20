@@ -37,7 +37,7 @@ import type {
 
 const DEFAULT_SETTINGS: SiteSettings = {
   siteName: "Hubble Bubble",
-  contactEmail: "hello@hubblebubble.uk",
+  contactEmail: "hello@hubblebubble.club",
 };
 
 const today = () => new Date().toISOString().slice(0, 10);
