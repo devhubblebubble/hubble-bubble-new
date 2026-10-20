@@ -55,28 +55,30 @@ export default function HeroSection({ data, settings }: Props) {
     <>
       <section className={`${styles.hero} reveal`} id="top">
         <div className={styles.grid}>
-          <div className="reveal">
-            <h1 className={styles.headline}>
-              {/* The spaces matter: on phones the line breaks are hidden, and
-                  without a space the words run together ("theAnti-Agent"). */}
-              {data.headlineLead}{" "}
-              <br />
-              <span className={styles.accent}>{data.headlineAccent}</span>
-              {headlineRest.map((line) => (
-                <span key={line}>
-                  {" "}
-                  <br />
-                  {line}
-                </span>
-              ))}
-            </h1>
-            <div className={styles.rule} />
-            <p className={styles.sub}>
-              <span className={styles.subMuted}>{data.subLead} </span>
-              <span className={styles.subHighlight}>{data.subHighlight}</span>{" "}
-              <br />
-              <span className={styles.subMuted}>{data.subRest}</span>
-            </p>
+          <div className={`${styles.copy} reveal`}>
+            <div className={styles.intro}>
+              <h1 className={styles.headline}>
+                {/* The spaces matter: on phones the line breaks are hidden, and
+                    without a space the words run together ("theAnti-Agent"). */}
+                {data.headlineLead}{" "}
+                <br />
+                <span className={styles.accent}>{data.headlineAccent}</span>
+                {headlineRest.map((line) => (
+                  <span key={line}>
+                    {" "}
+                    <br />
+                    {line}
+                  </span>
+                ))}
+              </h1>
+              <div className={styles.rule} />
+              <p className={styles.sub}>
+                <span className={styles.subMuted}>{data.subLead} </span>
+                <span className={styles.subHighlight}>{data.subHighlight}</span>{" "}
+                <br />
+                <span className={styles.subMuted}>{data.subRest}</span>
+              </p>
+            </div>
 
             {(data.accreditations?.length ?? 0) > 0 && (
               <div className={styles.accred}>
