@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import '../style/globals.scss';
 import Universe from '@/components/Background/Universe';
@@ -34,6 +34,12 @@ export const metadata: Metadata = {
   },
   twitter: { card: 'summary_large_image' },
   ...(noIndex ? { robots: { index: false, follow: false } } : {}),
+};
+
+// The colour the phone's browser paints around the page (address bar, overscroll).
+export const viewport: Viewport = {
+  themeColor: '#080808',
+  colorScheme: 'dark',
 };
 
 export default function RootLayout({
