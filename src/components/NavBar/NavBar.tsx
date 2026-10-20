@@ -165,7 +165,7 @@ export default function NavBar() {
         {/* Logo */}
         <Link href="/" aria-label="Hubble Bubble home" className={styles.logoLink}>
           <Image
-            src="/images/logos/logo.svg"
+            src="/images/logos/logo.webp"
             alt="Hubble Bubble"
             width={119}
             height={64}
@@ -216,7 +216,7 @@ export default function NavBar() {
         onKeyDown={onDrawerKeyDown}
       >
         <div className={styles.drawerTop}>
-          <Image src="/images/logos/logo.svg" alt="" width={119} height={64} className={styles.drawerLogo} />
+          <Image src="/images/logos/logo.webp" alt="" width={119} height={64} className={styles.drawerLogo} />
           <button
             type="button"
             className={styles.close}

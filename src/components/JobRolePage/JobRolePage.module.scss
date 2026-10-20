@@ -76,6 +76,8 @@
 }
 
 .back {
+  display: inline-block;
+  padding: 10px 0;
   font-size: var(--fs-sm);
   color: var(--muted);
   text-decoration: underline;

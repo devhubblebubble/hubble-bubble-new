@@ -120,6 +120,10 @@
 }
 
 .stepNumber {
+  &::before {
+    content: attr(data-number);
+  }
+
   font-family: $font-primary;
   font-weight: 700;
   font-size: 4rem;
@@ -175,7 +179,8 @@
   min-height: 11.9em; /* Reserve ~7 lines to prevent layout shift */
 
   @media (max-width: 480px) {
-    @include fluid-size(14, 12);
+    // Never under 14px: smaller body text is hard to read on a phone.
+    font-size: 0.875rem;
     line-height: 1.5;
     min-height: 10.5em;
     margin-bottom: rem(16);
@@ -344,7 +349,7 @@
   // The visible dot is drawn by ::before; the button itself is the tap target.
   position: relative;
   width: rem(44);
-  height: rem(30);
+  height: rem(40);
   padding: 0;
   border: 0;
   background: none;

@@ -47,7 +47,7 @@ export default async function JobRoleRoute({
   if (!role) notFound();
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <JobRolePage role={role} settings={settings} />
       <FooterSection />

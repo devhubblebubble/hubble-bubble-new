@@ -25,7 +25,7 @@ export default async function GalleryRoute() {
   if (!page.galleryItems?.length) notFound();
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <GallerySection
         variant="page"

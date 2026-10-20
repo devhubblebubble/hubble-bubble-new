@@ -26,7 +26,7 @@ export default async function JourneyRoute() {
   const page = await getHomePage();
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       {/* The steps' own headings are h2, so the page heading is for readers and crawlers only. */}
       <h1 className="sr-only">{TITLE}</h1>

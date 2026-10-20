@@ -56,23 +56,33 @@ export default function TransitionProvider({ children }: TransitionProviderProps
     <TransitionRouter
       auto
       leave={(next) => {
+        // People who ask for less motion get an instant page change.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          next();
+          return;
+        }
         const tween = gsap.to(blocksRef.current, {
           opacity: 1,
           duration: 0.03,
           ease: 'power2.inOut',
-          stagger: { amount: 0.5, from: 'random' },
+          stagger: { amount: 0.38, from: 'random' },
           onComplete: next,
         });
         return () => tween.kill();
       }}
       enter={(next) => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          gsap.set(blocksRef.current, { opacity: 0 });
+          next();
+          return;
+        }
         gsap.set(blocksRef.current, { opacity: 1 });
         const tween = gsap.to(blocksRef.current, {
           opacity: 0,
           duration: 0.03,
-          delay: 0.1,
+          delay: 0.08,
           ease: 'power2.inOut',
-          stagger: { amount: 0.5, from: 'random' },
+          stagger: { amount: 0.38, from: 'random' },
           onComplete: next,
         });
         return () => tween.kill();

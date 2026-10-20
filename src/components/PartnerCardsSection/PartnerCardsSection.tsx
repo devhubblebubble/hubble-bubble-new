@@ -207,7 +207,7 @@ export default function PartnerCardsSection({ data }: Props) {
           </h3>
           <p className={styles.text}>{data.networkText}</p>
           <div
-            className={styles.strip}
+            className={styles.strip} role="region" tabIndex={0}
             aria-label="Accelerators, institutions, and enterprise partners"
           >
             <div className={styles.stripTrack}>

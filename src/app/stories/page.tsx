@@ -19,7 +19,7 @@ export default async function StoriesPageRoute() {
   const [page, stories] = await Promise.all([getStoriesPage(), getStories()]);
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <StoriesPage title={page.title} stories={stories} />
       <FooterSection />

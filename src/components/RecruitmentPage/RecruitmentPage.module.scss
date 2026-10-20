@@ -73,6 +73,7 @@
 }
 
 .chip {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -190,6 +191,11 @@
 }
 
 .cardTitle {
+  a {
+    display: inline-block;
+    padding: 8px 0;
+  }
+
   font-size: clamp(1.1rem, 1.6vw, 1.5rem);
   font-weight: 600;
   line-height: 1.25;
@@ -265,6 +271,8 @@
   z-index: 1;
   align-self: flex-start;
   margin-top: auto;
+  display: inline-block;
+  padding: 12px 0;
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--orange);

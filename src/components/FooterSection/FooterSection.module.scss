@@ -37,11 +37,15 @@
 .links {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
   font-size: var(--fs-body);
   font-weight: 400;
 
   a {
+    // Each link is a 44px-tall row to tap.
+    display: inline-block;
+    padding: 10px 0;
+    width: fit-content;
     color: var(--white);
     transition: color 0.2s;
 
@@ -53,7 +57,7 @@
 .contact {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
 
   a {
     color: var(--white);
@@ -61,6 +65,8 @@
     font-weight: 300;
     text-decoration: none;
     display: block;
+    padding: 10px 0;
+    width: fit-content;
     transition: color 0.2s;
 
     &:hover { color: var(--orange); }

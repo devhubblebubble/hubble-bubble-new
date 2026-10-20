@@ -77,6 +77,9 @@
 .btnPrimary {
   background: var(--orange);
   color: var(--white);
+  // Bold and at least 18.67px: white on this orange only passes the contrast rule as large text.
+  font-weight: 700;
+  font-size: max(1.1667rem, var(--fs-body));
   box-shadow: 0 8px 24px rgba(255, 79, 0, 0.25);
 
   &:hover {

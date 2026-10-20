@@ -19,7 +19,7 @@ export default async function PrivacyPageRoute() {
   const page = await getPrivacyPage();
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <PrivacyPage data={page} />
       <FooterSection />

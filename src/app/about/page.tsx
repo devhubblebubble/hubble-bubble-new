@@ -19,7 +19,7 @@ export default async function AboutPageRoute() {
   const [page, settings] = await Promise.all([getAboutPage(), getSiteSettings()]);
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <AboutUsPage data={page} settings={settings} />
       <FooterSection />

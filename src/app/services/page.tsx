@@ -19,7 +19,7 @@ export default async function ServicesRoute() {
   const page = await getServicesPage();
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <ServicesPage data={page} />
       <FooterSection />

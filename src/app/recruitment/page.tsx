@@ -16,7 +16,7 @@ export default async function RecruitmentRoute() {
   const [roles, settings] = await Promise.all([getOpenRoles(), getSiteSettings()]);
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <RecruitmentPage roles={roles} settings={settings} />
       <FooterSection />

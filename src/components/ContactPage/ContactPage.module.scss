@@ -81,6 +81,8 @@
 }
 
 .infoLink {
+  display: inline-block;
+  padding: 10px 0;
   font-size: var(--fs-body);
   color: var(--orange);
   text-decoration: underline;
@@ -107,6 +109,8 @@
 }
 
 .socialLink {
+  display: inline-block;
+  padding: 10px 0;
   font-size: var(--fs-sm);
   color: var(--white);
   text-decoration: underline;
@@ -137,6 +141,9 @@
 }
 
 .eligBtn {
+  min-height: 44px;
+  font-weight: 700;
+  font-size: max(1.1667rem, 1rem);
   display: inline-flex;
   align-items: center;
   padding: 10px 20px;
@@ -164,6 +171,7 @@
 }
 
 .tab {
+  min-height: 44px;
   padding: 8px 20px;
   border-radius: 20px;
   font-size: var(--fs-sm);
@@ -243,6 +251,9 @@
 }
 
 .submit {
+  min-height: 48px;
+  font-weight: 700;
+  font-size: max(1.1667rem, 1rem);
   padding: 14px 36px;
   border-radius: 10px;
   background: var(--orange);
@@ -294,9 +305,10 @@
 }
 
 .privacy {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--dim);
   line-height: 1.5;
+  max-width: 60ch;
 }
 
 .privacyLink {

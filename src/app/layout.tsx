@@ -44,8 +44,9 @@ export default function RootLayout({
   return (
     // data-scroll-behavior: lets Next.js scroll instantly when a link changes
     // page (e.g. to /#journey), while the page itself still scrolls smoothly.
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en-GB" data-scroll-behavior="smooth">
       <body className={`${poppins.className} ${poppins.variable}`}>
+        <a href="#main" className="skip-link" data-transition-ignore="true">Skip to content</a>
         {/* The universe behind every page: stars and bubbles that move with the finger, the mouse and the scroll. */}
         <Universe />
         <ScrollReveal />

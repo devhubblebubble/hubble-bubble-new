@@ -96,9 +96,8 @@ export default function JourneySection({ steps = [], outputsLabel }: Props) {
 
           <div className={styles.contentWrapper}>
             <div className={styles.slideContent}>
-              <span className={styles.stepNumber}>
-                {currentStep.number}
-              </span>
+              {/* The faint big number is decoration (drawn by CSS from data-number). */}
+              <span className={styles.stepNumber} data-number={currentStep.number} aria-hidden="true" />
 
               <h2 className={styles.stepTitle}>
                 {currentStep.title}{" "}

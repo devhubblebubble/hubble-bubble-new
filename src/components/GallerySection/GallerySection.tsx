@@ -120,6 +120,7 @@ export default function GallerySection({ title, lead, hint, items = [], variant 
   const stories = list.filter((item) => item.description);
   const heading = title ?? "Look Who've Noticed Us!";
   const Heading = variant === "page" ? "h1" : "h2";
+  const StoryHeading = variant === "page" ? "h2" : "h3";
 
   const show = (item: GalleryItem, opener: HTMLElement | null) => {
     openerRef.current = opener;
@@ -154,7 +155,7 @@ export default function GallerySection({ title, lead, hint, items = [], variant 
         <ul className={styles.stories}>
           {stories.map((item, i) => (
             <li key={item._key ?? i}>
-              <h3>{item.name}</h3>
+              <StoryHeading>{item.name}</StoryHeading>
               <p>{item.description}</p>
             </li>
           ))}

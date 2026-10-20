@@ -26,7 +26,7 @@ export default async function Home() {
   const [page, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <OrganizationJsonLd />
       <NavBar />
       <HeroSection data={page} settings={settings} />

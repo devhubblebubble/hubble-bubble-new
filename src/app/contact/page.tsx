@@ -15,7 +15,7 @@ export default async function ContactPageRoute() {
   const settings = await getSiteSettings();
 
   return (
-    <main>
+    <main id="main" tabIndex={-1}>
       <NavBar />
       <ContactPage settings={settings} />
       <FooterSection />

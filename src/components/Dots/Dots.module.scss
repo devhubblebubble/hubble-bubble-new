@@ -7,8 +7,8 @@
 }
 
 .btn {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 6px;
   border: 1.5px solid var(--mint);
   color: var(--mint);
@@ -27,16 +27,34 @@
 .dots {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0;
+}
+
+// The tap target around each dot.
+.dotHit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dotHitActive {
+  cursor: default;
 }
 
 .dot {
+  display: block;
   width: 12px;
   height: 12px;
   border-radius: 50%;
   background: rgba(120, 225, 197, 0.35);
-  cursor: pointer;
-  transition: all 0.3s;
+  transition: width 0.3s, background 0.3s;
 }
 
 .dotActive {

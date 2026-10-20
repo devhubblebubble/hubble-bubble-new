@@ -22,7 +22,8 @@ html {
   --orange: rgb(255, 79, 0);
   --white: rgb(255, 255, 255);
   --muted: rgb(193, 192, 192);
-  --dim: rgb(115, 115, 115);
+  // Lightened from 115 so small grey labels pass the AA contrast check.
+  --dim: rgb(140, 140, 140);
   --pad-x: clamp(20px, 7.35vw, 127px);
   --max: 1474px;
   --fs-display: clamp(3rem, 6.94vw, 7.5rem);
@@ -111,4 +112,36 @@ button {
   background: var(--orange);
   opacity: 0;
   will-change: opacity;
+}
+
+// ── Keyboard focus ────────────────────────────────────────────────────────────
+// One clear focus ring everywhere (mouse and touch do not show it).
+:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+// ── Skip link: the first Tab stop, hidden until focused ───────────────────────
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 10000;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: var(--orange);
+  color: var(--white);
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease;
+
+  &:focus {
+    transform: translateY(0);
+  }
+}
+
+// The page body is a focus target for the skip link, without a ring of its own.
+main:focus {
+  outline: none;
 }

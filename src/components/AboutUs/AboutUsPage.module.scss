@@ -151,7 +151,7 @@
 // "a. k. a the mission" — muted, small, regular
 .missionAlias {
   font-size: clamp(0.8125rem, 0.75rem + 0.35vw, 0.9375rem);
-  color: #666666;
+  color: #8f8f8f;
   font-weight: 400;
   line-height: 1.4;
   margin-bottom: clamp(28px, 4vw, 44px);
@@ -260,8 +260,9 @@
   border-radius: 10px;
   background: var(--orange);
   color: var(--white);
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  // Bold and at least 18.67px: white on this orange only passes the contrast rule as large text.
+  font-size: max(1.1667rem, var(--fs-sm));
+  font-weight: 700;
   text-align: center;
   box-shadow: 0 4px 20px rgba(255, 79, 0, 0.28);
   transition: opacity 0.2s, box-shadow 0.2s;
@@ -298,10 +299,10 @@
 .ctaSection .ctaRow .ctaGhost {
   width: auto;
   align-self: center;
-  min-height: 0;
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-size: clamp(0.75rem, 0.75vw + 0.35rem, 0.8125rem);
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: clamp(0.875rem, 0.75vw + 0.45rem, 0.9375rem);
   font-weight: 500;
 }
 
@@ -312,6 +313,8 @@
 }
 
 .emailLink {
+  display: inline-block;
+  padding: 10px 0;
   color: var(--white);
   text-decoration: underline;
   transition: color 0.2s;
