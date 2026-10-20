@@ -81,7 +81,10 @@ export const homePageQuery = /* groq */ `
     "accreditations": accreditations[] ${logoItem},
     "heroStudents": heroStudents[] {
       _key, name, course, flag, "photo": photo ${img},
-      "admits": admits[] { _key, label, "logo": logo ${img} }
+      "admits": admits[] {
+        _key, label, "logo": logo ${img},
+        "university": university->{ name, shortName, "logo": logo ${img} }
+      }
     },
     "backingLogo": backingLogo ${img},
     "certifiedLogos": certifiedLogos[] ${logoItem},

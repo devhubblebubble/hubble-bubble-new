@@ -1,0 +1,59 @@
+[
+  {
+    "_id": "university-cambridge",
+    "_type": "university",
+    "name": "University of Cambridge",
+    "shortName": "Cambridge",
+    "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "University of Cambridge" }
+  },
+  {
+    "_id": "university-dundee",
+    "_type": "university",
+    "name": "University of Dundee",
+    "shortName": "Dundee",
+    "logo": { "_upload": "public/images/impact/dundee.png", "alt": "University of Dundee" }
+  },
+  {
+    "_id": "university-manchester",
+    "_type": "university",
+    "name": "The University of Manchester",
+    "shortName": "Manchester",
+    "logo": { "_upload": "public/images/impact/manchester.png", "alt": "The University of Manchester" }
+  },
+  {
+    "_id": "university-durham",
+    "_type": "university",
+    "name": "Durham University",
+    "shortName": "Durham"
+  },
+  {
+    "_id": "university-northumbria",
+    "_type": "university",
+    "name": "Northumbria University",
+    "shortName": "Northumbria"
+  },
+  {
+    "_id": "university-st-andrews",
+    "_type": "university",
+    "name": "University of St Andrews",
+    "shortName": "St Andrews"
+  },
+  {
+    "_id": "university-sussex",
+    "_type": "university",
+    "name": "University of Sussex",
+    "shortName": "Sussex"
+  },
+  {
+    "_id": "university-ual",
+    "_type": "university",
+    "name": "University of the Arts London",
+    "shortName": "UAL"
+  },
+  {
+    "_id": "university-goldsmiths",
+    "_type": "university",
+    "name": "Goldsmiths, University of London",
+    "shortName": "Goldsmiths"
+  }
+]

@@ -5,6 +5,7 @@ import { jobRole } from "./jobRole";
 import { privacyPage, servicesPage, storiesPage, story } from "./pages";
 import { siteSettings } from "./siteSettings";
 import { richText, styledText } from "./text";
+import { university } from "./university";
 
 export const schemaTypes = [
   // Pages (one of each)
@@ -18,6 +19,7 @@ export const schemaTypes = [
   jobRole,
   story,
   teamMember,
+  university,
   // Reusable field types
   blockContent,
   styledText,

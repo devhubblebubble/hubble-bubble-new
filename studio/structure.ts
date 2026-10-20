@@ -51,6 +51,14 @@ export const structure: StructureResolver = (S) =>
             .title("Team members")
             .defaultOrdering([{ field: "order", direction: "asc" }]),
         ),
+      S.listItem()
+        .title("Universities")
+        .schemaType("university")
+        .child(
+          S.documentTypeList("university")
+            .title("Universities (logos)")
+            .defaultOrdering([{ field: "name", direction: "asc" }]),
+        ),
       S.divider(),
       page(S, "siteSettings", "Site settings"),
     ]);

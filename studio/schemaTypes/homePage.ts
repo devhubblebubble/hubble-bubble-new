@@ -1,4 +1,4 @@
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType, type Rule } from "sanity";
 import { imageField, seoFields, str, text } from "./helpers";
 
 export const homePage = defineType({
@@ -41,7 +41,9 @@ export const homePage = defineType({
     str("secondaryCtaHref", "Second button link", "e.g. /contact", { group: "hero" }),
     defineField({
       name: "heroStudents",
-      title: "Student cards (right of the headline)",
+      title: "Student cards (next to the headline)",
+      description:
+        "One card per student; the cards rotate every few seconds. Upload the student's photo here and pick their university admits from the Universities list (left menu), where each logo is uploaded once.",
       type: "array",
       group: "hero",
       of: [
@@ -51,19 +53,65 @@ export const homePage = defineType({
           fields: [
             str("name", "Name"),
             str("course", "Course"),
-            str("flag", "Country flag", "An emoji flag, e.g. 🇬🇧"),
-            imageField("photo", "Photo"),
+            str(
+              "flag",
+              "Country",
+              "Where the student is going to study: the 2-letter country code, e.g. GB, IE, AU, CA or US. Shown as a round flag next to the photo.",
+              {
+                validation: (rule: Rule) =>
+                  rule.custom((value: unknown) => {
+                    if (typeof value !== "string" || !value.trim()) return true;
+                    const v = value.trim();
+                    const ok = /^[A-Za-z]{2}$/.test(v) || /^[\u{1F1E6}-\u{1F1FF}]{2}$/u.test(v);
+                    return ok || "Use the 2-letter country code, e.g. GB for the UK or IE for Ireland. Without it no flag is shown.";
+                  }).warning(),
+              },
+            ),
+            imageField("photo", "Photo", "A square photo works best; it is shown in a circle."),
             defineField({
               name: "admits",
               title: "University admits",
-              description: "A logo image, or just a name in text.",
+              description:
+                "Add one item per university and pick it from the list. New university? Add it once under Universities in the left menu (with its logo), then it appears here.",
               type: "array",
               of: [
                 defineArrayMember({
                   type: "object",
                   name: "admit",
-                  fields: [str("label", "University name"), imageField("logo", "Logo (optional)")],
-                  preview: { select: { title: "label", media: "logo" } },
+                  title: "University",
+                  fieldsets: [
+                    {
+                      name: "oneOff",
+                      title: "Not in the list? Type a name or upload a logo instead",
+                      options: { collapsible: true, collapsed: true },
+                    },
+                  ],
+                  fields: [
+                    defineField({
+                      name: "university",
+                      title: "University",
+                      type: "reference",
+                      to: [{ type: "university" }],
+                      // Deleting a university must not be blocked by the cards that use it;
+                      // the site simply skips an admit whose university no longer exists.
+                      weak: true,
+                    }),
+                    {
+                      ...str("label", "University name (one-off)", "Only used when no university is picked above."),
+                      fieldset: "oneOff",
+                    },
+                    {
+                      ...imageField("logo", "Logo (one-off)", "Only used when no university is picked above."),
+                      fieldset: "oneOff",
+                    },
+                  ],
+                  preview: {
+                    select: { uniName: "university.name", uniLogo: "university.logo", label: "label", logo: "logo" },
+                    prepare: ({ uniName, uniLogo, label, logo }) => ({
+                      title: uniName || label || "Choose a university",
+                      media: uniLogo || logo,
+                    }),
+                  },
                 }),
               ],
             }),

@@ -80,13 +80,34 @@ export type Seo = { seoTitle?: string; seoDescription?: string };
 
 export type LogoItem = { _key?: string; name?: string; logo?: SanityImage };
 
+/** A university from the Studio's Universities list (logo uploaded once, reused). */
+export type University = {
+  _id?: string;
+  name?: string;
+  shortName?: string;
+  logo?: SanityImage;
+};
+
+/**
+ * One university on a student card: the one picked from the Universities list
+ * (`university`), or, for a one-off, a typed `label` and/or its own `logo`.
+ * `university` is null when the picked university has since been deleted.
+ */
+export type HeroAdmit = {
+  _key?: string;
+  university?: University | null;
+  label?: string;
+  logo?: SanityImage;
+};
+
 export type HeroStudent = {
   _key?: string;
   name?: string;
   course?: string;
+  /** 2-letter country code (GB) or an emoji flag. */
   flag?: string;
   photo?: SanityImage;
-  admits?: { _key?: string; label?: string; logo?: SanityImage }[];
+  admits?: HeroAdmit[];
 };
 
 export type JourneyStep = {

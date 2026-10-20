@@ -21,37 +21,37 @@
     {
       "name": "Jagadesh Kaliappan",
       "course": "MSc. Artificial Intelligence in Games",
-      "flag": "🇬🇧",
+      "flag": "GB",
       "photo": { "_upload": "public/images/impact/dp.png", "alt": "Jagadesh Kaliappan" },
       "admits": [
-        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
-        { "label": "NORTHUMBRIA" },
-        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
-        { "label": "Durham", "logo": { "_upload": "public/images/impact/dundee.png", "alt": "Durham" } }
+        { "university": { "_type": "reference", "_ref": "university-cambridge" } },
+        { "university": { "_type": "reference", "_ref": "university-northumbria" } },
+        { "university": { "_type": "reference", "_ref": "university-dundee" } },
+        { "university": { "_type": "reference", "_ref": "university-durham" } }
       ]
     },
     {
       "name": "Rupsee Padhi",
       "course": "MSc. Social Innovation & Entrepreneurship",
-      "flag": "🇬🇧",
+      "flag": "GB",
       "photo": { "_upload": "public/images/impact/dp.png", "alt": "Rupsee Padhi" },
       "admits": [
-        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
-        { "label": "ST ANDREWS" },
-        { "label": "Durham", "logo": { "_upload": "public/images/impact/dundee.png", "alt": "Durham" } },
-        { "label": "SUSSEX" }
+        { "university": { "_type": "reference", "_ref": "university-cambridge" } },
+        { "university": { "_type": "reference", "_ref": "university-st-andrews" } },
+        { "university": { "_type": "reference", "_ref": "university-dundee" } },
+        { "university": { "_type": "reference", "_ref": "university-sussex" } }
       ]
     },
     {
       "name": "Amir Shah",
       "course": "BA (Hons) Game Design",
-      "flag": "🇬🇧",
+      "flag": "GB",
       "photo": { "_upload": "public/images/impact/dp.png", "alt": "Amir Shah" },
       "admits": [
-        { "label": "Durham", "logo": { "_upload": "public/images/impact/dundee.png", "alt": "Durham" } },
-        { "label": "Cambridge", "logo": { "_upload": "public/images/impact/cambridge.png", "alt": "Cambridge" } },
-        { "label": "UAL" },
-        { "label": "GOLDSMITHS" }
+        { "university": { "_type": "reference", "_ref": "university-dundee" } },
+        { "university": { "_type": "reference", "_ref": "university-cambridge" } },
+        { "university": { "_type": "reference", "_ref": "university-ual" } },
+        { "university": { "_type": "reference", "_ref": "university-goldsmiths" } }
       ]
     }
   ],

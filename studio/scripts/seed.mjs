@@ -2,7 +2,7 @@
 //
 // Reads content/seed/*.json (at the repo root), uploads any images they point
 // at ({"_upload": "public/images/..."}), and writes the documents:
-//   - collections (job roles, stories, team members): created only if missing
+//   - collections (job roles, stories, team members, universities): created only if missing
 //   - single pages and site settings: created if missing; if they already
 //     exist, only fields that are still empty get the seed value
 // So re-running never overwrites edits made in the Studio.
@@ -120,6 +120,7 @@ const roles = await Promise.all(
 );
 const stories = await Promise.all((await readJson("stories.json")).map(prepare));
 const team = await Promise.all((await readJson("team-members.json")).map(prepare));
+const universities = await Promise.all((await readJson("universities.json")).map(prepare));
 
 // ── Single documents ───────────────────────────────────────────────────
 const singletonFiles = [
@@ -134,7 +135,7 @@ const singletons = [];
 for (const file of singletonFiles) singletons.push(await prepare(await readJson(file)));
 
 const tx = client.transaction();
-for (const doc of [...roles, ...stories, ...team]) tx.createIfNotExists(doc);
+for (const doc of [...roles, ...stories, ...team, ...universities]) tx.createIfNotExists(doc);
 for (const doc of singletons) {
   const { _id, _type, ...fields } = doc;
   tx.createIfNotExists({ _id, _type, ...fields });

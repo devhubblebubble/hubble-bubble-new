@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useState } from "react";
 import EligibilityModal from "@/components/EligibilityModal";
 import { useCarousel } from "@/hooks/useCarousel";
+import { countryCode, countryName, flagSrc } from "@/lib/flags";
 import { imageDims, imageUrl } from "@/lib/sanity/image";
-import type { HomePage, SanityImage, SiteSettings } from "@/lib/sanity/types";
+import type { HeroAdmit, HomePage, SanityImage, SiteSettings } from "@/lib/sanity/types";
 import styles from "./HeroSection.module.scss";
 
 type Props = { data: HomePage; settings: SiteSettings };
@@ -16,6 +17,33 @@ const widthAtHeight = (img: SanityImage | undefined, height: number, fallbackWid
   const d = imageDims(img, { width: fallbackWidth, height });
   return Math.round((d.width * height) / d.height);
 };
+
+/** "Jagadesh Kaliappan" -> "JK", shown in the photo circle until a photo is uploaded. */
+const initials = (name: string | undefined) =>
+  (name ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join("");
+
+type AdmitView = { text: string; fullName: string; src?: string; alt: string };
+
+/**
+ * What to show for one admit: the university picked from the Universities
+ * list (logo, else its short name), or for a one-off the typed name and/or
+ * logo. Returns null when there is nothing to show (e.g. the university was
+ * deleted), so an empty slot never appears.
+ */
+function admitView(a: HeroAdmit): AdmitView | null {
+  const u = a.university;
+  const fullName = ((u ? u.name : a.label) ?? "").trim();
+  const text = ((u ? u.shortName || u.name : a.label) ?? "").trim();
+  const logo = u ? u.logo : a.logo;
+  const src = imageUrl(logo, { width: 320 });
+  if (!src && !text) return null;
+  return { text, fullName: fullName || text, src, alt: logo?.alt || fullName || text };
+}
 
 export default function HeroSection({ data, settings }: Props) {
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
@@ -97,38 +125,55 @@ export default function HeroSection({ data, settings }: Props) {
                 >
                   {students.map((s) => {
                     const photo = imageUrl(s.photo, { width: 320, height: 320 });
+                    const code = countryCode(s.flag);
+                    const admits = (s.admits ?? []).flatMap((a, i) => {
+                      const v = admitView(a);
+                      return v ? [{ key: a._key ?? String(i), ...v }] : [];
+                    });
                     return (
                       <article className={styles.card} key={s._key ?? s.name}>
                         <div className={styles.photoWrap}>
                           <div
                             className={styles.photo}
                             style={photo ? { backgroundImage: `url('${photo}')` } : undefined}
-                          />
-                          {s.flag && <div className={styles.flag}>{s.flag}</div>}
+                            role={photo ? "img" : undefined}
+                            aria-label={photo ? (s.photo?.alt ?? s.name) : undefined}
+                          >
+                            {!photo && <span aria-hidden="true">{initials(s.name)}</span>}
+                          </div>
+                          {code && (
+                            <div className={styles.flag}>
+                              <Image
+                                src={flagSrc(code)}
+                                alt={countryName(code)}
+                                width={112}
+                                height={112}
+                                className={styles.flagImg}
+                              />
+                            </div>
+                          )}
                         </div>
                         <div className={styles.name}>{s.name}</div>
                         <div className={styles.course}>{s.course}</div>
-                        {(s.admits?.length ?? 0) > 0 && (
+                        {admits.length > 0 && (
                           <>
                             <div className={styles.admitsLabel}>Admits:</div>
                             <div className={styles.admits}>
-                              {s.admits!.map((a, i) => {
-                                const src = imageUrl(a.logo, { width: 320 });
-                                return src ? (
-                                  <Image
-                                    key={a._key ?? i}
-                                    src={src}
-                                    alt={a.logo?.alt ?? a.label ?? ""}
-                                    width={160}
-                                    height={56}
-                                    className={styles.admitImg}
-                                  />
-                                ) : (
-                                  <span key={a._key ?? i} className={styles.admitWordmark}>
-                                    {a.label}
-                                  </span>
-                                );
-                              })}
+                              {admits.map((a) => (
+                                <div key={a.key} className={styles.admit} title={a.fullName}>
+                                  {a.src ? (
+                                    <Image
+                                      src={a.src}
+                                      alt={a.alt}
+                                      width={160}
+                                      height={56}
+                                      className={styles.admitImg}
+                                    />
+                                  ) : (
+                                    <span className={styles.admitWordmark}>{a.text}</span>
+                                  )}
+                                </div>
+                              ))}
                             </div>
                           </>
                         )}

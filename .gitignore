@@ -20,6 +20,9 @@
 # production
 /build
 
+# country flags, copied from the flag-icons package by scripts/copy-flags.mjs
+/public/images/flags/
+
 # Cloudflare local state
 /.wrangler/
 

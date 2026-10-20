@@ -185,6 +185,14 @@
   border-radius: 50%;
   background-size: cover;
   background-position: center;
+  // Until a photo is uploaded: a plain circle with the student's initials.
+  background-color: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
   flex-shrink: 0;
   position: relative;
   z-index: 2;
@@ -203,8 +211,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   font-size: 54px;
   background: rgba(20, 20, 40, 0.8);
+}
+
+.flagImg {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  display: block;
 }
 
 .name {
@@ -245,6 +261,10 @@
 }
 
 .admits {
+  // Height of one university slot: logos are drawn at this height and a
+  // typed name gets at least this much room. A long name wraps and its row
+  // grows, so nothing spills out of the card.
+  --slot: clamp(36px, 4.6vw, 60px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px 20px;
@@ -253,33 +273,43 @@
   min-width: 0;
 }
 
+.admit {
+  min-height: var(--slot);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
 .admitImg {
-  height: clamp(36px, 4.6vw, 60px) !important;
+  height: var(--slot) !important;
   width: auto !important;
   max-width: 100%;
   object-fit: contain;
+  object-position: left center;
   filter: brightness(0) invert(1);
 }
 
 .admitWordmark {
-  height: clamp(36px, 4.6vw, 60px);
-  display: inline-flex;
-  align-items: center;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  font-size: clamp(10px, 1.1vw, 16px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: clamp(0.95rem, 1.35vw, 1.25rem);
+  line-height: 1.15;
   color: var(--white);
+  overflow-wrap: anywhere;
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
+// One column: the headline, subtitle, accreditations and buttons come first,
+// then the student card (the grid gap is the only spacing between them).
 @media (max-width: 1100px) {
   .grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: clamp(32px, 6vw, 56px);
+    gap: clamp(40px, 7vw, 64px);
   }
 
-  .right {
-    order: -1;
+  .ctas {
+    margin-bottom: 0;
   }
 
   .carousel {
@@ -289,7 +319,7 @@
 
 @media (max-width: 640px) {
   .hero {
-    padding: calc(env(safe-area-inset-top, 0px) + clamp(120px, 24vw, 140px)) var(--pad-x)
+    padding: calc(env(safe-area-inset-top, 0px) + clamp(140px, 30vw, 160px)) var(--pad-x)
       clamp(48px, 10vw, 72px);
     padding-bottom: max(clamp(48px, 10vw, 72px), env(safe-area-inset-bottom, 0px));
   }
@@ -324,7 +354,7 @@
   .ctas {
     flex-direction: column;
     align-items: stretch;
-    margin-bottom: 40px;
+    margin-bottom: 0;
     gap: 12px;
   }
 
@@ -353,6 +383,7 @@
   .photo {
     width: 120px;
     height: 120px;
+    font-size: 2.25rem;
   }
 
   .flag {
@@ -373,17 +404,12 @@
   }
 
   .admits {
+    --slot: clamp(28px, 8vw, 44px);
     gap: 16px 12px;
   }
 
   .admitWordmark {
-    font-size: clamp(9px, 2.6vw, 13px);
-    height: auto;
-    min-height: 32px;
-  }
-
-  .admitImg {
-    height: clamp(28px, 8vw, 44px) !important;
+    font-size: clamp(0.85rem, 3.6vw, 1rem);
   }
 }
 
@@ -394,8 +420,7 @@
   }
 
   .admits {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 12px 10px;
   }
 
   .flag {

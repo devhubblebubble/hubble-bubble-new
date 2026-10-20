@@ -17,6 +17,7 @@ import type {
   StoriesPage,
   Story,
   TeamMember,
+  University,
 } from "./types";
 
 const root = process.cwd();
@@ -103,11 +104,24 @@ export const fixtureStories = (): Story[] =>
 
 export const fixtureTeam = (): TeamMember[] => readJson<Json[]>("team-members.json").map((d) => prepare<TeamMember>(d));
 
+export const fixtureUniversities = (): University[] =>
+  readJson<Json[]>("universities.json").map((d) => prepare<University>(d));
+
 export function fixtureHomePage(): HomePage {
   const raw = readJson<Record<string, Json>>("home-page.json");
   const { featuredStories, ...rest } = raw;
   const page = prepare<HomePage>(rest);
-  return { ...page, featuredStories: deref(featuredStories as Ref[], fixtureStories()) };
+  // Each admit points at a university in the Universities list; look it up
+  // the way the live query does (a missing one comes back as null).
+  const universities = fixtureUniversities();
+  const heroStudents = (page.heroStudents ?? []).map((s) => ({
+    ...s,
+    admits: (s.admits ?? []).map((a) => {
+      const ref = (a.university as { _ref?: string } | null | undefined)?._ref;
+      return ref ? { ...a, university: universities.find((u) => u._id === ref) ?? null } : a;
+    }),
+  }));
+  return { ...page, heroStudents, featuredStories: deref(featuredStories as Ref[], fixtureStories()) };
 }
 
 export function fixtureAboutPage(): AboutPage {
