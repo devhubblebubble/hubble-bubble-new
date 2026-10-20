@@ -143,7 +143,8 @@ export async function handleApi(
   const missing = (["RESEND_API_KEY", "CONTACT_TO", "CONTACT_FROM"] as const).filter((k) => !env[k]);
   if (missing.length > 0) {
     console.error(`Form email is not set up. Missing: ${missing.join(", ")}`);
-    return reply(503, { ok: false, error: "not_configured" });
+    // Setting names only, never values
+    return reply(503, { ok: false, error: "not_configured", missing });
   }
 
   try {

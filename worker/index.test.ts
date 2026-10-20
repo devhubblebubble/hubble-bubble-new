@@ -176,7 +176,9 @@ describe("contact form endpoint", () => {
     const { calls, deps } = fakeResend();
     const res = await handleApi(post(good), { ...env, RESEND_API_KEY: undefined }, deps);
     assert.equal(res.status, 503);
-    assert.equal((await json(res)).error, "not_configured");
+    const body = await json(res);
+    assert.equal(body.error, "not_configured");
+    assert.deepEqual(body.missing, ["RESEND_API_KEY"]);
     assert.equal(calls.length, 0);
   });
 
