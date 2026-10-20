@@ -111,7 +111,7 @@ export default function ContactPage({ settings }: Props) {
           {/* The form needs the browser (it reads ?type= from the address), so it
               sits in its own Suspense boundary. The rest of the page is plain HTML. */}
           <Suspense fallback={null}>
-            <ContactForm />
+            <ContactForm contactEmail={settings.contactEmail} />
           </Suspense>
         </div>
       </section>

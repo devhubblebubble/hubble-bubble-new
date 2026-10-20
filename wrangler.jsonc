@@ -1,16 +1,28 @@
-// Cloudflare Workers config: serves the static export in ./out as plain files.
-// No Worker code runs; Cloudflare's static asset hosting serves everything.
+// Cloudflare Workers config.
+// The static export in ./out is served as plain files. A small Worker
+// (worker/index.ts) only runs for addresses that start with /api/, which today
+// is the contact form. Everything else never touches the Worker.
 // Docs: https://developers.cloudflare.com/workers/static-assets/
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hubble-bubble-new",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
+    // Only /api/ addresses run the Worker; every other request is a plain static file
+    "run_worker_first": ["/api/*"],
     // /recruitment/ -> recruitment/index.html; /recruitment redirects to /recruitment/
     "html_handling": "auto-trailing-slash",
     // Serve Next.js's exported 404.html for unknown addresses
     "not_found_handling": "404-page"
+  },
+  // Where contact form emails go, and the sender they appear to come from.
+  // RESEND_API_KEY is a secret: it is set in the Cloudflare dashboard, never here.
+  "vars": {
+    "CONTACT_TO": "hello@hubblebubble.uk",
+    "CONTACT_FROM": "Hubble Bubble website <onboarding@resend.dev>"
   },
   "observability": {
     "enabled": true

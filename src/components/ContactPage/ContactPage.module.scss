@@ -255,6 +255,41 @@
   width: fit-content;
 
   &:hover { opacity: 0.85; }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+}
+
+.fieldError {
+  font-size: 0.8rem;
+  color: #ff8a5c;
+  line-height: 1.4;
+}
+
+.input[aria-invalid="true"] {
+  border-color: #ff8a5c;
+}
+
+.formError {
+  font-size: var(--fs-sm);
+  color: #ff8a5c;
+  line-height: 1.6;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+// Spam trap: out of sight for people, still present for scripts that fill every field.
+.hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .privacy {

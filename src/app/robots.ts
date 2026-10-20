@@ -25,8 +25,9 @@ export default function robots(): MetadataRoute.Robots {
   }
   return {
     rules: [
-      { userAgent: "*", allow: "/" },
-      { userAgent: AI_SEARCH_BOTS, allow: "/" },
+      // /api/ is where the contact form is sent; there is nothing there to read
+      { userAgent: "*", allow: "/", disallow: "/api/" },
+      { userAgent: AI_SEARCH_BOTS, allow: "/", disallow: "/api/" },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
   };

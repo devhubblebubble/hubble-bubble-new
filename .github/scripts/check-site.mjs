@@ -157,6 +157,42 @@ const missingPage = await get("/this-page-does-not-exist/");
 if (missingPage.status === 404) say("404 for a missing page, as it should be");
 else fail(`a missing page returned ${missingPage.status}`);
 
+// ── 5. The contact form's back end ──────────────────────────────────────────
+// Nothing here sends an email: an empty post is refused, and a post with the
+// hidden spam-trap field filled in is quietly thrown away.
+async function postJson(path, body) {
+  const res = await fetch(site + path, {
+    method: "POST",
+    headers: { "content-type": "application/json", origin: site },
+    body: JSON.stringify(body),
+  });
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    json = {};
+  }
+  return { status: res.status, json, text: text.slice(0, 120) };
+}
+
+const emptyPost = await postJson("/api/contact", {});
+if (emptyPost.status === 400 && emptyPost.json.error === "too_fast") say("POST /api/contact with nothing in it: refused (400), the form code is live");
+else fail(`POST /api/contact with nothing in it returned ${emptyPost.status} ${emptyPost.text}`);
+
+const trapPost = await postJson("/api/contact", { _gotcha: "x" });
+if (trapPost.status === 200 && trapPost.json.ok === true) say("POST /api/contact with the spam-trap field filled: quietly dropped, nothing sent");
+else fail(`POST /api/contact with the spam trap returned ${trapPost.status} ${trapPost.text}`);
+
+const getApi = await get("/api/contact");
+if (getApi.status === 405) say("GET /api/contact: 405, as it should be");
+else fail(`GET /api/contact returned ${getApi.status}`);
+
+const contactPage = await get("/contact/");
+const mailto = first(/href="mailto:([^"]+)"/, contactPage.body);
+say(`/contact/ shows the email address: ${mailto ?? "NONE"}`);
+if (!mailto) fail("no mailto link on /contact/");
+
 // ── Report ──────────────────────────────────────────────────────────────────
 const escape = (s) => s.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
 for (let i = 0; i < report.length; i += 12) {
