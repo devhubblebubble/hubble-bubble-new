@@ -89,3 +89,46 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+// ── Liquid glass ─────────────────────────────────────────────────────────────
+// Translucent panes with a soft blur, a light rim and a highlight along the
+// top edge, so the universe behind the page shows through. Use `glass` for
+// the fixed chrome and overlays (menu, bars, pop-ups) and `glass-flat` for
+// cards inside the page: blurring many cards at once is heavy on phones, and
+// the tint alone already reads as glass.
+@mixin glass($tint: rgba(18, 18, 22, 0.55), $blur: 20px) {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 35%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.05) 100%),
+    $tint;
+  -webkit-backdrop-filter: blur($blur) saturate(170%);
+  backdrop-filter: blur($blur) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+@mixin glass-flat($tint: rgba(255, 255, 255, 0.05)) {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.04) 100%),
+    $tint;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+// A glass button or chip: a pill that lifts a little on hover.
+@mixin glass-pill($tint: rgba(255, 255, 255, 0.08)) {
+  @include glass($tint, 14px);
+  border-radius: 999px;
+  color: var(--white);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(255, 255, 255, 0.02) 60%, rgba(255, 255, 255, 0.08) 100%),
+      rgba(255, 255, 255, 0.12);
+  }
+}

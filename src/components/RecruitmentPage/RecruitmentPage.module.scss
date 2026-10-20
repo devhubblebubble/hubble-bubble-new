@@ -1,3 +1,5 @@
+@use '../../style/mixins' as *;
+
 // Recruitment (jobs) listing page. Shares NavBar + FooterSection and the
 // design tokens from globals.scss.
 
@@ -168,10 +170,9 @@
 .card {
   position: relative;
   display: flex;
-  background: #1a1a1a;
-  border-radius: 12px;
+  @include glass-flat(rgba(255, 255, 255, 0.045));
+  border-radius: 16px;
   padding: 32px 32px 36px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   transition: border-color 0.25s, transform 0.25s;
 

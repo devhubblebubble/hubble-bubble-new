@@ -1,3 +1,5 @@
+@use '../../style/mixins' as *;
+
 // Contact page
 
 .page {
@@ -150,8 +152,7 @@
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 .formWrap {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  @include glass-flat(rgba(255, 255, 255, 0.04));
   border-radius: 20px;
   padding: 40px;
 }

@@ -67,6 +67,16 @@ export default function JourneySection({ steps = [], outputsLabel }: Props) {
     };
   }, [handleScroll, computeAndApplyProgress]);
 
+  // Scroll so that step `i` is the one shown.
+  const goToStep = (i: number) => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const totalScroll = section.offsetHeight - window.innerHeight;
+    const top = section.getBoundingClientRect().top + window.scrollY;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: top + (totalScroll * (i + 0.5)) / steps.length, behavior: reduce ? "auto" : "smooth" });
+  };
+
   const currentStep = steps[Math.min(activeIndex, steps.length - 1)];
   if (!currentStep) return null;
 
@@ -143,11 +153,16 @@ export default function JourneySection({ steps = [], outputsLabel }: Props) {
           </div>
         </div>
 
-        <div className={styles.paginationDots}>
+        {/* Step dots: a column on the right, in the direction of the scroll. Tapping one goes to that step. */}
+        <div className={styles.paginationDots} role="group" aria-label="Steps">
           {steps.map((step, i) => (
-            <div
+            <button
               key={step._key ?? i}
+              type="button"
               className={`${styles.dot} ${i === activeIndex ? styles.dotActive : ''}`}
+              aria-label={`Step ${i + 1} of ${steps.length}`}
+              aria-current={i === activeIndex ? "step" : undefined}
+              onClick={() => goToStep(i)}
             />
           ))}
         </div>

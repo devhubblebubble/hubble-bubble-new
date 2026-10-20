@@ -1,3 +1,5 @@
+@use '../../style/mixins' as *;
+
 .section {
   position: relative;
   padding: 48px var(--pad-x) 64px;
@@ -83,14 +85,9 @@
 }
 
 .btnGhost {
-  background: rgb(75, 75, 76);
-  color: var(--white);
-  backdrop-filter: blur(12px);
-  font-weight: 300;
-
-  &:hover {
-    background: rgb(95, 95, 96);
-  }
+  @include glass-pill(rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  font-weight: 400;
 }
 
 @media (max-width: 1100px) {

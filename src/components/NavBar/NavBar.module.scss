@@ -1,14 +1,18 @@
+@use '../../style/mixins' as *;
+
+// The top bar: a liquid glass pane. On phones the menu button sits on the
+// left and the logo in the middle, as on the old site and in the designer's
+// Figma; the menu is a glass drawer that slides in from the left.
+
 .nav {
   position: fixed;
   top: 24px;
   left: var(--pad-x);
   right: var(--pad-x);
   z-index: 100;
-  transform: translateY(0);
-  transition:
-    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-    background 0.3s ease,
-    backdrop-filter 0.3s ease;
+  // No transform while shown: a transformed parent would pin the fixed drawer
+  // and scrim to the bar instead of the screen.
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hidden {
@@ -16,19 +20,30 @@
 }
 
 .inner {
+  @include glass(rgba(14, 14, 18, 0.42), 18px);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 28px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  padding: 14px 24px;
+  border-radius: 18px;
+  transition: background 0.3s ease;
 }
 
 .scrolled .inner {
-  background: rgba(8, 8, 8, 0.78);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 35%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.04) 100%),
+    rgba(8, 8, 10, 0.62);
+}
+
+.logoLink {
+  display: inline-flex;
+  border-radius: 10px;
+
+  &:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 4px;
+  }
 }
 
 .logo {
@@ -48,10 +63,16 @@
     text-decoration: none;
     transition: color 0.2s;
     position: relative;
+    border-radius: 6px;
 
     &:hover { color: var(--mint); }
 
-    // Underline dot for active page
+    &:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 6px;
+    }
+
+    // Underline dot for the current page
     &::after {
       content: "";
       position: absolute;
@@ -82,8 +103,13 @@
   opacity: 0.75;
 }
 
-.toggle {
+.toggle,
+.spacer {
   display: none;
+}
+
+.toggle,
+.close {
   width: 44px;
   height: 44px;
   align-items: center;
@@ -91,43 +117,208 @@
   color: var(--white);
   background: transparent;
   border: none;
+  border-radius: 12px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 
   svg {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: 2px;
+  }
+}
+
+// ── Phone menu ───────────────────────────────────────────────────────────────
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.scrimOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  @include glass(rgba(10, 10, 14, 0.72), 28px);
+
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 120;
+  width: min(84vw, 360px);
+  display: flex;
+  flex-direction: column;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 0 max(20px, env(safe-area-inset-bottom, 0px));
+  border-width: 0 1px 0 0;
+  border-radius: 0 28px 28px 0;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.08),
+    24px 0 80px rgba(0, 0, 0, 0.55);
+  transform: translateX(-104%);
+  visibility: hidden;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.38s;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+}
+
+.drawerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px 8px 24px;
+}
+
+.drawerLogo {
+  height: 40px;
+  width: auto;
+}
+
+.close {
+  display: inline-flex;
+}
+
+.menuList {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  color: var(--white);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  &:active {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mint);
+    outline-offset: -2px;
+  }
+}
+
+.menuIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #c6c7c1;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.menuCurrent {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mint);
+
+  .menuIcon {
+    color: var(--mint);
+  }
+}
+
+.menuContact {
+  color: var(--orange);
+
+  .menuIcon {
+    color: var(--orange);
+  }
+}
+
+.drawerFoot {
+  margin-top: auto;
+  padding: 20px 26px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footLink {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  width: fit-content;
+
+  &:hover {
+    color: var(--white);
   }
 }
 
 @media (max-width: 900px) {
   .nav {
+    top: 12px;
     left: 12px;
     right: 12px;
   }
 
-  .links {
-    position: fixed;
-    inset: 88px 16px auto 16px;
-    flex-direction: column;
-    gap: 20px;
-    background: rgba(8, 8, 8, 0.96);
-    backdrop-filter: blur(16px);
-    border-radius: 16px;
-    padding: 28px;
-    align-items: flex-start;
-    transform: translateY(-12px);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.25s ease;
+  .inner {
+    padding: 8px 10px;
+    border-radius: 20px;
   }
 
-  .linksOpen {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
+  .links {
+    display: none;
   }
 
   .toggle {
     display: inline-flex;
+  }
+
+  .spacer {
+    display: block;
+    width: 44px;
+    height: 44px;
+  }
+
+  .logo {
+    height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .drawer,
+  .scrim,
+  .menuLink {
+    transition: none;
   }
 }

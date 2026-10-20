@@ -212,9 +212,12 @@
 
 .tagButton {
   padding: rem(8) rem(16);
-  border: 1.5px solid rgba(0, 255, 204, 0.3);
-  background: rgba(0, 0, 0, 0.4);
-  color: #00FFCC;
+  border: 1px solid rgba(120, 225, 197, 0.35);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 55%),
+    rgba(120, 225, 197, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  color: var(--mint);
   border-radius: rem(999);
   font-family: $font-primary;
   font-size: 0.875rem;
@@ -313,18 +316,22 @@
   }
 }
 
+// A column of dots on the right edge, in the direction of the scroll (the
+// current one is a longer pill). Each dot is a 44px tap target. On tablets and
+// desktops the rocket progress bar is the indicator, so the dots are hidden.
 .paginationDots {
   position: absolute;
-  bottom: rem(32);
-  left: 50%;
-  transform: translateX(-50%);
+  right: rem(4);
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: rem(12);
+  gap: 0;
   z-index: 10;
 
   @include min(tablet) {
-    bottom: rem(48);
+    display: none;
   }
 
   @media (max-width: 480px) {
@@ -334,16 +341,40 @@
 }
 
 .dot {
-  width: rem(8);
-  height: rem(8);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease;
+  // The visible dot is drawn by ::before; the button itself is the tap target.
+  position: relative;
+  width: rem(44);
+  height: rem(30);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: rem(8);
+    height: rem(8);
+    border-radius: rem(4);
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: height 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::before {
+      box-shadow: 0 0 0 3px rgba(120, 225, 197, 0.9);
+    }
+  }
 }
 
-.dotActive {
-  width: rem(10);
-  height: rem(10);
+.dotActive::before {
+  height: rem(24);
   background: #FF5A1F;
   box-shadow: 0 0 rem(10) rgba(255, 90, 31, 0.4);
 }
