@@ -87,18 +87,45 @@ if (expect) {
 }
 
 // ── 2. Which roles does Sanity say are open, and are they on the site? ─────
+// Compares each role's title on /recruitment/ with the published title in
+// Sanity, exactly. If WAIT_MINUTES is set, keeps trying until they match, so a
+// rebuild that is still running is not reported as a failure.
 const today = new Date().toISOString().slice(0, 10);
 const query =
   '*[_type == "jobRole" && status == "open" && defined(slug.current) && (!defined(closingDate) || closingDate >= $today)]{title, "slug": slug.current, _updatedAt} | order(_updatedAt desc)';
-const sanityRes = await fetch(`${SANITY}?query=${encodeURIComponent(query)}&$today=${encodeURIComponent(JSON.stringify(today))}`);
-const roles = (await sanityRes.json()).result ?? [];
-say(`Sanity: ${roles.length} open roles, newest edit ${roles[0]?._updatedAt ?? "none"} (${roles[0]?.title ?? "-"})`);
 
-const listing = await get("/recruitment/");
-const listingText = visibleText(listing.body);
-const missing = roles.filter((r) => !listingText.includes(r.title)).map((r) => r.title);
-if (missing.length) fail(`titles in Sanity but not on /recruitment/: ${missing.join(" | ")}`);
-else say(`/recruitment/ shows all ${roles.length} titles from Sanity`);
+async function sanityRoles() {
+  const res = await fetch(`${SANITY}?query=${encodeURIComponent(query)}&$today=${encodeURIComponent(JSON.stringify(today))}`);
+  return (await res.json()).result ?? [];
+}
+
+function siteTitles(html) {
+  const titles = new Map();
+  for (const m of html.matchAll(/<a [^>]*href="\/recruitment\/([a-z0-9-]+)\/"[^>]*>([^<]*)<\/a>/g)) {
+    const text = decode(m[2]).trim();
+    if (text && !titles.has(m[1])) titles.set(m[1], text);
+  }
+  return titles;
+}
+
+const matchStarted = Date.now();
+let roles;
+let listing;
+let mismatches;
+for (;;) {
+  roles = await sanityRoles();
+  listing = await get("/recruitment/");
+  const onSite = siteTitles(listing.body);
+  mismatches = roles
+    .filter((r) => onSite.get(r.slug) !== r.title)
+    .map((r) => `${r.slug}: site shows "${onSite.get(r.slug) ?? "nothing"}", Sanity has "${r.title}"`);
+  if (!mismatches.length || Date.now() - matchStarted >= waitMs) break;
+  await sleep(20_000);
+}
+const waited = Math.round((Date.now() - matchStarted) / 1000);
+say(`Sanity: ${roles.length} open roles, newest edit ${roles[0]?._updatedAt ?? "none"} (${roles[0]?.title ?? "-"})`);
+if (mismatches.length) fail(`site is behind Sanity after ${waited}s: ${mismatches.join(" | ")}`);
+else say(`/recruitment/ matches Sanity exactly for all ${roles.length} roles (checked for ${waited}s)`);
 
 // ── 3. Every page ───────────────────────────────────────────────────────────
 const slugs = [...new Set([...listing.body.matchAll(/href="\/recruitment\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];

@@ -39,4 +39,4 @@ jobs:
         env:
           SITE: https://hubble-bubble-new.jevinzac.workers.dev
           EXPECT: ${{ inputs.expect }}
-          WAIT_MINUTES: ${{ inputs.wait_minutes }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes || '4' }}
