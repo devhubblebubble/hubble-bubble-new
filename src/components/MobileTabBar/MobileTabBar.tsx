@@ -9,23 +9,28 @@ import type { TabIconName } from "./icons";
 import styles from "./MobileTabBar.module.scss";
 
 // The phone-only bar at the bottom of the screen, from the designer's Figma
-// (HBWebsite/Mobile/Home). The Figma also has a Gallery tab; there is no
-// Gallery page on the site yet, so it is left out.
+// (HBWebsite/Mobile/Home). Journey and Gallery are sections of the home page,
+// so they scroll there instead of opening a page of their own.
 type Tab = {
-  key: "home" | "services" | "journey" | "stories";
+  key: "home" | "services" | "journey" | "stories" | "gallery";
   label: string;
   href: string;
   icon: TabIconName;
-  /** The page the tab belongs to. Tapping it while already there scrolls to the top. */
+  /** The page the tab belongs to. Tapping it while already there scrolls. */
   page: string;
+  /** The home page section the tab scrolls to (its id), if it is not the top. */
+  section?: "journey" | "gallery";
 };
 
 const TABS: Tab[] = [
   { key: "home", label: "Home", href: "/", icon: "home", page: "/" },
   { key: "services", label: "Services", href: "/services", icon: "services", page: "/services" },
-  { key: "journey", label: "Journey", href: "/#journey", icon: "journey", page: "/" },
+  { key: "journey", label: "Journey", href: "/#journey", icon: "journey", page: "/", section: "journey" },
   { key: "stories", label: "Stories", href: "/stories", icon: "stories", page: "/stories" },
+  { key: "gallery", label: "Gallery", href: "/#gallery", icon: "gallery", page: "/", section: "gallery" },
 ];
+
+const SECTIONS = ["journey", "gallery"] as const;
 
 const scrollBehavior = (): ScrollBehavior =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
@@ -33,27 +38,35 @@ const scrollBehavior = (): ScrollBehavior =>
 export default function MobileTabBar() {
   // "/services/" and "/services" are the same page.
   const path = (usePathname() ?? "/").replace(/\/+$/, "") || "/";
-  const [inJourney, setInJourney] = useState(false);
+  const [inSection, setInSection] = useState<Tab["section"] | null>(null);
 
-  // On the home page, the Journey tab lights up while that section fills the
-  // middle of the screen.
+  // On the home page, the Journey and Gallery tabs light up while their section
+  // fills the middle of the screen.
   useEffect(() => {
     if (path !== "/") return;
-    const section = document.getElementById("journey");
-    if (!section) return;
+    const onScreen = new Set<string>();
     const observer = new IntersectionObserver(
-      (entries) => setInJourney(entries.some((entry) => entry.isIntersecting)),
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) onScreen.add(entry.target.id);
+          else onScreen.delete(entry.target.id);
+        }
+        setInSection(SECTIONS.find((id) => onScreen.has(id)) ?? null);
+      },
       { rootMargin: "-49% 0px -49% 0px" },
     );
-    observer.observe(section);
+    for (const id of SECTIONS) {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    }
     return () => {
       observer.disconnect();
-      setInJourney(false);
+      setInSection(null);
     };
   }, [path]);
 
   let current: Tab["key"] | null = null;
-  if (path === "/") current = inJourney ? "journey" : "home";
+  if (path === "/") current = inSection ?? "home";
   else if (path.startsWith("/services")) current = "services";
   else if (path.startsWith("/stories")) current = "stories";
 
@@ -63,8 +76,8 @@ export default function MobileTabBar() {
 
     // Already on the page: scroll instead of reloading it.
     if (path === tab.page) {
-      if (tab.key === "journey") {
-        const section = document.getElementById("journey");
+      if (tab.section) {
+        const section = document.getElementById(tab.section);
         if (!section) return;
         event.preventDefault();
         section.scrollIntoView({ behavior: scrollBehavior(), block: "start" });

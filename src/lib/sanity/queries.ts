@@ -92,6 +92,9 @@ export const homePageQuery = /* groq */ `
     "featuredStories": featuredStories[]->{ ${storyFields} },
     "testimonials": testimonials[] {
       _key, quote, name, course, university, large, "photo": photo ${img}
+    },
+    "galleryItems": galleryItems[] {
+      _key, name, style, color, bubbleText, icon, description, "image": image ${img}
     }
   }
 `;

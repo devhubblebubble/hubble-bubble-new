@@ -151,6 +151,20 @@ export type TeamMember = {
   order?: number;
 };
 
+export type GalleryColor = "navy" | "indigo" | "teal" | "blue" | "green" | "gold";
+
+/** One bubble in the home page Gallery ("Look who've noticed us"). */
+export type GalleryItem = {
+  _key?: string;
+  name?: string;
+  style?: "logo" | "photo";
+  color?: GalleryColor;
+  image?: SanityImage;
+  bubbleText?: string;
+  icon?: "trophy" | "handshake";
+  description?: string;
+};
+
 export type HomePage = Seo & {
   headlineLead?: string;
   headlineAccent?: string;
@@ -182,6 +196,10 @@ export type HomePage = Seo & {
   testimonialsTitle?: string;
   testimonialsLead?: string;
   testimonials?: Testimonial[];
+  galleryTitle?: string;
+  galleryLead?: string;
+  galleryHint?: string;
+  galleryItems?: GalleryItem[];
   originTitleLead?: string;
   originTitleAccent?: string;
   originLead?: string;

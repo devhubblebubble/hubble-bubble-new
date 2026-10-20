@@ -135,6 +135,51 @@
     }
   ],
 
+  "galleryTitle": "Look Who've Noticed Us!",
+  "galleryLead": "Big names, real impact, and we're just getting started.",
+  "galleryHint": "Tap a bubble to read the story behind it.",
+  "galleryItems": [
+    {
+      "name": "Bank of Scotland",
+      "style": "logo",
+      "color": "navy",
+      "image": { "_upload": "public/images/gallery/bank-of-scotland-stacked.png", "alt": "Bank of Scotland" },
+      "description": "Our partnership with Bank of Scotland is a vote of confidence in the way we support students. With their backing, we're proud to be recognised as a reliable guide for your UK journey."
+    },
+    {
+      "name": "Scottish EDGE",
+      "style": "logo",
+      "color": "indigo",
+      "image": { "_upload": "public/images/partner-cards/scottish-edge.png", "alt": "Scottish EDGE" },
+      "description": "We won the UK's biggest start-up competition (Scottish EDGE) for disrupting a broken industry."
+    },
+    {
+      "name": "Ed Impact Award",
+      "style": "photo",
+      "color": "green",
+      "icon": "handshake",
+      "description": "Hubble Bubble was crowned Best Ed Impact Award 2025: a nod to our bold ideas, honest mentoring, and cosmic-level commitment to students."
+    },
+    {
+      "name": "Award winner",
+      "style": "photo",
+      "color": "gold",
+      "icon": "trophy"
+    },
+    {
+      "name": "ISIC",
+      "style": "logo",
+      "color": "teal",
+      "bubbleText": "ISIC"
+    },
+    {
+      "name": "LinkedIn",
+      "style": "logo",
+      "color": "blue",
+      "bubbleText": "in"
+    }
+  ],
+
   "originTitleLead": "How It All",
   "originTitleAccent": "Began",
   "originLead": "From one spark came a constellation - our very own",

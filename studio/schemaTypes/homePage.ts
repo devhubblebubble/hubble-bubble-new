@@ -10,6 +10,7 @@ export const homePage = defineType({
     { name: "trust", title: "Trust cards" },
     { name: "journey", title: "Journey steps" },
     { name: "stories", title: "Stories and testimonials" },
+    { name: "gallery", title: "Gallery (round bubbles)" },
     { name: "bottom", title: "Bottom of page" },
     { name: "seo", title: "Search" },
   ],
@@ -220,6 +221,100 @@ export const homePage = defineType({
             }),
           ],
           preview: { select: { title: "name", subtitle: "university", media: "photo" } },
+        }),
+      ],
+    }),
+
+    // ── Gallery ────────────────────────────────────────────────────────
+    str("galleryTitle", "Title", 'e.g. "Look Who\'ve Noticed Us!"', { group: "gallery" }),
+    str("galleryLead", "Line under the title", undefined, { group: "gallery" }),
+    str("galleryHint", "Line under the bubbles", 'e.g. "Tap a bubble to read the story behind it."', {
+      group: "gallery",
+    }),
+    defineField({
+      name: "galleryItems",
+      title: "Bubbles",
+      description:
+        "The first bubble is the big one in the middle. The others repeat around it and get smaller towards the edge, so 6 to 10 bubbles looks best. A bubble with a story opens a round card when someone taps it; a bubble without a story is just decoration. Only add awards, partners and logos you are allowed to show.",
+      type: "array",
+      group: "gallery",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "galleryItem",
+          fields: [
+            str("name", "Name", 'e.g. "Bank of Scotland"', { validation: (rule: Rule) => rule.required() }),
+            defineField({
+              name: "style",
+              title: "Look",
+              type: "string",
+              options: {
+                layout: "radio",
+                list: [
+                  { title: "Logo or short text on a coloured bubble", value: "logo" },
+                  { title: "Photo", value: "photo" },
+                ],
+              },
+              initialValue: "logo",
+            }),
+            defineField({
+              name: "color",
+              title: "Bubble colour",
+              description: "Used for logo bubbles, and behind the text of the card.",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Navy", value: "navy" },
+                  { title: "Indigo", value: "indigo" },
+                  { title: "Teal", value: "teal" },
+                  { title: "Blue", value: "blue" },
+                  { title: "Green", value: "green" },
+                  { title: "Gold", value: "gold" },
+                ],
+              },
+              initialValue: "navy",
+            }),
+            imageField(
+              "image",
+              "Logo or photo",
+              "A logo works best as a PNG or SVG with a transparent background, in white or a light colour. A photo works best square; it is shown in a circle.",
+            ),
+            str(
+              "bubbleText",
+              "Text on the bubble (when there is no logo)",
+              'Short, e.g. "ISIC" or "in". Ignored when a logo is uploaded.',
+            ),
+            defineField({
+              name: "icon",
+              title: "Picture to show until a photo is uploaded",
+              type: "string",
+              options: {
+                layout: "radio",
+                list: [
+                  { title: "Trophy", value: "trophy" },
+                  { title: "Handshake", value: "handshake" },
+                ],
+              },
+              hidden: ({ parent }) => parent?.style !== "photo",
+            }),
+            text(
+              "description",
+              "Story (shown when someone taps the bubble)",
+              "Two or three short sentences, about 200 characters at most so it fits the round card. Leave empty and the bubble is just decoration. Only claims you can back up.",
+              {
+                validation: (rule: Rule) =>
+                  rule.max(240).warning("Long stories get very small type on the round card. Try to keep it under 200 characters."),
+              },
+            ),
+          ],
+          preview: {
+            select: { title: "name", subtitle: "description", media: "image" },
+            prepare: ({ title, subtitle, media }) => ({
+              title: title || "Bubble",
+              subtitle: subtitle ? "Opens a card" : "Decoration only",
+              media,
+            }),
+          },
         }),
       ],
     }),

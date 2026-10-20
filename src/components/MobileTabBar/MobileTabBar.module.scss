@@ -39,11 +39,12 @@
     transition: color 0.2s ease, opacity 0.2s ease;
 
     // Bigger tap area than the icon and label alone (the bar's padding and the
-    // gaps between tabs are free), without changing the layout.
+    // gaps between tabs are free), without changing the layout. Sideways it
+    // stays small so five tabs on a 320px phone do not overlap.
     &::after {
       content: "";
       position: absolute;
-      inset: -24px -14px;
+      inset: -24px -8px;
     }
 
     &:active {

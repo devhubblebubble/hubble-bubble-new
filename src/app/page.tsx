@@ -7,6 +7,7 @@ import PartnerCardsSection from "@/components/PartnerCardsSection/PartnerCardsSe
 import StoriesSection from "@/components/StoriesSection/StoriesSection";
 import JourneySection from "@/components/JourneySection/JourneySection";
 import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSection";
+import GallerySection from "@/components/GallerySection/GallerySection";
 import OriginSection from "@/components/OriginSection/OriginSection";
 import CtaSection from "@/components/CtaSection/CtaSection";
 import FooterSection from "@/components/FooterSection/FooterSection";
@@ -42,6 +43,14 @@ export default async function Home() {
         lead={page.testimonialsLead}
         testimonials={page.testimonials}
       />
+      {page.galleryItems && page.galleryItems.length > 0 && (
+        <GallerySection
+          title={page.galleryTitle}
+          lead={page.galleryLead}
+          hint={page.galleryHint}
+          items={page.galleryItems}
+        />
+      )}
       <OriginSection data={page} />
       <CtaSection data={page} settings={settings} />
       <FooterSection />
