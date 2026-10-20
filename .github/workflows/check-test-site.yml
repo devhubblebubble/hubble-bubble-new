@@ -1,0 +1,42 @@
+# Looks at the deployed test site from GitHub's servers and reports what it
+# finds as a notice on the run. It also compares the role titles on the site
+# with the ones published in Sanity, so a site that is behind shows up.
+# Runs when this file or the script changes. To check again without a change,
+# re-run the latest run from the Actions tab.
+
+name: Check test site
+
+on:
+  push:
+    branches: [sanity-cms]
+    paths:
+      - ".github/workflows/check-test-site.yml"
+      - ".github/scripts/check-site.mjs"
+  workflow_dispatch:
+    inputs:
+      expect:
+        description: "Text that must appear on /recruitment/ (optional)"
+        required: false
+        default: ""
+      wait_minutes:
+        description: "Keep checking for that text for up to this many minutes"
+        required: false
+        default: "0"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check the test site
+        run: node .github/scripts/check-site.mjs
+        env:
+          SITE: https://hubble-bubble-new.jevinzac.workers.dev
+          EXPECT: ${{ inputs.expect }}
+          WAIT_MINUTES: ${{ inputs.wait_minutes }}
