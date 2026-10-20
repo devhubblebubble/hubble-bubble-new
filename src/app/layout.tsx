@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import '../style/globals.scss';
-import ParallaxStars from '@/components/Background/ParallaxStars';
-import ShootingStars from '@/components/Background/ShootingStars';
+import Universe from '@/components/Background/Universe';
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
 import MobileTabBar from '@/components/MobileTabBar/MobileTabBar';
 import TransitionProvider from '@/providers/TransitionProvider';
@@ -47,8 +46,8 @@ export default function RootLayout({
     // page (e.g. to /#journey), while the page itself still scrolls smoothly.
     <html lang="en" data-scroll-behavior="smooth">
       <body className={`${poppins.className} ${poppins.variable}`}>
-         <ParallaxStars />
-        {/* <ShootingStars />  */}
+        {/* The universe behind every page: stars and bubbles that move with the finger, the mouse and the scroll. */}
+        <Universe />
         <ScrollReveal />
         <TransitionProvider>{children}</TransitionProvider>
         {/* Phones only: the bottom tab bar (hidden by CSS on bigger screens). */}
