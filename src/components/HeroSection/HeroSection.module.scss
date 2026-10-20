@@ -8,9 +8,11 @@
     content: "";
     position: absolute;
     inset: 0;
+    // A light shade behind the headline. It was darker; now that the universe
+    // behind the page moves, more of it shows through.
     background:
-      radial-gradient(ellipse 80% 60% at 30% 50%, rgba(0, 0, 0, 0.55) 0%, transparent 75%),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, transparent 60%, rgba(0, 0, 0, 0.6) 100%);
+      radial-gradient(ellipse 80% 60% at 30% 50%, rgba(0, 0, 0, 0.35) 0%, transparent 75%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
     pointer-events: none;
     z-index: 0;
   }

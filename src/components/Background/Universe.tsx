@@ -2,84 +2,59 @@
 
 import { useEffect, useRef } from "react";
 
-// The universe behind every page: stars and glassy bubbles at different
-// depths, slowly flying past. The view tilts with the finger or mouse, bubbles
-// are pushed aside where the page is touched, and scrolling flies the camera
-// forward. The old site had 300 glowing dots orbiting in 3D on a canvas; this
-// keeps that idea and stays light:
+// The universe behind every page: a cloud of stars in 3D with the camera
+// inside it, like the old site's home page (300 glowing dots orbiting on a
+// canvas, the view following the finger). Near stars are big and bright, far
+// ones small and faint. The whole field swings round with the finger or the
+// mouse (an orbit of up to about 45 degrees across the screen), stars near a
+// touch are nudged aside and spring back, scrolling turns the field slowly,
+// the cloud itself keeps turning and every star drifts a little on its own.
 //
-// - plain 2D canvas, no WebGL; glows are pre-drawn sprites, not per-frame
-//   gradients;
-// - the number of particles follows the screen size (about 165 on a phone,
-//   340 on a desktop), is lower on weak devices, and drops by itself when the
-//   frames get slow;
-// - the canvas never takes touches (pointer-events: none), so the page scrolls
-//   and taps exactly as before; the universe only listens;
-// - nothing moves for people who ask their device for reduced motion, and
-//   the loop stops while the tab is hidden.
+// Kept light: a plain 2D canvas, each star is one copy of a pre-drawn glow,
+// about 400 stars on a phone and 650 on a desktop (fewer on weak devices,
+// and fewer still if drawing stays slow), no touch handling on the canvas
+// itself (the page scrolls and taps as before; the universe only listens),
+// nothing moves for people who ask for reduced motion, and the loop stops
+// while the tab is hidden.
 
-const MINT = [120, 225, 197] as const;
-const ORANGE = [255, 140, 80] as const;
-const WHITE = [255, 255, 255] as const;
+/** The cloud's radius. */
+const CLOUD = 1.6;
+/** The camera sits this far from the cloud's middle, inside it. */
+const CAMERA = 0.6;
+/** Nothing nearer than this (in front of the camera) is drawn. */
+const NEAR = 0.1;
+/** How far a finger at the screen edge swings the view, in radians. */
+const SWING_X = 0.8;
+const SWING_Y = 0.55;
+/** The cloud's own slow turn, radians a second. */
+const SPIN = 0.045;
+/** Radians of turn per scrolled pixel. */
+const SCROLL_TURN = 0.00035;
 
-// Depth range (the camera looks down +z from z = 0; the unit is the focal length).
-const Z_NEAR = 0.4;
-const Z_FAR = 3.2;
-// Forward speed in depth units per second, and how far one screen of scrolling flies.
-const DRIFT = 0.09;
-const SCROLL_FLY = 0.00035;
+const TINTS = ["255,255,255", "190,240,225", "255,205,170"];
 
-type Sprites = { glow: HTMLCanvasElement[]; bubble: HTMLCanvasElement[] };
-
-function makeSprites(): Sprites {
-  const tints = [WHITE, MINT, ORANGE];
-  const glow = tints.map((c) => {
-    const s = 64;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const g = cv.getContext("2d")!;
-    const grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-    grad.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},1)`);
-    grad.addColorStop(0.25, `rgba(${c[0]},${c[1]},${c[2]},0.55)`);
-    grad.addColorStop(0.6, `rgba(${c[0]},${c[1]},${c[2]},0.12)`);
-    grad.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
-    g.fillStyle = grad;
-    g.fillRect(0, 0, s, s);
-    return cv;
-  });
-  // A glass bubble: faint body, brighter rim, a highlight at the top left.
-  const bubble = tints.map((c) => {
-    const s = 96;
-    const r = s / 2;
-    const cv = document.createElement("canvas");
-    cv.width = cv.height = s;
-    const g = cv.getContext("2d")!;
-    const body = g.createRadialGradient(r, r, r * 0.2, r, r, r);
-    body.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},0.05)`);
-    body.addColorStop(0.72, `rgba(${c[0]},${c[1]},${c[2]},0.09)`);
-    body.addColorStop(0.9, `rgba(${c[0]},${c[1]},${c[2]},0.42)`);
-    body.addColorStop(1, `rgba(${c[0]},${c[1]},${c[2]},0)`);
-    g.fillStyle = body;
-    g.beginPath();
-    g.arc(r, r, r, 0, Math.PI * 2);
-    g.fill();
-    const shine = g.createRadialGradient(r * 0.68, r * 0.62, 0, r * 0.68, r * 0.62, r * 0.5);
-    shine.addColorStop(0, "rgba(255,255,255,0.75)");
-    shine.addColorStop(0.35, "rgba(255,255,255,0.18)");
-    shine.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = shine;
-    g.fillRect(0, 0, s, s);
-    return cv;
-  });
-  return { glow, bubble };
+function makeGlow(tint: string): HTMLCanvasElement {
+  const s = 64;
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = s;
+  const g = cv.getContext("2d")!;
+  const grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  // A solid bright core with a soft halo, so even a 4px star reads as a dot.
+  grad.addColorStop(0, `rgba(${tint},1)`);
+  grad.addColorStop(0.36, `rgba(${tint},0.96)`);
+  grad.addColorStop(0.52, `rgba(${tint},0.45)`);
+  grad.addColorStop(0.74, `rgba(${tint},0.12)`);
+  grad.addColorStop(1, `rgba(${tint},0)`);
+  g.fillStyle = grad;
+  g.fillRect(0, 0, s, s);
+  return cv;
 }
 
-/** How many particles this screen gets: by area, fewer on weak devices. */
+/** How many stars this screen gets: by area, fewer on weak devices. */
 function budget(w: number, h: number) {
   const nav = navigator as Navigator & { deviceMemory?: number };
   const weak = (navigator.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4;
-  const n = Math.round(Math.min(340, Math.max(110, (w * h) / 2000)) * (weak ? 0.7 : 1));
-  return n;
+  return Math.round(Math.min(650, Math.max(380, (w * h) / 800)) * (weak ? 0.7 : 1));
 }
 
 export default function Universe() {
@@ -92,129 +67,130 @@ export default function Universe() {
     if (!ctx) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sprites = makeSprites();
+    const glows = TINTS.map(makeGlow);
 
     let w = 0;
     let h = 0;
-    let dpr = 1;
     let focal = 1;
+    let sizeScale = 1;
     let count = 0;
 
-    // Per particle: world position, the push it has taken (screen px) and its
-    // speed, size, kind (0 dust, 1 spark, 2 bubble), tint and age.
-    let X: Float32Array, Y: Float32Array, Z: Float32Array;
+    // Per star: resting place in the cloud, the small path it drifts on
+    // (amplitude, three speeds, three phases), size, tint, twinkle phase, and
+    // the nudge it has taken on screen with its speed.
+    let PX: Float32Array, PY: Float32Array, PZ: Float32Array;
+    let AMP: Float32Array, F1: Float32Array, F2: Float32Array, F3: Float32Array;
+    let PH1: Float32Array, PH2: Float32Array, PH3: Float32Array;
+    let SIZE: Float32Array, TINT: Uint8Array, TW: Float32Array;
     let OX: Float32Array, OY: Float32Array, VX: Float32Array, VY: Float32Array;
-    let SIZE: Float32Array, KIND: Uint8Array, TINT: Uint8Array, AGE: Float32Array, SPIN: Float32Array;
-
-    const spawn = (i: number, z: number, fresh: boolean) => {
-      // Somewhere on screen at this depth (a little beyond the edges).
-      const hx = ((w / 2) / focal) * z * 1.06;
-      const hy = ((h / 2) / focal) * z * 1.06;
-      X[i] = (Math.random() * 2 - 1) * hx;
-      Y[i] = (Math.random() * 2 - 1) * hy;
-      Z[i] = z;
-      OX[i] = OY[i] = VX[i] = VY[i] = 0;
-      AGE[i] = fresh ? 0 : 5;
-      SPIN[i] = Math.random() * Math.PI * 2;
-      const r = Math.random();
-      if (r < 0.55) {
-        KIND[i] = 0;
-        SIZE[i] = 0.002 + Math.random() * 0.0025;
-      } else if (r < 0.91) {
-        KIND[i] = 1;
-        SIZE[i] = 0.006 + Math.random() * 0.008;
-      } else {
-        KIND[i] = 2;
-        SIZE[i] = 0.02 + Math.random() * 0.03;
-      }
-      const t = Math.random();
-      TINT[i] = t < 0.8 ? 0 : t < 0.93 ? 1 : 2;
-    };
 
     const allocate = (n: number) => {
       count = n;
       canvas.dataset.particles = String(n);
-      X = new Float32Array(n);
-      Y = new Float32Array(n);
-      Z = new Float32Array(n);
+      PX = new Float32Array(n);
+      PY = new Float32Array(n);
+      PZ = new Float32Array(n);
+      AMP = new Float32Array(n);
+      F1 = new Float32Array(n);
+      F2 = new Float32Array(n);
+      F3 = new Float32Array(n);
+      PH1 = new Float32Array(n);
+      PH2 = new Float32Array(n);
+      PH3 = new Float32Array(n);
+      SIZE = new Float32Array(n);
+      TINT = new Uint8Array(n);
+      TW = new Float32Array(n);
       OX = new Float32Array(n);
       OY = new Float32Array(n);
       VX = new Float32Array(n);
       VY = new Float32Array(n);
-      SIZE = new Float32Array(n);
-      KIND = new Uint8Array(n);
-      TINT = new Uint8Array(n);
-      AGE = new Float32Array(n);
-      SPIN = new Float32Array(n);
-      for (let i = 0; i < n; i++) spawn(i, Z_NEAR + Math.random() * (Z_FAR - Z_NEAR), false);
+      for (let i = 0; i < n; i++) {
+        // Evenly through the ball.
+        const u = Math.random() * 2 - 1;
+        const t = Math.random() * Math.PI * 2;
+        const r = CLOUD * Math.cbrt(Math.random());
+        const s = Math.sqrt(1 - u * u);
+        PX[i] = r * s * Math.cos(t);
+        PY[i] = r * s * Math.sin(t);
+        PZ[i] = r * u;
+        AMP[i] = (0.02 + Math.random() * 0.05) * CLOUD;
+        F1[i] = 0.05 + Math.random() * 0.15;
+        F2[i] = 0.05 + Math.random() * 0.15;
+        F3[i] = 0.05 + Math.random() * 0.15;
+        PH1[i] = Math.random() * 6.283;
+        PH2[i] = Math.random() * 6.283;
+        PH3[i] = Math.random() * 6.283;
+        // Radius in pixels when the star is as far away as the cloud's middle:
+        // mostly small stars, a few bright ones.
+        const k = Math.random();
+        SIZE[i] = k < 0.7 ? 1.5 + Math.random() * 1 : k < 0.94 ? 2.5 + Math.random() * 1.5 : 4 + Math.random() * 3;
+        const c = Math.random();
+        TINT[i] = c < 0.86 ? 0 : c < 0.95 ? 1 : 2;
+        TW[i] = Math.random() * 6.283;
+        OX[i] = OY[i] = VX[i] = VY[i] = 0;
+      }
     };
 
     const resize = () => {
       w = window.innerWidth;
       h = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, w < 768 ? 1.5 : 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, w < 768 ? 1.5 : 2);
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      focal = Math.max(w, h) * 0.6;
+      // A wide view: the far side of the cloud just fills the screen's width.
+      focal = w * 0.55;
+      sizeScale = Math.min(1.6, Math.max(0.8, Math.min(w, h) / 500));
       // Only a real change of screen (not a phone toolbar sliding away) refills the field.
       const n = budget(w, h);
       if (!count || Math.abs(n - count) / count > 0.2) allocate(n);
     };
     resize();
 
-    // The camera: where it is, where the pointer or tilt wants it.
-    const cam = { x: 0, y: 0, tx: 0, ty: 0, z: 0 };
-    // The last touch or mouse position (screen px) and how fresh it is.
-    const touch = { x: -1e4, y: -1e4, strength: 0, isTouch: false, lastAt: -1e4 };
+    // Where the view is turned to, and where the finger, mouse, tilt or scroll want it.
+    const view = { yaw: 0, pitch: 0, yawT: 0, pitchT: 0, spin: 0 };
+    const touch = { x: -1e4, y: -1e4, strength: 0, lastAt: -1e4 };
     let scrollLast = window.scrollY;
-    let scrollVel = 0;
+    let scrollTurn = 0;
     let hidden = document.visibilityState === "hidden";
     let raf = 0;
     let last = performance.now();
-    let frameMs = 16;
+    let frameMs = 4;
     let slowSince = 0;
     let statsAt = 0;
     let streak: { x: number; y: number; vx: number; vy: number; t: number } | null = null;
-    let nextStreak = 6 + Math.random() * 8;
+    let nextStreak = 5 + Math.random() * 8;
 
     const aim = (px: number, py: number) => {
-      cam.tx = ((px - w / 2) / (w / 2)) * 0.045;
-      cam.ty = ((py - h / 2) / (h / 2)) * 0.035;
+      view.yawT = -((px - w / 2) / (w / 2)) * SWING_X;
+      view.pitchT = ((py - h / 2) / (h / 2)) * SWING_Y;
     };
-
-    const onPointerMove = (e: PointerEvent) => {
-      const isTouch = e.pointerType === "touch";
-      if (!isTouch || e.buttons > 0 || e.pressure > 0) {
-        touch.x = e.clientX;
-        touch.y = e.clientY;
-        touch.strength = 1;
-        touch.isTouch = isTouch;
-        touch.lastAt = performance.now();
-        aim(e.clientX, e.clientY);
-      }
-    };
-    const onPointerDown = (e: PointerEvent) => {
+    const poke = (e: PointerEvent, strength: number) => {
       touch.x = e.clientX;
       touch.y = e.clientY;
-      touch.strength = 1.6;
-      touch.isTouch = e.pointerType === "touch";
+      touch.strength = strength;
       touch.lastAt = performance.now();
       aim(e.clientX, e.clientY);
     };
+    const onPointerMove = (e: PointerEvent) => {
+      // A finger only counts while it is down; the mouse always does.
+      if (e.pointerType === "touch" && e.buttons === 0) return;
+      poke(e, 1);
+    };
+    const onPointerDown = (e: PointerEvent) => poke(e, 1.8);
     const onPointerEnd = () => {
       touch.strength = 0;
     };
-    // Tilting the phone tilts the view, where the browser allows it without a prompt.
+    // Tilting the phone turns the view, where the browser allows it without a prompt.
     const onTilt = (e: DeviceOrientationEvent) => {
       if (e.gamma == null || e.beta == null) return;
       if (performance.now() - touch.lastAt < 1500) return;
       const gx = Math.max(-30, Math.min(30, e.gamma)) / 30;
       const gy = Math.max(-30, Math.min(30, e.beta - 40)) / 30;
-      cam.tx = gx * 0.04;
-      cam.ty = gy * 0.03;
+      view.yawT = -gx * SWING_X * 0.6;
+      view.pitchT = gy * SWING_Y * 0.6;
     };
     const onVisibility = () => {
       hidden = document.visibilityState === "hidden";
@@ -235,14 +211,15 @@ export default function Universe() {
       const k = streak.t / life;
       const x = streak.x + streak.vx * streak.t;
       const y = streak.y + streak.vy * streak.t;
-      const len = 90;
-      const nx = streak.vx / Math.hypot(streak.vx, streak.vy);
-      const ny = streak.vy / Math.hypot(streak.vx, streak.vy);
+      const len = 110;
+      const n = Math.hypot(streak.vx, streak.vy);
+      const nx = streak.vx / n;
+      const ny = streak.vy / n;
       const grad = ctx.createLinearGradient(x - nx * len, y - ny * len, x, y);
       grad.addColorStop(0, "rgba(255,255,255,0)");
       grad.addColorStop(1, `rgba(255,255,255,${0.9 * Math.sin(Math.PI * k)})`);
       ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.6;
       ctx.beginPath();
       ctx.moveTo(x - nx * len, y - ny * len);
       ctx.lineTo(x, y);
@@ -250,112 +227,98 @@ export default function Universe() {
     };
 
     const render = (dt: number, still: boolean) => {
+      ctx.globalCompositeOperation = "source-over";
       ctx.clearRect(0, 0, w, h);
 
-      // Camera follows the pointer; after a touch ends it drifts back to the middle.
-      if (touch.isTouch && performance.now() - touch.lastAt > 400) {
-        cam.tx *= 1 - Math.min(1, dt * 0.8);
-        cam.ty *= 1 - Math.min(1, dt * 0.8);
-      }
-      const ease = 1 - Math.exp(-dt * 3);
-      cam.x += (cam.tx - cam.x) * ease;
-      cam.y += (cam.ty - cam.y) * ease;
+      // The view eases towards where it is wanted.
+      const ease = 1 - Math.exp(-dt * 7);
+      view.yaw += (view.yawT - view.yaw) * ease;
+      view.pitch += (view.pitchT - view.pitch) * ease;
+      if (!still) view.spin += SPIN * dt;
 
-      // Scrolling flies the camera forward (down) or back (up).
+      // Scrolling turns the field.
       const sy = window.scrollY;
-      scrollVel = (sy - scrollLast) * SCROLL_FLY;
+      scrollTurn += (sy - scrollLast) * SCROLL_TURN;
       scrollLast = sy;
-      const advance = still ? 0 : DRIFT * dt + scrollVel;
+
+      const yaw = view.yaw + view.spin;
+      const pitch = view.pitch + scrollTurn;
+      const cosY = Math.cos(yaw);
+      const sinY = Math.sin(yaw);
+      const cosP = Math.cos(pitch);
+      const sinP = Math.sin(pitch);
 
       const time = performance.now() * 0.001;
       const cx = w / 2;
       const cy = h / 2;
-      const pushR = Math.min(w, h) * 0.32;
+      const pushR = Math.min(w, h) * 0.3;
       const touching = touch.strength > 0.01;
-      if (touching) touch.strength *= 1 - Math.min(1, dt * 1.8);
+      if (touching) touch.strength *= 1 - Math.min(1, dt * 1.6);
+      const damp = Math.exp(-dt * 3.4);
 
+      ctx.globalCompositeOperation = "lighter";
       for (let i = 0; i < count; i++) {
-        let z = Z[i] - advance;
-        AGE[i] += dt;
-        if (z < Z_NEAR) {
-          spawn(i, Z_FAR, true);
-          z = Z_FAR;
-        } else if (z > Z_FAR) {
-          spawn(i, Z_NEAR + 0.05, true);
-          z = Z_NEAR + 0.05;
-        }
-        Z[i] = z;
+        // Where the star is right now: its resting place plus its own slow drift.
+        const a = AMP[i];
+        const x0 = PX[i] + a * Math.sin(time * F1[i] + PH1[i]);
+        const y0 = PY[i] + a * Math.sin(time * F2[i] + PH2[i]);
+        const z0 = PZ[i] + a * Math.cos(time * F3[i] + PH3[i]);
+        // Turn the cloud (yaw about the vertical axis, then pitch), then look from the camera.
+        const x1 = x0 * cosY + z0 * sinY;
+        const z1 = -x0 * sinY + z0 * cosY;
+        const y2 = y0 * cosP - z1 * sinP;
+        const z2 = y0 * sinP + z1 * cosP;
+        const depth = z2 + CAMERA;
+        if (depth < NEAR) continue;
 
-        const scale = focal / z;
-        // A slow personal sway so the field never looks frozen.
-        const sway = KIND[i] === 0 ? 0 : 0.004 * z;
-        const px = cx + (X[i] - cam.x + Math.sin(time * 0.35 + SPIN[i]) * sway) * scale;
-        const py = cy + (Y[i] - cam.y + Math.cos(time * 0.29 + SPIN[i]) * sway) * scale;
+        const scale = focal / depth;
+        const px = cx + x1 * scale;
+        const py = cy + y2 * scale;
 
-        // A finger or the mouse pushes nearby particles away; nearer ones more.
+        // A finger or the mouse nudges nearby stars aside; nearer ones more.
         if (touching) {
           const dx = px + OX[i] - touch.x;
           const dy = py + OY[i] - touch.y;
           const d = Math.hypot(dx, dy) || 1;
           if (d < pushR) {
-            const f = ((1 - d / pushR) * touch.strength * 520 * dt) / Math.sqrt(z);
+            const f = ((1 - d / pushR) * touch.strength * 700 * dt) / (0.4 + depth);
             VX[i] += (dx / d) * f;
             VY[i] += (dy / d) * f;
           }
         }
-        // Spring back, with damping.
-        VX[i] += -OX[i] * 6 * dt;
-        VY[i] += -OY[i] * 6 * dt;
-        const damp = Math.exp(-dt * 3.2);
-        VX[i] *= damp;
-        VY[i] *= damp;
+        VX[i] = (VX[i] - OX[i] * 7 * dt) * damp;
+        VY[i] = (VY[i] - OY[i] * 7 * dt) * damp;
         OX[i] += VX[i] * dt;
         OY[i] += VY[i] * dt;
 
         const sx = px + OX[i];
-        const sy2 = py + OY[i];
-        const r = SIZE[i] * scale;
-        if (sx < -r * 2 || sx > w + r * 2 || sy2 < -r * 2 || sy2 > h + r * 2) {
-          // Off the edge: it will only come back if it respawns.
-          if (z < Z_FAR * 0.6) {
-            spawn(i, Z_FAR, true);
-          }
-          continue;
-        }
+        const syy = py + OY[i];
+        const r = (SIZE[i] * sizeScale * CAMERA) / depth;
+        if (sx < -r * 3 || sx > w + r * 3 || syy < -r * 3 || syy > h + r * 3) continue;
 
-        // Dim far away, fade in when new, fade out just before passing the camera.
-        const depth = 1 - (z - Z_NEAR) / (Z_FAR - Z_NEAR);
-        let a = 0.35 + 0.65 * depth;
-        a *= Math.min(1, AGE[i] * 0.8);
-        if (z < Z_NEAR + 0.35) a *= (z - Z_NEAR) / 0.35;
-        const kind = KIND[i];
-        if (kind === 0) {
-          const tw = 0.75 + 0.25 * Math.sin(time * 2.1 + SPIN[i] * 7);
-          ctx.globalAlpha = Math.min(1, a * tw);
-          ctx.fillStyle = TINT[i] === 1 ? "rgb(170,235,220)" : "#fff";
-          const d = Math.max(1, Math.min(3, r * 1.7));
-          ctx.fillRect(sx - d / 2, sy2 - d / 2, d, d);
-        } else if (kind === 1) {
-          const d = Math.max(3, Math.min(26, r * 2.2));
-          ctx.globalAlpha = Math.min(1, a * 0.9);
-          ctx.drawImage(sprites.glow[TINT[i]], sx - d / 2, sy2 - d / 2, d, d);
-        } else {
-          const d = Math.max(10, Math.min(110, r * 2));
-          ctx.globalAlpha = Math.min(1, a * 0.95);
-          ctx.drawImage(sprites.bubble[TINT[i]], sx - d / 2, sy2 - d / 2, d, d);
-        }
+        // Bright when near, faint when far; a gentle twinkle; fade just before the camera.
+        const nearness = Math.min(1, CAMERA / depth);
+        let alpha = 0.55 + 0.45 * nearness * nearness;
+        alpha *= 0.82 + 0.18 * Math.sin(time * 1.7 + TW[i]);
+        if (depth < NEAR + 0.15) alpha *= (depth - NEAR) / 0.15;
+        ctx.globalAlpha = Math.min(1, alpha);
+
+        // Never smaller than 4px: a 1px dot drawn between pixels all but vanishes.
+        const d = Math.max(4, Math.min(48, r * 2.4));
+        ctx.drawImage(glows[TINT[i]], sx - d / 2, syy - d / 2, d, d);
       }
       ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
 
       // Now and then a shooting star.
       if (!still) {
         nextStreak -= dt;
         if (nextStreak <= 0 && !streak) {
-          const angle = Math.PI * (0.15 + Math.random() * 0.25);
-          const speed = 900 + Math.random() * 500;
+          const angle = Math.PI * (0.12 + Math.random() * 0.3);
+          const speed = 1000 + Math.random() * 600;
           streak = {
             x: Math.random() * w * 0.8,
-            y: Math.random() * h * 0.4,
+            y: Math.random() * h * 0.45,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
             t: 0,
@@ -373,7 +336,7 @@ export default function Universe() {
       last = now;
       const t0 = performance.now();
       render(dt, false);
-      // If frames stay slow for two seconds, draw fewer particles.
+      // If drawing stays slow for two seconds, draw fewer stars.
       frameMs = frameMs * 0.9 + (performance.now() - t0) * 0.1;
       if (now - statsAt > 1000) {
         statsAt = now;
@@ -381,7 +344,7 @@ export default function Universe() {
       }
       if (frameMs > 9) {
         if (!slowSince) slowSince = now;
-        else if (now - slowSince > 2000 && count > 60) {
+        else if (now - slowSince > 2000 && count > 90) {
           allocate(Math.round(count * 0.75));
           slowSince = 0;
           frameMs = 4;
@@ -440,15 +403,7 @@ export default function Universe() {
   return (
     <div
       aria-hidden="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: -1,
-        pointerEvents: "none",
-        overflow: "hidden",
-        background:
-          "radial-gradient(ellipse 70% 55% at 20% 10%, rgba(25, 60, 75, 0.32), transparent 70%), radial-gradient(ellipse 60% 50% at 85% 90%, rgba(110, 45, 15, 0.2), transparent 70%)",
-      }}
+      style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", overflow: "hidden" }}
     >
       <canvas ref={canvasRef} style={{ display: "block" }} />
     </div>
