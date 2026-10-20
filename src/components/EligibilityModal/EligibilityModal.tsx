@@ -55,11 +55,26 @@ const STUDY_STATUS_OPTIONS = [
   "The course or university does not matter",
 ];
 
-const PROCEED_OPTIONS: Array<{ id: ProceedOption; label: string }> = [
+/**
+ * Documents cannot be uploaded yet, because nothing stores them. Until there is
+ * a safe place for passports and certificates, people email them instead (the
+ * "sendEmail" option). Do not turn this on before uploads are actually saved.
+ */
+const UPLOADS_ENABLED = false;
+
+const ALL_PROCEED_OPTIONS: Array<{ id: ProceedOption; label: string }> = [
   { id: "uploadNow", label: "I will upload my documents now" },
   { id: "sendEmail", label: "I will send my documents via email" },
   { id: "bookCall", label: "Book a call with a Hubble Bubble mentor" },
 ];
+
+const PROCEED_OPTIONS = ALL_PROCEED_OPTIONS.filter(
+  (option) => UPLOADS_ENABLED || option.id !== "uploadNow",
+);
+
+/** The options about sending documents, and the separate "talk to us" option. */
+const DOCUMENT_OPTIONS = PROCEED_OPTIONS.filter((option) => option.id !== "bookCall");
+const CALL_OPTIONS = PROCEED_OPTIONS.filter((option) => option.id === "bookCall");
 
 const UPLOAD_CATEGORIES: UploadCategory[] = [
   { id: "passport", label: "Passport (front and back)", required: true },
@@ -112,18 +127,30 @@ function getInitialFormState(): FormState {
 interface EligibilityModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Where people email their documents (from Site settings) */
+  contactEmail: string;
+  /** Booking link for the "book a call" screen (from Site settings) */
+  bookingUrl?: string;
 }
 
-export default function EligibilityModal({ isOpen, onClose }: EligibilityModalProps) {
+export default function EligibilityModal({ isOpen, onClose, contactEmail, bookingUrl }: EligibilityModalProps) {
   const [step, setStep] = useState<Step>("basic");
   const [form, setForm] = useState<FormState>(getInitialFormState);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [sending, setSending] = useState(false);
+  const [sendFailed, setSendFailed] = useState(false);
+  // The details already emailed to the team. Going Back and pressing Next again
+  // must not send the same message twice.
+  const [alreadySent, setAlreadySent] = useState<string | null>(null);
+  // When the form opened. The server uses this to spot scripts that post instantly.
+  const openedAt = useRef(0);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
 
+    openedAt.current = Date.now();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
@@ -198,6 +225,50 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
     if (step === "bookCallScreen") setStep("proceed");
   };
 
+  /** Emails the details to the team (through /api/eligibility), then moves on. */
+  const sendDetailsAndContinue = async () => {
+    const choice = form.proceedOption;
+    if (sending || (choice !== "sendEmail" && choice !== "bookCall")) return;
+
+    const nextScreen: Step = choice === "sendEmail" ? "emailChecklist" : "bookCallScreen";
+    const details = JSON.stringify({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      age: form.age.trim(),
+      qualification: form.qualification.trim(),
+      contactNumber: form.contactNumber.trim(),
+      studyStatus: form.studyStatus,
+      countries: form.countries,
+      universities: universitiesTrimmed,
+      nextStep: choice,
+    });
+    if (details === alreadySent) {
+      setStep(nextScreen);
+      return;
+    }
+
+    setSending(true);
+    setSendFailed(false);
+    try {
+      const res = await fetch("/api/eligibility", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...JSON.parse(details), elapsedMs: Date.now() - openedAt.current }),
+      });
+      const body: { ok?: boolean } | null = await res.json().catch(() => null);
+      if (res.ok && body?.ok) {
+        setAlreadySent(details);
+        setStep(nextScreen);
+      } else {
+        setSendFailed(true);
+      }
+    } catch {
+      setSendFailed(true);
+    } finally {
+      setSending(false);
+    }
+  };
+
   const goNext = () => {
     if (!canGoNext) return;
 
@@ -206,11 +277,10 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
     if (step === "preferences") setStep("proceed");
     if (step === "proceed") {
       if (form.proceedOption === "uploadNow") {
+        // Only reachable when UPLOADS_ENABLED is on (see above)
         setStep("upload");
-      } else if (form.proceedOption === "sendEmail") {
-        setStep("emailChecklist");
-      } else if (form.proceedOption === "bookCall") {
-        setStep("bookCallScreen");
+      } else {
+        void sendDetailsAndContinue();
       }
     }
     if (step === "upload") setStep("success");
@@ -275,7 +345,7 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
     const checklist = [
       "Hubble Bubble - Eligibility Checklist",
       "",
-      "Please share the following documents to hello@hubblebubble.com:",
+      `Please share the following documents to ${contactEmail}:`,
       "",
       "- Passport (front and back)",
       "- CV / Resume",
@@ -495,7 +565,7 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
           <div className={styles.content}>
             <p className={styles.sectionHeading}>How do you want to proceed?</p>
             <div className={styles.optionGroup}>
-              {PROCEED_OPTIONS.slice(0, 2).map((option) => {
+              {DOCUMENT_OPTIONS.map((option) => {
                 const selected = form.proceedOption === option.id;
                 return (
                   <button
@@ -514,7 +584,7 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
             <p className={styles.stillGotQuestions}>Still got questions?</p>
 
             <div className={styles.optionGroup}>
-              {PROCEED_OPTIONS.slice(2).map((option) => {
+              {CALL_OPTIONS.map((option) => {
                 const selected = form.proceedOption === option.id;
                 return (
                   <button
@@ -530,14 +600,21 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
               })}
             </div>
 
+            {sendFailed && (
+              <p className={styles.errorText} role="alert">
+                Sorry, we could not send your details. Please try again, or email us at{" "}
+                <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+              </p>
+            )}
+
             <div className={styles.actions}>
               <button
                 type="button"
                 className={styles.primaryButton}
                 onClick={goNext}
-                disabled={!canGoNext}
+                disabled={!canGoNext || sending}
               >
-                Next
+                {sending ? "Sending..." : "Next"}
               </button>
               <button type="button" className={styles.secondaryButton} onClick={goBack}>
                 Back
@@ -609,9 +686,10 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
 
         {step === "emailChecklist" && (
           <div className={styles.content}>
+            <p className={styles.thanks}>Thanks, we have your details.</p>
             <p className={styles.sectionHeading}>Share the following documents to</p>
             <p className={styles.emailAddress}>
-              <a href="mailto:hello@hubblebubble.com">hello@hubblebubble.com</a>
+              <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
             </p>
             <ul className={styles.checklist}>
               <li>Passport (front and back)</li>
@@ -648,13 +726,13 @@ export default function EligibilityModal({ isOpen, onClose }: EligibilityModalPr
             />
             <h3 className={styles.stateTitle}>Let&apos;s talk</h3>
             <p className={styles.stateText}>
-              Book a call with a Hubble Bubble Mentor and begin your dream journey!
+              Thanks, we have your details. Book a call with a Hubble Bubble Mentor and begin your
+              dream journey!
             </p>
             <div className={styles.actions}>
               <a
-                href="https://calendly.com/hubblebubble"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={bookingUrl || "/contact"}
+                {...(bookingUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className={styles.primaryButton}
               >
                 Book now

@@ -10,7 +10,7 @@ import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSe
 import OriginSection from "@/components/OriginSection/OriginSection";
 import CtaSection from "@/components/CtaSection/CtaSection";
 import FooterSection from "@/components/FooterSection/FooterSection";
-import { getHomePage } from "@/lib/sanity/data";
+import { getHomePage, getSiteSettings } from "@/lib/sanity/data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getHomePage();
@@ -22,13 +22,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const page = await getHomePage();
+  const [page, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
 
   return (
     <main>
       <OrganizationJsonLd />
       <NavBar />
-      <HeroSection data={page} />
+      <HeroSection data={page} settings={settings} />
       <WorldMapSection headline={page.worldMapHeadline} />
       <PartnerCardsSection data={page} />
       <StoriesSection
@@ -43,7 +43,7 @@ export default async function Home() {
         testimonials={page.testimonials}
       />
       <OriginSection data={page} />
-      <CtaSection data={page} />
+      <CtaSection data={page} settings={settings} />
       <FooterSection />
     </main>
   );

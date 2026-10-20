@@ -6,10 +6,10 @@ import { useState } from "react";
 import EligibilityModal from "@/components/EligibilityModal";
 import { useCarousel } from "@/hooks/useCarousel";
 import { imageDims, imageUrl } from "@/lib/sanity/image";
-import type { HomePage, SanityImage } from "@/lib/sanity/types";
+import type { HomePage, SanityImage, SiteSettings } from "@/lib/sanity/types";
 import styles from "./HeroSection.module.scss";
 
-type Props = { data: HomePage };
+type Props = { data: HomePage; settings: SiteSettings };
 
 /** Width that keeps the logo's proportions at a fixed display height. */
 const widthAtHeight = (img: SanityImage | undefined, height: number, fallbackWidth: number) => {
@@ -17,7 +17,7 @@ const widthAtHeight = (img: SanityImage | undefined, height: number, fallbackWid
   return Math.round((d.width * height) / d.height);
 };
 
-export default function HeroSection({ data }: Props) {
+export default function HeroSection({ data, settings }: Props) {
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
   const students = data.heroStudents ?? [];
   const { idx, setPaused } = useCarousel(Math.max(students.length, 1), 6500);
@@ -143,7 +143,12 @@ export default function HeroSection({ data }: Props) {
       </section>
 
       {eligibilityOpen && (
-        <EligibilityModal isOpen={eligibilityOpen} onClose={() => setEligibilityOpen(false)} />
+        <EligibilityModal
+          isOpen={eligibilityOpen}
+          onClose={() => setEligibilityOpen(false)}
+          contactEmail={settings.contactEmail}
+          bookingUrl={settings.bookingUrl}
+        />
       )}
     </>
   );

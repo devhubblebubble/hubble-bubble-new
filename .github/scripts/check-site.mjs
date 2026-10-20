@@ -184,6 +184,10 @@ const trapPost = await postJson("/api/contact", { _gotcha: "x" });
 if (trapPost.status === 200 && trapPost.json.ok === true) say("POST /api/contact with the spam-trap field filled: quietly dropped, nothing sent");
 else fail(`POST /api/contact with the spam trap returned ${trapPost.status} ${trapPost.text}`);
 
+const emptyEligibility = await postJson("/api/eligibility", {});
+if (emptyEligibility.status === 400 && emptyEligibility.json.error === "too_fast") say("POST /api/eligibility with nothing in it: refused (400), the eligibility form code is live");
+else fail(`POST /api/eligibility with nothing in it returned ${emptyEligibility.status} ${emptyEligibility.text}`);
+
 const getApi = await get("/api/contact");
 if (getApi.status === 405) say("GET /api/contact: 405, as it should be");
 else fail(`GET /api/contact returned ${getApi.status}`);

@@ -607,7 +607,12 @@ export default function FigmaHome() {
       </main>
 
       {eligibilityOpen && (
-        <EligibilityModal isOpen={eligibilityOpen} onClose={() => setEligibilityOpen(false)} />
+        // This old home page is not used by the site any more. The address is only here so it still compiles.
+        <EligibilityModal
+          isOpen={eligibilityOpen}
+          onClose={() => setEligibilityOpen(false)}
+          contactEmail="hello@hubblebubble.uk"
+        />
       )}
     </>
   );

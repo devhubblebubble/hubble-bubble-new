@@ -335,6 +335,27 @@
   }
 }
 
+.errorText {
+  margin: 14px 0 0;
+  font-family: $font-primary;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ff8a5c;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.thanks {
+  margin: 0 0 14px;
+  font-family: $font-primary;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #78e1c5;
+}
+
 .emailAddress {
   margin: 0 0 14px;
   font-family: $font-primary;

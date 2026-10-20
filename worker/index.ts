@@ -2,15 +2,22 @@
 //
 // The site itself is plain static files that Cloudflare serves without running
 // any code. This Worker only wakes up for addresses starting with /api/ (see
-// "run_worker_first" in wrangler.jsonc). Today that is the contact form, which
-// it checks and then sends to the team's inbox through Resend.
+// "run_worker_first" in wrangler.jsonc). Today that is the contact form and the
+// eligibility check. It checks what the visitor sent, then emails it to the
+// team's inbox through Resend.
 //
 // Settings (in wrangler.jsonc, and the secret in the Cloudflare dashboard):
 //   RESEND_API_KEY   secret, from resend.com
 //   CONTACT_TO       the inbox that receives enquiries
 //   CONTACT_FROM     the sender shown on those emails
 
-import { checkContact, composeContactEmail, type Email } from "./forms.ts";
+import {
+  checkContact,
+  checkEligibility,
+  composeContactEmail,
+  composeEligibilityEmail,
+  type Email,
+} from "./forms.ts";
 
 export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
@@ -53,6 +60,14 @@ const ROUTES: Record<string, FormRoute> = {
       const checked = checkContact(input);
       return checked.ok
         ? { ok: true, email: composeContactEmail(checked.value, meta) }
+        : { ok: false, fields: checked.fields };
+    },
+  },
+  "/api/eligibility": {
+    prepare(input, meta) {
+      const checked = checkEligibility(input);
+      return checked.ok
+        ? { ok: true, email: composeEligibilityEmail(checked.value, meta) }
         : { ok: false, fields: checked.fields };
     },
   },

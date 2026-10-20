@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import Breadcrumb from "@/components/Breadcrumb/Breadcrumb";
 import type { SiteSettings } from "@/lib/sanity/types";
+import EligibilityButton from "@/components/EligibilityModal/EligibilityButton";
 import ContactForm from "./ContactForm";
 import styles from "./ContactPage.module.scss";
 
@@ -100,9 +100,13 @@ export default function ContactPage({ settings }: Props) {
               Take our free eligibility check. It takes 3 minutes and gives you
               a clear picture of your options.
             </p>
-            <Link href="/contact" className={styles.eligBtn}>
+            <EligibilityButton
+              className={styles.eligBtn}
+              contactEmail={settings.contactEmail}
+              bookingUrl={settings.bookingUrl}
+            >
               Take the eligibility Test →
-            </Link>
+            </EligibilityButton>
           </div>
         </div>
 

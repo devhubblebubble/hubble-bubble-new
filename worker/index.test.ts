@@ -207,6 +207,88 @@ describe("contact form endpoint", () => {
   });
 });
 
+const goodEligibility = {
+  name: "Ravi Menon",
+  email: "ravi@example.com",
+  age: "24",
+  qualification: "BEng Mechanical",
+  contactNumber: "+91 98765 43210",
+  studyStatus: "I am not sure which university or course to apply for",
+  countries: ["UK", "Germany"],
+  universities: ["University of Dundee", "TU Munich"],
+  nextStep: "bookCall",
+  elapsedMs: 20000,
+};
+
+describe("eligibility check endpoint", () => {
+  const eligibilityPost = (body: unknown) => post(body, {}, "/api/eligibility");
+
+  it("emails the details to the team inbox", async () => {
+    const { calls, deps } = fakeResend();
+    const res = await handleApi(eligibilityPost(goodEligibility), env, deps);
+    assert.equal(res.status, 200);
+    assert.equal(calls.length, 1);
+    const sent = JSON.parse(calls[0].init.body as string);
+    assert.deepEqual(sent.to, ["team@example.com"]);
+    assert.equal(sent.reply_to, "ravi@example.com");
+    assert.equal(sent.subject, "Eligibility check from Ravi Menon");
+    assert.match(sent.text, /Age: 24/);
+    assert.match(sent.text, /Current qualification: BEng Mechanical/);
+    assert.match(sent.text, /Contact number: \+91 98765 43210/);
+    assert.match(sent.text, /Preferred countries: UK, Germany/);
+    assert.match(sent.text, /Preferred universities: University of Dundee; TU Munich/);
+    assert.match(sent.text, /Wants to book a call with a mentor/);
+  });
+
+  it("notes when they will email their documents", async () => {
+    const { calls, deps } = fakeResend();
+    await handleApi(eligibilityPost({ ...goodEligibility, nextStep: "sendEmail" }), env, deps);
+    const sent = JSON.parse(calls[0].init.body as string);
+    assert.match(sent.text, /Will email their documents/);
+  });
+
+  it("does not accept document uploads or other next steps", async () => {
+    const { calls, deps } = fakeResend();
+    const res = await handleApi(eligibilityPost({ ...goodEligibility, nextStep: "uploadNow" }), env, deps);
+    assert.equal(res.status, 400);
+    assert.ok("nextStep" in ((await json(res)).fields as object));
+    assert.equal(calls.length, 0);
+  });
+
+  it("explains which details are missing", async () => {
+    const { calls, deps } = fakeResend();
+    const res = await handleApi(eligibilityPost({ elapsedMs: 20000 }), env, deps);
+    assert.equal(res.status, 400);
+    const fields = Object.keys((await json(res)).fields as object).sort();
+    assert.deepEqual(fields, ["age", "contactNumber", "countries", "email", "name", "nextStep", "qualification", "studyStatus", "universities"]);
+    assert.equal(calls.length, 0);
+  });
+
+  it("needs lists to be lists", async () => {
+    const { deps } = fakeResend();
+    const res = await handleApi(eligibilityPost({ ...goodEligibility, countries: "UK", universities: "Dundee" }), env, deps);
+    assert.equal(res.status, 400);
+  });
+
+  it("keeps only the first ten universities", async () => {
+    const { calls, deps } = fakeResend();
+    const many = Array.from({ length: 15 }, (_, i) => `University ${i + 1}`);
+    await handleApi(eligibilityPost({ ...goodEligibility, universities: many }), env, deps);
+    const sent = JSON.parse(calls[0].init.body as string);
+    assert.match(sent.text, /University 10/);
+    assert.ok(!/University 11/.test(sent.text));
+  });
+
+  it("applies the same spam checks as the contact form", async () => {
+    const { calls, deps } = fakeResend();
+    const fast = await handleApi(eligibilityPost({ ...goodEligibility, elapsedMs: 100 }), env, deps);
+    assert.equal(fast.status, 400);
+    const trapped = await handleApi(eligibilityPost({ ...goodEligibility, _gotcha: "x" }), env, deps);
+    assert.equal(trapped.status, 200);
+    assert.equal(calls.length, 0);
+  });
+});
+
 describe("worker entry point", () => {
   it("passes everything outside /api/ to the static site", async () => {
     const res = await worker.fetch(new Request(ORIGIN + "/about/"), env);

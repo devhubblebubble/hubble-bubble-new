@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import EligibilityModal from "@/components/EligibilityModal";
-import type { HomePage } from "@/lib/sanity/types";
+import type { HomePage, SiteSettings } from "@/lib/sanity/types";
 import styles from "./CtaSection.module.scss";
 
-type Props = { data: HomePage };
+type Props = { data: HomePage; settings: SiteSettings };
 
-export default function CtaSection({ data }: Props) {
+export default function CtaSection({ data, settings }: Props) {
   const leadLines = (data.ctaTitleLead ?? "Still not sure\nwhere to start?").split("\n").filter(Boolean);
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
 
@@ -46,7 +46,12 @@ export default function CtaSection({ data }: Props) {
       </section>
 
       {eligibilityOpen && (
-        <EligibilityModal isOpen={eligibilityOpen} onClose={() => setEligibilityOpen(false)} />
+        <EligibilityModal
+          isOpen={eligibilityOpen}
+          onClose={() => setEligibilityOpen(false)}
+          contactEmail={settings.contactEmail}
+          bookingUrl={settings.bookingUrl}
+        />
       )}
     </>
   );

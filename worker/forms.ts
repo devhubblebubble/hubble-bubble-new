@@ -126,3 +126,125 @@ export function composeContactEmail(
     replyTo: enquiry.email,
   };
 }
+
+// ── Eligibility check ────────────────────────────────────────────────────────
+
+export type NextStep = "sendEmail" | "bookCall";
+
+export type EligibilityEnquiry = {
+  name: string;
+  email: string;
+  age: string;
+  qualification: string;
+  contactNumber: string;
+  studyStatus: string;
+  countries: string[];
+  universities: string[];
+  nextStep: NextStep;
+};
+
+const NEXT_STEP_LABEL: Record<NextStep, string> = {
+  sendEmail: "Will email their documents",
+  bookCall: "Wants to book a call with a mentor",
+};
+
+const MAX_LIST_ITEMS = 10;
+
+function list(input: Record<string, unknown>, key: string, maxEach: number): { items: string[]; tooLong: boolean } {
+  const raw = input[key];
+  const items: string[] = [];
+  let tooLong = false;
+  if (Array.isArray(raw)) {
+    for (const entry of raw.slice(0, MAX_LIST_ITEMS)) {
+      if (typeof entry !== "string") continue;
+      const value = oneLine(entry);
+      if (!value) continue;
+      if (value.length > maxEach) tooLong = true;
+      else items.push(value);
+    }
+  }
+  return { items, tooLong };
+}
+
+export function checkEligibility(input: Record<string, unknown>): Checked<EligibilityEnquiry> {
+  const fields: Record<string, string> = {};
+
+  const name = oneLine(text(input, "name"));
+  if (!name) fields.name = "Please enter your name.";
+  else if (name.length > LIMITS.name) fields.name = `Please keep your name under ${LIMITS.name} characters.`;
+
+  const email = text(input, "email").trim();
+  if (!email) fields.email = "Please enter your email address.";
+  else if (email.length > LIMITS.email || !EMAIL_PATTERN.test(email)) {
+    fields.email = "That email address does not look right.";
+  }
+
+  const age = oneLine(text(input, "age"));
+  if (!age) fields.age = "Please enter your age.";
+  else if (age.length > 10) fields.age = "That does not look like an age.";
+
+  const qualification = oneLine(text(input, "qualification"));
+  if (!qualification) fields.qualification = "Please enter your current qualification.";
+  else if (qualification.length > LIMITS.short) fields.qualification = `Please keep this under ${LIMITS.short} characters.`;
+
+  const contactNumber = oneLine(text(input, "contactNumber"));
+  if (contactNumber.length < 5) fields.contactNumber = "Please enter a contact number.";
+  else if (contactNumber.length > 40) fields.contactNumber = "That number is too long.";
+
+  const studyStatus = oneLine(text(input, "studyStatus"));
+  if (!studyStatus) fields.studyStatus = "Please choose your current status.";
+  else if (studyStatus.length > LIMITS.short) fields.studyStatus = `Please keep this under ${LIMITS.short} characters.`;
+
+  const countries = list(input, "countries", 40);
+  if (countries.items.length === 0 || countries.tooLong) fields.countries = "Please choose at least one country.";
+
+  const universities = list(input, "universities", LIMITS.name);
+  if (universities.items.length === 0 || universities.tooLong) fields.universities = "Please enter at least one university.";
+
+  const rawStep = text(input, "nextStep");
+  const nextStep = rawStep === "sendEmail" || rawStep === "bookCall" ? rawStep : null;
+  if (!nextStep) fields.nextStep = "Please choose how you want to proceed.";
+
+  if (Object.keys(fields).length > 0 || !nextStep) return { ok: false, fields };
+
+  return {
+    ok: true,
+    value: {
+      name,
+      email,
+      age,
+      qualification,
+      contactNumber,
+      studyStatus,
+      countries: countries.items,
+      universities: universities.items,
+      nextStep,
+    },
+  };
+}
+
+export function composeEligibilityEmail(
+  enquiry: EligibilityEnquiry,
+  meta: { host: string; at: Date },
+): Email {
+  const lines = [
+    "Type: Eligibility check",
+    `Name: ${enquiry.name}`,
+    `Email: ${enquiry.email}`,
+    `Age: ${enquiry.age}`,
+    `Current qualification: ${enquiry.qualification}`,
+    `Contact number: ${enquiry.contactNumber}`,
+    `Status in the study abroad process: ${enquiry.studyStatus}`,
+    `Preferred countries: ${enquiry.countries.join(", ")}`,
+    `Preferred universities: ${enquiry.universities.join("; ")}`,
+    `Next step they chose: ${NEXT_STEP_LABEL[enquiry.nextStep]}`,
+    "",
+    `Sent from the website eligibility check (${meta.host}) on ${meta.at.toISOString()}`,
+    "Reply to this email to answer the visitor directly.",
+  ];
+  return {
+    subject: `Eligibility check from ${enquiry.name}`.slice(0, 150),
+    text: lines.join("\n"),
+    replyTo: enquiry.email,
+  };
+}
