@@ -29,11 +29,14 @@ export default function HeroSection({ data }: Props) {
         <div className={styles.grid}>
           <div className="reveal">
             <h1 className={styles.headline}>
-              {data.headlineLead}
+              {/* The spaces matter: on phones the line breaks are hidden, and
+                  without a space the words run together ("theAnti-Agent"). */}
+              {data.headlineLead}{" "}
               <br />
               <span className={styles.accent}>{data.headlineAccent}</span>
               {headlineRest.map((line) => (
                 <span key={line}>
+                  {" "}
                   <br />
                   {line}
                 </span>
@@ -42,7 +45,7 @@ export default function HeroSection({ data }: Props) {
             <div className={styles.rule} />
             <p className={styles.sub}>
               <span className={styles.subMuted}>{data.subLead} </span>
-              <span className={styles.subHighlight}>{data.subHighlight}</span>
+              <span className={styles.subHighlight}>{data.subHighlight}</span>{" "}
               <br />
               <span className={styles.subMuted}>{data.subRest}</span>
             </p>
