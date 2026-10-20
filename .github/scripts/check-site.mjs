@@ -140,8 +140,11 @@ for (const path of pages) {
   const images = (body.match(/cdn\.sanity\.io\/images/g) ?? []).length;
   const text = visibleText(body);
   const bad = ["undefined", "[object Object]", "NaN"].filter((w) => text.includes(w));
-  const line = `${status} ${path} | ${title} | canonical ${canonical} | robots ${robots} | json-ld ${ld.join(",") || "-"} | sanity images ${images}${bad.length ? ` | BAD TEXT ${bad.join(",")}` : ""}`;
-  if (status !== 200 || bad.length) fail(line);
+  // Every page needs exactly one heading in the plain HTML. If the page text is
+  // only built in the browser, Google and AI tools see no heading at all.
+  const h1s = (body.match(/<h1[\s>]/g) ?? []).length;
+  const line = `${status} ${path} | ${title} | canonical ${canonical} | robots ${robots} | json-ld ${ld.join(",") || "-"} | h1 ${h1s} | sanity images ${images}${bad.length ? ` | BAD TEXT ${bad.join(",")}` : ""}`;
+  if (status !== 200 || bad.length || h1s !== 1) fail(line);
   else say(line);
 }
 

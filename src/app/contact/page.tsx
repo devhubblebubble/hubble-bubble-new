@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import NavBar from "@/components/NavBar/NavBar";
 import ContactPage from "@/components/ContactPage/ContactPage";
@@ -18,9 +17,7 @@ export default async function ContactPageRoute() {
   return (
     <main>
       <NavBar />
-      <Suspense fallback={null}>
-        <ContactPage settings={settings} />
-      </Suspense>
+      <ContactPage settings={settings} />
       <FooterSection />
     </main>
   );

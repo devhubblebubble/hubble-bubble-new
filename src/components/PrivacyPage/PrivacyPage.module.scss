@@ -103,10 +103,8 @@
 }
 
 .sectionBody {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
+  // Spacing matches the old page: 28px between paragraphs, 14px between a
+  // lead-in line and its bullets, and 14px between bullets.
   p,
   li {
     font-size: var(--fs-body);
@@ -114,12 +112,22 @@
     line-height: 1.75;
   }
 
+  > * + * {
+    margin-top: 28px;
+  }
+
+  p + ul,
+  p + ol {
+    margin-top: 14px;
+  }
+
   ul,
   ol {
     padding-left: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  }
+
+  li + li {
+    margin-top: 14px;
   }
 
   ul {
@@ -134,7 +142,14 @@
     font-size: var(--fs-body);
     font-weight: 600;
     color: var(--white);
-    margin-top: 8px;
+  }
+
+  > * + h3 {
+    margin-top: 36px;
+  }
+
+  > h3 + * {
+    margin-top: 12px;
   }
 
   a {
