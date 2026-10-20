@@ -131,8 +131,14 @@ else say(`/recruitment/ matches Sanity exactly for all ${roles.length} roles (ch
 const slugs = [...new Set([...listing.body.matchAll(/href="\/recruitment\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];
 const pages = ["/", "/recruitment/", "/about/", "/services/", "/stories/", "/privacy/", "/contact/", ...slugs.map((s) => `/recruitment/${s}/`)];
 
+// Every Hubble Bubble email address found in the pages, and which pages show it
+const emailPages = new Map();
+
 for (const path of pages) {
   const { status, body } = await get(path);
+  for (const m of body.matchAll(/[A-Za-z0-9._%+-]+@hubblebubble\.[a-z]+/g)) {
+    emailPages.set(m[0], (emailPages.get(m[0]) ?? new Set()).add(path));
+  }
   const title = decode(first(/<title[^>]*>([^<]*)<\/title>/, body) ?? "");
   const canonical = first(/<link rel="canonical" href="([^"]*)"/, body) ?? "-";
   const robots = first(/<meta name="robots" content="([^"]*)"/, body) ?? "-";
@@ -146,6 +152,20 @@ for (const path of pages) {
   const line = `${status} ${path} | ${title} | canonical ${canonical} | robots ${robots} | json-ld ${ld.join(",") || "-"} | h1 ${h1s} | sanity images ${images}${bad.length ? ` | BAD TEXT ${bad.join(",")}` : ""}`;
   if (status !== 200 || bad.length || h1s !== 1) fail(line);
   else say(line);
+}
+
+// The email address saved in Site settings is the one the whole site should
+// show. Any other Hubble Bubble address (an old one left in some text) fails.
+const settingsRes = await fetch(`${SANITY}?query=${encodeURIComponent('*[_type == "siteSettings"][0].contactEmail')}`);
+const settingsEmail = String((await settingsRes.json()).result ?? "").trim();
+say(
+  `Hubble Bubble email addresses on the site: ${
+    [...emailPages].map(([address, where]) => `${address} (${where.size} page${where.size === 1 ? "" : "s"})`).join(", ") || "none"
+  } | Site settings has ${settingsEmail || "nothing"}`,
+);
+const otherEmails = [...emailPages.keys()].filter((address) => address.toLowerCase() !== settingsEmail.toLowerCase());
+if (settingsEmail && otherEmails.length) {
+  fail(`email addresses that are not the Site settings one (${settingsEmail}): ${otherEmails.map((a) => `${a} on ${[...emailPages.get(a)].join(" ")}`).join(" | ")}`);
 }
 
 // ── 4. robots.txt, sitemap, and a missing page ──────────────────────────────
