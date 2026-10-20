@@ -184,9 +184,30 @@ describe("contact form endpoint", () => {
     const { deps } = fakeResend(() => new Response('{"name":"validation_error","message":"nope"}', { status: 403 }));
     const res = await handleApi(post(good), env, deps);
     assert.equal(res.status, 502);
-    const text = JSON.stringify(await json(res));
+    const body = await json(res);
+    const text = JSON.stringify(body);
     assert.ok(!text.includes("re_secret_key"));
     assert.ok(!text.includes("nope"));
+    // Only the status number and Resend's short error name are passed on
+    assert.equal(body.error, "send_failed");
+    assert.equal(body.upstream, 403);
+    assert.equal(body.reason, "validation_error");
+  });
+
+  it("does not pass on a Resend error name that looks odd", async () => {
+    const { deps } = fakeResend(() => new Response('{"name":"<script>alert(1)</script>"}', { status: 422 }));
+    const body = await json(await handleApi(post(good), env, deps));
+    assert.equal(body.upstream, 422);
+    assert.equal(body.reason, undefined);
+  });
+
+  it("copes with a Resend refusal that is not JSON", async () => {
+    const { deps } = fakeResend(() => new Response("error code: 1010", { status: 403 }));
+    const res = await handleApi(post(good), env, deps);
+    assert.equal(res.status, 502);
+    const body = await json(res);
+    assert.equal(body.upstream, 403);
+    assert.equal(body.reason, undefined);
   });
 
   it("reports a failure when Resend cannot be reached", async () => {
@@ -198,6 +219,27 @@ describe("contact form endpoint", () => {
     };
     const res = await handleApi(post(good), env, deps);
     assert.equal(res.status, 502);
+    const body = await json(res);
+    assert.equal(body.error, "send_failed");
+    assert.equal(body.reason, "network");
+  });
+
+  it("tells a slow Resend apart from an unreachable one", async () => {
+    const deps: Deps = {
+      fetch: async () => {
+        throw new DOMException("timed out", "TimeoutError");
+      },
+      now: () => new Date(),
+    };
+    const body = await json(await handleApi(post(good), env, deps));
+    assert.equal(body.reason, "timeout");
+  });
+
+  it("introduces itself to Resend with a User-Agent", async () => {
+    const { calls, deps } = fakeResend();
+    await handleApi(post(good), env, deps);
+    const headers = calls[0].init.headers as Record<string, string>;
+    assert.match(headers["User-Agent"], /^hubble-bubble-website\//);
   });
 
   it("never lets the browser or Cloudflare cache an answer", async () => {

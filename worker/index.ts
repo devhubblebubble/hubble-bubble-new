@@ -152,6 +152,7 @@ export async function handleApi(
       headers: {
         Authorization: `Bearer ${env.RESEND_API_KEY}`,
         "Content-Type": "application/json",
+        "User-Agent": "hubble-bubble-website/1.0",
       },
       body: JSON.stringify({
         from: env.CONTACT_FROM,
@@ -163,15 +164,29 @@ export async function handleApi(
       signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
-      console.error(`Resend refused the email (${res.status}): ${(await res.text()).slice(0, 300)}`);
-      return reply(502, { ok: false, error: "send_failed" });
+      const detail = (await res.text()).slice(0, 4000);
+      console.error(`Resend refused the email (${res.status}): ${detail.slice(0, 300)}`);
+      // Only the status number and Resend's short error name go back to the
+      // browser. Its full message can include the account's email address.
+      return reply(502, { ok: false, error: "send_failed", upstream: res.status, reason: refusalName(detail) });
     }
   } catch (err) {
     console.error(`Could not reach Resend: ${String(err)}`);
-    return reply(502, { ok: false, error: "send_failed" });
+    const reason = err instanceof Error && err.name === "TimeoutError" ? "timeout" : "network";
+    return reply(502, { ok: false, error: "send_failed", reason });
   }
 
   return reply(200, { ok: true });
+}
+
+/** Resend's short error name (like "validation_error") from its reply, if it has one. */
+function refusalName(body: string): string | undefined {
+  try {
+    const name = (JSON.parse(body) as { name?: unknown }).name;
+    return typeof name === "string" && /^[A-Za-z0-9_]{1,40}$/.test(name) ? name : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 const handler = {
