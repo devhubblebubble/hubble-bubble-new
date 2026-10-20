@@ -4,6 +4,7 @@ import '../style/globals.scss';
 import ParallaxStars from '@/components/Background/ParallaxStars';
 import ShootingStars from '@/components/Background/ShootingStars';
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
+import MobileTabBar from '@/components/MobileTabBar/MobileTabBar';
 import TransitionProvider from '@/providers/TransitionProvider';
 import { noIndex, siteUrl } from '@/lib/site';
 
@@ -42,12 +43,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // data-scroll-behavior: lets Next.js scroll instantly when a link changes
+    // page (e.g. to /#journey), while the page itself still scrolls smoothly.
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${poppins.className} ${poppins.variable}`}>
          <ParallaxStars />
         {/* <ShootingStars />  */}
         <ScrollReveal />
         <TransitionProvider>{children}</TransitionProvider>
+        {/* Phones only: the bottom tab bar (hidden by CSS on bigger screens). */}
+        <MobileTabBar />
       </body>
     </html>
   );

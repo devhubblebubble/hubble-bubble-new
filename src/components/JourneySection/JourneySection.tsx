@@ -73,6 +73,7 @@ export default function JourneySection({ steps = [], outputsLabel }: Props) {
   return (
     <section
       ref={sectionRef}
+      id="journey"
       className={styles.section}
       style={{ height: `${(steps.length + 1) * 100}vh` }}
     >

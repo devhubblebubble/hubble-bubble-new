@@ -137,4 +137,7 @@
   .grid { grid-template-columns: 1fr; }
 
   .beamSpacing { margin-bottom: 40px; }
+
+  // On phones the bottom bar sits under the footer (the page adds room for it).
+  .footer { padding-bottom: 24px; }
 }

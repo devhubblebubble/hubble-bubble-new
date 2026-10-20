@@ -1,0 +1,81 @@
+// Phone-only bottom bar, measured from the designer's Figma
+// (HBWebsite/Mobile/Home, "Frame 124"): 94px tall, #151515, 24px padding all
+// round, icon 24px high, label Poppins Light 12px, tabs spread edge to edge.
+// Orange = the page you are on. It only shows on phones held upright; on a
+// phone on its side the bar would eat too much of the screen.
+//
+// globals.scss sets --tabbar-h to the bar's height, so the page can leave room.
+
+.bar {
+  display: none;
+}
+
+@media (max-width: 640px) and (min-height: 480px) {
+  .bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    // Above the page, below the top menu (100) and the eligibility pop-up (1200).
+    z-index: 90;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px 24px max(24px, env(safe-area-inset-bottom, 0px));
+    background: #151515;
+    // A hairline so the bar still reads as a bar over similar dark content.
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .tab {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #c6c7c1;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease, opacity 0.2s ease;
+
+    // Bigger tap area than the icon and label alone (the bar's padding and the
+    // gaps between tabs are free), without changing the layout.
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -24px -14px;
+    }
+
+    &:active {
+      opacity: 0.7;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
+  }
+
+  .icon {
+    display: block;
+    flex: none;
+  }
+
+  .label {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 18px;
+    color: #d9d9d9;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+  }
+
+  .active {
+    color: var(--orange);
+
+    .label {
+      color: var(--orange);
+    }
+  }
+}
