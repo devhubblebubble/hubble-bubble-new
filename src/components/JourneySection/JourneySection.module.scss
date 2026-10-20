@@ -9,7 +9,8 @@
 .stickyViewport {
   position: sticky;
   top: 0;
-  height: 100vh;
+  // The phone bottom bar covers the bottom of the screen; keep the step out of it.
+  height: calc(100vh - var(--tabbar-h));
   width: 100%;
   overflow: hidden;
 }
@@ -345,4 +346,50 @@
   height: rem(10);
   background: #FF5A1F;
   box-shadow: 0 0 rem(10) rgba(255, 90, 31, 0.4);
+}
+
+// Short phone screens (an iPhone SE or 8, or a phone with the bottom bar
+// taking a slice): the step did not fit, so the globe and the spacing shrink.
+@media (max-width: 767px) and (max-height: 760px) {
+  .globeWrapper {
+    max-width: rem(190);
+    height: rem(160);
+    margin-top: rem(-8);
+    margin-bottom: rem(4);
+  }
+
+  .stepNumber {
+    font-size: 2.5rem;
+    margin-bottom: rem(-4);
+  }
+
+  .stepTitle {
+    min-height: 2.6em;
+    margin-bottom: rem(10);
+  }
+
+  .description {
+    line-height: 1.45;
+    min-height: 0;
+    margin-bottom: rem(12);
+  }
+
+  .keyOutputsLabel {
+    margin-bottom: rem(8);
+  }
+
+  .tagButton {
+    padding: rem(5) rem(12);
+    font-size: 0.75rem;
+  }
+
+  .paginationDots {
+    bottom: rem(14);
+  }
+}
+
+@media (max-width: 767px) and (max-height: 600px) {
+  .globeWrapper {
+    display: none;
+  }
 }

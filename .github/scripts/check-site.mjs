@@ -129,7 +129,7 @@ else say(`/recruitment/ matches Sanity exactly for all ${roles.length} roles (ch
 
 // ── 3. Every page ───────────────────────────────────────────────────────────
 const slugs = [...new Set([...listing.body.matchAll(/href="\/recruitment\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];
-const pages = ["/", "/recruitment/", "/about/", "/services/", "/stories/", "/privacy/", "/contact/", ...slugs.map((s) => `/recruitment/${s}/`)];
+const pages = ["/", "/recruitment/", "/about/", "/services/", "/journey/", "/gallery/", "/stories/", "/privacy/", "/contact/", ...slugs.map((s) => `/recruitment/${s}/`)];
 
 // Every Hubble Bubble email address found in the pages, and which pages show it
 const emailPages = new Map();

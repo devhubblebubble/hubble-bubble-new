@@ -40,6 +40,35 @@ $tones: (
   text-align: center;
 }
 
+// The Gallery screen of its own (/gallery/): title under the top menu, the
+// ring filling what is left above the bottom bar, the hint under it.
+.page {
+  --cluster: max(200px, min(calc(100vw - 2 * var(--pad-x)), 750px, calc(100dvh - 330px - var(--tabbar-h))));
+
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--tabbar-h));
+  padding: 120px var(--pad-x) 28px;
+
+  @media (max-height: 620px) {
+    padding-top: 104px;
+  }
+
+  @media (min-width: 768px) {
+    --cluster: max(200px, min(calc(100vw - 2 * var(--pad-x)), 750px, calc(100dvh - 380px)));
+
+    padding-top: 160px;
+  }
+
+  // The ring sits in the middle of whatever is left between the title and the hint.
+  .fieldWrap {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 .header {
   max-width: 36rem;
   margin: 0 auto;
@@ -67,11 +96,40 @@ $tones: (
 
 // ── Cluster ───────────────────────────────────────────────────────────────────
 
+.fieldWrap {
+  width: var(--cluster);
+  margin: clamp(22px, 3.6dvh, 42px) auto clamp(18px, 2.8dvh, 32px);
+}
+
+// The field of bubbles (BubbleField). Drag it in any direction.
 .cluster {
   position: relative;
   width: var(--cluster);
   height: var(--cluster);
-  margin: clamp(22px, 3.6dvh, 42px) auto clamp(18px, 2.8dvh, 32px);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-dragging] {
+    cursor: grabbing;
+  }
+
+  // While dragging, bubbles passing under the pointer must not pop up.
+  &[data-dragging] .face {
+    transform: none;
+    transition: none;
+  }
+}
+
+// Its own screen: every swipe moves the bubbles.
+.clusterPage {
+  touch-action: none;
+}
+
+// Part of the home page: swiping up and down still scrolls the page.
+.clusterSection {
+  touch-action: pan-y;
 }
 
 .ring {
@@ -83,14 +141,17 @@ $tones: (
   pointer-events: none;
 }
 
+// One bubble. Its place and size come from a transform that BubbleField
+// sets (translate from the middle of the ring, then scale).
 .bubble {
   --d: calc(var(--cluster) * var(--k));
 
   position: absolute;
-  left: var(--x);
-  top: var(--y);
+  left: 50%;
+  top: 50%;
   width: var(--d);
   height: var(--d);
+  margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -98,16 +159,21 @@ $tones: (
   display: block;
   color: inherit;
   font: inherit;
-  transform: translate(-50%, -50%);
-  cursor: default;
+  cursor: inherit;
+  will-change: transform;
   -webkit-tap-highlight-color: transparent;
+
+  img {
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
 
   &:focus-visible {
     outline: none;
   }
 }
 
-.clickable {
+.cluster:not([data-dragging]) .clickable {
   cursor: pointer;
 }
 
@@ -116,11 +182,17 @@ $tones: (
   display: block;
   width: 100%;
   height: 100%;
-  animation: driftA calc(7s + var(--i) * 0.55s) ease-in-out calc(var(--i) * -0.9s) infinite alternate;
+  animation: driftA 8s ease-in-out infinite alternate;
 }
 
 .bubble:nth-child(even) .drift {
   animation-name: driftB;
+  animation-duration: 9.5s;
+  animation-delay: -3s;
+}
+
+.bubble:nth-child(3n) .drift {
+  animation-delay: -5.5s;
 }
 
 @keyframes driftA {
@@ -128,7 +200,7 @@ $tones: (
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(calc(var(--cluster) * 0.012), calc(var(--cluster) * -0.016), 0);
+    transform: translate3d(calc(var(--cluster) * 0.006), calc(var(--cluster) * -0.009), 0);
   }
 }
 
@@ -137,7 +209,7 @@ $tones: (
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(calc(var(--cluster) * -0.014), calc(var(--cluster) * 0.012), 0);
+    transform: translate3d(calc(var(--cluster) * -0.008), calc(var(--cluster) * 0.006), 0);
   }
 }
 

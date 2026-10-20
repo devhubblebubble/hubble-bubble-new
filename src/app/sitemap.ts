@@ -4,7 +4,7 @@ import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
 
-const STATIC_PAGES = ["", "/services/", "/recruitment/", "/stories/", "/about/", "/contact/", "/privacy/"];
+const STATIC_PAGES = ["", "/services/", "/journey/", "/gallery/", "/recruitment/", "/stories/", "/about/", "/contact/", "/privacy/"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const roles = await getOpenRoles();

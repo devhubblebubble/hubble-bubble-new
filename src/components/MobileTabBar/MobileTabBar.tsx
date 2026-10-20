@@ -9,25 +9,26 @@ import type { TabIconName } from "./icons";
 import styles from "./MobileTabBar.module.scss";
 
 // The phone-only bar at the bottom of the screen, from the designer's Figma
-// (HBWebsite/Mobile/Home). Journey and Gallery are sections of the home page,
-// so they scroll there instead of opening a page of their own.
+// (HBWebsite/Mobile/Home). Journey and Gallery open screens of their own
+// (/journey/ and /gallery/) that hold just that part of the home page. On the
+// home page itself their tabs light up while that section is on screen.
 type Tab = {
   key: "home" | "services" | "journey" | "stories" | "gallery";
   label: string;
   href: string;
   icon: TabIconName;
-  /** The page the tab belongs to. Tapping it while already there scrolls. */
+  /** The page the tab belongs to. Tapping it while already there scrolls to the top. */
   page: string;
-  /** The home page section the tab scrolls to (its id), if it is not the top. */
+  /** The home page section (its id) that lights this tab up while on screen. */
   section?: "journey" | "gallery";
 };
 
 const TABS: Tab[] = [
   { key: "home", label: "Home", href: "/", icon: "home", page: "/" },
   { key: "services", label: "Services", href: "/services", icon: "services", page: "/services" },
-  { key: "journey", label: "Journey", href: "/#journey", icon: "journey", page: "/", section: "journey" },
+  { key: "journey", label: "Journey", href: "/journey", icon: "journey", page: "/journey", section: "journey" },
   { key: "stories", label: "Stories", href: "/stories", icon: "stories", page: "/stories" },
-  { key: "gallery", label: "Gallery", href: "/#gallery", icon: "gallery", page: "/", section: "gallery" },
+  { key: "gallery", label: "Gallery", href: "/gallery", icon: "gallery", page: "/gallery", section: "gallery" },
 ];
 
 const SECTIONS = ["journey", "gallery"] as const;
@@ -68,23 +69,18 @@ export default function MobileTabBar() {
   let current: Tab["key"] | null = null;
   if (path === "/") current = inSection ?? "home";
   else if (path.startsWith("/services")) current = "services";
+  else if (path.startsWith("/journey")) current = "journey";
   else if (path.startsWith("/stories")) current = "stories";
+  else if (path.startsWith("/gallery")) current = "gallery";
 
   function onTabClick(event: MouseEvent<HTMLAnchorElement>, tab: Tab) {
     // Leave new-tab and modified clicks to the browser.
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
-    // Already on the page: scroll instead of reloading it.
+    // Already on the page: scroll to the top instead of reloading it.
     if (path === tab.page) {
-      if (tab.section) {
-        const section = document.getElementById(tab.section);
-        if (!section) return;
-        event.preventDefault();
-        section.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
-      } else {
-        event.preventDefault();
-        window.scrollTo({ top: 0, behavior: scrollBehavior() });
-      }
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: scrollBehavior() });
     }
   }
 
