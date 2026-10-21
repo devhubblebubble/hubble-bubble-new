@@ -2,11 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./PartnerCardsSection.module.scss";
-
-gsap.registerPlugin(ScrollTrigger);
 
 import { imageDims, imageUrl } from "@/lib/sanity/image";
 import type { HomePage, LogoItem } from "@/lib/sanity/types";
@@ -48,109 +44,117 @@ function NetworkLogo({ item, hidden }: { item: LogoItem; hidden?: boolean }) {
   );
 }
 
+const CARD_Y_OFFSET = 5;     // % each waiting card sits lower than the one in front
+const CARD_SCALE_STEP = 0.075; // how much smaller each waiting card is
+
+/**
+ * Where a card is for a given scroll position. `flipped` is how many cards have
+ * already flipped away (a fraction while one is mid-flip): a card in front of
+ * that flips up and tips back, the ones behind it drift forward.
+ */
+function cardTransform(index: number, count: number, flipped: number) {
+  const done = Math.min(Math.floor(flipped), count - 1);
+  const part = flipped - done;
+  if (index < done) return `translate(-50%, -250%) rotateX(35deg)`;
+  if (index === done && index < count - 1) {
+    const y = -50 - 150 * part;
+    return part === 0 ? `translate(-50%, ${y}%)` : `translate(-50%, ${y}%) rotateX(${35 * part}deg)`;
+  }
+  if (index === count - 1 && done >= count - 1) return `translate(-50%, -50%)`;
+  const behind = index - done - part;
+  const y = -50 + behind * CARD_Y_OFFSET;
+  const scale = 1 - behind * CARD_SCALE_STEP;
+  return scale === 1 ? `translate(-50%, ${y}%)` : `translate(-50%, ${y}%) scale(${scale})`;
+}
+
 export default function PartnerCardsSection({ data }: Props) {
+  const pinRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const collabs = data.networkItems ?? [];
   const backingLogo = imageUrl(data.backingLogo, { width: 1100 });
   const backingDims = imageDims(data.backingLogo, { width: 543, height: 198 });
 
+  // The section stays on screen (CSS sticky) while the page scrolls through a
+  // taller wrapper; the scroll position through that wrapper moves the cards.
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const cards      = gsap.utils.toArray<HTMLElement>(`.${styles.card}`);
-      const totalCards = cards.length;           // 3
-      const segmentSize   = 1 / totalCards;
-      const cardYOffset   = 5;     // px% stagger between waiting cards
-      const cardScaleStep = 0.075; // scale step per card behind active
+    const pin = pinRef.current;
+    const section = sectionRef.current;
+    if (!pin || !section) return;
+    const cards = Array.from(section.querySelectorAll<HTMLElement>("article"));
+    const flips = cards.length - 1;
+    if (flips < 1) return;
 
-      /* ── Initial stack: first card centred, rest offset + scaled ── */
-      cards.forEach((card, i) => {
-        gsap.set(card, {
-          xPercent: -50,
-          yPercent: -50 + i * cardYOffset,
-          scale:     1 - i * cardScaleStep,
-        });
-      });
-
-      // Only the first (totalCards-1) cards flip away.
-      // The last card stays centred — it's the resting state when the section unpins.
-      const flipCount = totalCards - 1; // 2 for 3 cards
-
-      const pinScrollPx = () => {
-        const h = window.innerHeight;
-        const narrow = window.innerWidth <= 768;
-        /* Shorter pin on small screens = less empty pin-spacer below #about */
-        const scrollVhPerFlip = narrow ? 0.62 : 1.12;
-        const scrollVhTail = narrow ? 0.14 : 0.28;
-        return h * (flipCount * scrollVhPerFlip + scrollVhTail);
-      };
-
-      /* ── ScrollTrigger — pin section, scrub animation ── */
-      ScrollTrigger.create({
-        trigger:    sectionRef.current,
-        start:      "top top",
-        // Function + refresh on resize keeps pin length in sync with the viewport
-        end:        () => `+=${pinScrollPx()}px`,
-        pin:        true,
-        pinSpacing: true,
-        scrub:      0.45,
-
-        onUpdate: (self) => {
-          const progress    = self.progress;
-          // Only count progress within the flip segments (0 → flipCount/totalCards)
-          const activeIndex = Math.min(
-            Math.floor(progress / segmentSize),
-            flipCount, // cap at flipCount so we never "activate" beyond last flip
-          );
-          const segProgress =
-            (progress - activeIndex * segmentSize) / segmentSize;
-
-          cards.forEach((card, i) => {
-            if (i < activeIndex) {
-              // Already flipped → park above viewport
-              gsap.set(card, { yPercent: -250, rotationX: 35 });
-
-            } else if (i === activeIndex && i < flipCount) {
-              // Currently flipping — animate upward
-              gsap.set(card, {
-                yPercent:  gsap.utils.interpolate(-50, -200, segProgress),
-                rotationX: gsap.utils.interpolate(0,   35,   segProgress),
-                scale: 1,
-              });
-
-            } else if (i === totalCards - 1 && activeIndex >= flipCount) {
-              // Last card is now the frontmost — lock it perfectly centred, never flip
-              gsap.set(card, { yPercent: -50, rotationX: 0, scale: 1 });
-
-            } else {
-              // Waiting cards — drift up and scale in as the card ahead flips
-              const behind = i - activeIndex;
-              gsap.set(card, {
-                yPercent:  -50 + (behind - segProgress) * cardYOffset,
-                rotationX: 0,
-                scale:     1 - (behind - segProgress) * cardScaleStep,
-              });
-            }
-          });
-        },
-      });
-    }, sectionRef);
-
-    const onResize = () => {
-      ScrollTrigger.refresh();
+    // How much of the wrapper's scroll one flip takes, from the same numbers the stylesheet sizes it with.
+    let flipShare = 1 / cards.length;
+    const readShare = () => {
+      const style = getComputedStyle(pin);
+      const flip = parseFloat(style.getPropertyValue("--flip"));
+      const hold = parseFloat(style.getPropertyValue("--hold"));
+      if (flip > 0 && hold >= 0) flipShare = flip / (flips * flip + hold);
     };
+    readShare();
+
+    let raf = 0;
+    let shown = -1;
+    const update = () => {
+      raf = 0;
+      const range = pin.offsetHeight - section.offsetHeight;
+      if (range <= 0) return;
+      const progress = Math.min(1, Math.max(0, -pin.getBoundingClientRect().top / range));
+      const flipped = Math.min(flips, progress / flipShare);
+      if (Math.abs(flipped - shown) < 0.0005) return;
+      shown = flipped;
+      cards.forEach((card, i) => {
+        card.style.transform = cardTransform(i, cards.length, flipped);
+      });
+    };
+    const request = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    const onResize = () => {
+      readShare();
+      shown = -1;
+      request();
+    };
+
+    // Only follow the scroll while the section is (nearly) on screen.
+    let listening = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const on = entries[entries.length - 1].isIntersecting;
+        if (on && !listening) {
+          window.addEventListener("scroll", request, { passive: true });
+          listening = true;
+          request();
+        } else if (!on && listening) {
+          window.removeEventListener("scroll", request);
+          listening = false;
+          request();
+        }
+      },
+      { rootMargin: "100px 0px" },
+    );
+    io.observe(pin);
     window.addEventListener("resize", onResize, { passive: true });
+    request();
 
     return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", request);
       window.removeEventListener("resize", onResize);
-      ctx.revert();
+      cancelAnimationFrame(raf);
     };
   }, []);
 
+  const count = 3;
+  const rest = (i: number) => ({ transform: cardTransform(i, count, 0) });
+
   return (
+    <div ref={pinRef} className={styles.pin}>
     <section ref={sectionRef} id="about" className={styles.section}>
 
       {/* ── Card 1 — Scottish EDGE / government backing ───── */}
-      <article className={`${styles.card} ${styles.cardEdge}`}>
+      <article className={`${styles.card} ${styles.cardEdge}`} style={rest(0)}>
         <div className={styles.cardGrid}>
           <p className={styles.text}>{data.backingText}</p>
           <div className={styles.partnerBlock}>
@@ -171,7 +175,7 @@ export default function PartnerCardsSection({ data }: Props) {
       </article>
 
       {/* ── Card 2 — British Council & ICEF ───────────────── */}
-      <article className={`${styles.card} ${styles.cardBos}`}>
+      <article className={`${styles.card} ${styles.cardBos}`} style={rest(1)}>
         <div className={`${styles.cardGrid} ${styles.flip}`}>
           <div className={styles.partnerBlock}>
             <h3 className={styles.heading}>
@@ -200,7 +204,7 @@ export default function PartnerCardsSection({ data }: Props) {
       </article>
 
       {/* ── Card 3 — UK business network marquee ───────────── */}
-      <article className={`${styles.card} ${styles.cardCollab}`}>
+      <article className={`${styles.card} ${styles.cardCollab}`} style={rest(2)}>
         <div className={styles.collabInner}>
           <h3 className={styles.heading}>
             <Lines text={data.networkHeading} />
@@ -225,5 +229,6 @@ export default function PartnerCardsSection({ data }: Props) {
       </article>
 
     </section>
+    </div>
   );
 }

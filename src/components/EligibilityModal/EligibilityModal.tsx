@@ -124,7 +124,7 @@ function getInitialFormState(): FormState {
   };
 }
 
-interface EligibilityModalProps {
+export interface EligibilityModalProps {
   isOpen: boolean;
   onClose: () => void;
   /** Where people email their documents (from Site settings) */

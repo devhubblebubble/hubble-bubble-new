@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import EligibilityModal from "@/components/EligibilityModal";
+import EligibilityModal, { preloadOnIntent } from "@/components/EligibilityModal";
 import type { HomePage, SiteSettings } from "@/lib/sanity/types";
 import styles from "./CtaSection.module.scss";
 
@@ -34,6 +34,7 @@ export default function CtaSection({ data, settings }: Props) {
               <button
                 className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={() => setEligibilityOpen(true)}
+                {...preloadOnIntent}
               >
                 {data.ctaPrimaryLabel ?? "Take the eligibility Test"}
               </button>

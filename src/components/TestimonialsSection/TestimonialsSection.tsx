@@ -2,14 +2,9 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCards } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
-
-import "swiper/css";
-import "swiper/css/effect-cards";
 
 import Dots from "@/components/Dots/Dots";
+import CardStack, { type CardStackHandle } from "./CardStack";
 import styles from "./TestimonialsSection.module.scss";
 
 import { imageUrl } from "@/lib/sanity/image";
@@ -19,13 +14,11 @@ type Props = { title?: string; lead?: string; testimonials?: Testimonial[] };
 
 export default function TestimonialsSection({ title, lead, testimonials = [] }: Props) {
   const [idx, setIdx] = useState(0);
-  const swiperRef = useRef<SwiperType | null>(null);
+  const stackRef = useRef<CardStackHandle | null>(null);
 
   const go = (i: number) => {
-    if (!swiperRef.current) return;
     const count = testimonials.length;
-    const next = ((i % count) + count) % count;
-    swiperRef.current.slideTo(next);
+    stackRef.current?.slideTo(((i % count) + count) % count);
   };
 
   const t = testimonials[Math.min(idx, testimonials.length - 1)];
@@ -41,31 +34,24 @@ export default function TestimonialsSection({ title, lead, testimonials = [] }: 
       <div className={styles.grid}>
         <div className={styles.cardsWrapper}>
           <div className={styles.cardsContainer}>
-            <Swiper
-              effect="cards"
-              grabCursor
-              modules={[EffectCards]}
-              onSwiper={(s) => (swiperRef.current = s)}
-              onSlideChange={(s) => setIdx(s.activeIndex)}
-              className={styles.swiper}
-            >
-              {testimonials.map((tm, i) => {
+            <CardStack
+              ref={stackRef}
+              onChange={setIdx}
+              cardClassName={styles.card}
+              cards={testimonials.map((tm) => {
                 const src = imageUrl(tm.photo, { width: 900 });
-                return (
-                  <SwiperSlide key={tm._key ?? i} className={styles.card}>
-                    {src && (
-                      <Image
-                        src={src}
-                        alt={tm.photo?.alt ?? tm.name ?? ""}
-                        fill
-                        sizes="(max-width: 640px) 82vw, (max-width: 1100px) 76vw, min(440px, 48vw)"
-                        style={{ objectFit: "cover" }}
-                      />
-                    )}
-                  </SwiperSlide>
-                );
+                return src ? (
+                  <Image
+                    src={src}
+                    alt={tm.photo?.alt ?? tm.name ?? ""}
+                    fill
+                    draggable={false}
+                    sizes="(max-width: 640px) 82vw, (max-width: 1100px) 76vw, min(440px, 48vw)"
+                    style={{ objectFit: "cover" }}
+                  />
+                ) : null;
               })}
-            </Swiper>
+            />
           </div>
         </div>
 

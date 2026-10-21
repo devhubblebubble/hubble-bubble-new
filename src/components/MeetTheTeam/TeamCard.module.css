@@ -9,8 +9,19 @@
     0 0 0 1px rgba(255, 255, 255, 0.07);
   isolation: isolate;
   cursor: crosshair;
+  /* Sideways drags paint the trail; up and down still scrolls the page. */
+  touch-action: pan-y;
   /* subtle mint glow on hover to hint at the drag effect */
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Only one portrait: nothing to reveal, so no crosshair and no hint. */
+.card[data-still] {
+  cursor: default;
+}
+
+.card[data-still]::after {
+  display: none;
 }
 
 .card:hover {
@@ -27,10 +38,17 @@
   z-index: 1;
 }
 
+.photo {
+  object-fit: cover;
+}
+
 .canvas {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 /* Drag hint badge — appears on hover */

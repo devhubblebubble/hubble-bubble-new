@@ -10,6 +10,12 @@
   width: 100%;
   height: 100%;
   display: block;
+  opacity: 0;
+  transition: opacity 600ms ease;
+
+  &[data-ready="true"] {
+    opacity: 1;
+  }
 }
 
 .markers {
@@ -21,7 +27,12 @@
 .marker {
   position: absolute;
   pointer-events: none;
-  transition: opacity 150ms ease;
+  // Shown by the globe while the city faces the camera; its position is set there too.
+  display: none;
+
+  &[data-on] {
+    display: block;
+  }
 }
 
 .stem {

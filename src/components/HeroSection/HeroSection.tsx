@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import EligibilityModal from "@/components/EligibilityModal";
+import EligibilityModal, { preloadOnIntent } from "@/components/EligibilityModal";
 import { useCarousel } from "@/hooks/useCarousel";
 import { countryCode, countryName, flagSrc } from "@/lib/flags";
 import { imageDims, imageUrl } from "@/lib/sanity/image";
@@ -105,6 +105,7 @@ export default function HeroSection({ data, settings }: Props) {
               <button
                 className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={() => setEligibilityOpen(true)}
+                {...preloadOnIntent}
               >
                 {data.primaryCtaLabel ?? "Take the eligibility Test"}
               </button>

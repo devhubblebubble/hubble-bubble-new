@@ -1,18 +1,13 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import * as THREE from "three";
-import {
-  displayFragmentShader,
-  fluidFragmentShader,
-  vertexShader,
-} from "./shaders";
+import Image from "next/image";
 import styles from "./TeamCard.module.css";
 
 export interface TeamCardProps {
   /** URL/path of the default ("top") portrait shown before the trail. */
   topImage: string;
-  /** URL/path of the portrait revealed by the fluid trail. */
+  /** URL/path of the portrait revealed by the trail. */
   bottomImage: string;
   /** Member name displayed in orange. */
   name: string;
@@ -24,10 +19,29 @@ export interface TeamCardProps {
   aspectRatio?: string;
 }
 
+// How the reveal trail behaves. These are the numbers of the shader this
+// replaces. Every frame the pointer lays "paint" along the line it moved
+// (PEAK on the line itself, fading to nothing REACH away, measured in card
+// widths and heights). All paint fades by 3% a frame, at 60 frames a second.
+// The second portrait shows wherever there is more than THRESHOLD of paint.
+const FRAME_MS = 1000 / 60;
+const DECAY = 0.97;
+const PEAK = 0.3;
+const REACH = 0.09;
+const THRESHOLD = 0.02;
+const EDGE = 0.004; // the edge of the trail fades in over this much paint (less on sharper screens)
+const HOLD_MS = 50; // the last move keeps painting this long after the pointer stops
+const MIN_MOVE = 0.001; // a shorter move paints nothing
+const CELL = 4; // the paint is worked out at the corners of squares this many pixels wide
+const TOUCH_SLOP = 8; // a finger must go this far sideways before it paints, so scrolling never does
+
+type Point = { u: number; v: number };
+
 /**
- * Interactive team member card. Hovering / dragging across the card reveals
- * the `bottomImage` along a fluid trail driven by a Three.js ping-pong
- * simulation, while the rest of the card keeps showing `topImage`.
+ * Team member card. Moving a mouse or finger across it reveals the second
+ * portrait along a fading trail. The first portrait is a normal image (so
+ * search engines and screen readers see it). The trail is a small 2D canvas
+ * that only does any work while a trail is on screen.
  */
 export default function TeamCard({
   topImage,
@@ -37,270 +51,379 @@ export default function TeamCard({
   className,
   aspectRatio = "4 / 5",
 }: TeamCardProps) {
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // Without a second portrait there is nothing to reveal.
+  const still = bottomImage === topImage;
 
   useEffect(() => {
+    const card = cardRef.current;
     const canvas = canvasRef.current;
-    const cardEl = cardRef.current;
-    if (!canvas || !cardEl) return;
+    if (!card || !canvas || still) return;
+    const ctx = canvas.getContext("2d");
+    const maskCanvas = document.createElement("canvas");
+    const maskCtx = maskCanvas.getContext("2d");
+    if (!ctx || !maskCtx) return;
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      precision: "highp",
-      alpha: true,
-    });
+    let photo: HTMLImageElement | null = null;
+    let photoReady = false;
 
-    const getSize = () => {
-      const rect = cardEl.getBoundingClientRect();
-      return {
-        width: Math.max(1, Math.round(rect.width)),
-        height: Math.max(1, Math.round(rect.height)),
+    // The size the paint was set up for, in CSS pixels.
+    let width = 0;
+    let height = 0;
+    let cols = 0; // squares across and down; the paint lives at their corners
+    let rows = 0;
+    let paint = new Float32Array(0);
+    let mask: ImageData | null = null;
+    let maskBox: [number, number, number, number] | null = null; // pixels of the mask that may not be empty: x0, y0, x1, y1
+    let box: [number, number, number, number] | null = null; // corners with paint worth drawing: i0, j0, i1, j1
+    let peak = 0;
+    let sharp = 1; // device pixels per CSS pixel
+
+    // The pointer since the last frame, as fractions of the card.
+    let pending: Point[] = [];
+    let last: Point | null = null;
+    let hold: Point[] | null = null;
+    let lastMoveAt = 0;
+    let lastFrameAt = 0;
+    let raf = 0;
+    // A finger paints only after it has gone sideways (see TOUCH_SLOP).
+    let armed = true;
+    let downX = 0;
+    let downY = 0;
+
+    const setUp = () => {
+      const w = card.offsetWidth;
+      const h = card.offsetHeight;
+      if (w < 1 || h < 1) return false;
+      if (w === width && h === height && mask) return true;
+      width = w;
+      height = h;
+      sharp = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * sharp);
+      canvas.height = Math.round(h * sharp);
+      maskCanvas.width = w;
+      maskCanvas.height = h;
+      mask = maskCtx.createImageData(w, h);
+      maskBox = null;
+      cols = Math.ceil(w / CELL);
+      rows = Math.ceil(h / CELL);
+      paint = new Float32Array((cols + 1) * (rows + 1));
+      box = null;
+      peak = 0;
+      return true;
+    };
+
+    const loadPhoto = () => {
+      if (photo) return;
+      photo = new window.Image();
+      photo.decoding = "async";
+      photo.onload = () => {
+        photoReady = true;
       };
+      photo.src = bottomImage;
     };
 
-    let { width: viewWidth, height: viewHeight } = getSize();
-    renderer.setSize(viewWidth, viewHeight, false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-    const mouse = new THREE.Vector2(0.5, 0.5);
-    const prevMouse = new THREE.Vector2(0.5, 0.5);
-    let isMoving = false;
-    let lastMoveTime = 0;
-
-    const simSize = 500;
-    const pingPongTargets: THREE.WebGLRenderTarget[] = [
-      new THREE.WebGLRenderTarget(simSize, simSize, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType,
-      }),
-      new THREE.WebGLRenderTarget(simSize, simSize, {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType,
-      }),
-    ];
-    let currentTarget = 0;
-
-    const createPlaceholderTexture = (color: string) => {
-      const c = document.createElement("canvas");
-      c.width = 4;
-      c.height = 4;
-      const ctx = c.getContext("2d");
-      if (ctx) {
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, 4, 4);
-      }
-      const tex = new THREE.CanvasTexture(c);
-      tex.minFilter = THREE.LinearFilter;
-      return tex;
-    };
-
-    const topTexture = createPlaceholderTexture("#080808");
-    const bottomTexture = createPlaceholderTexture("#080808");
-    const topTextureSize = new THREE.Vector2(1, 1);
-    const bottomTextureSize = new THREE.Vector2(1, 1);
-
-    const trailsMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        uPrevTrails: { value: null },
-        uMouse: { value: mouse },
-        uPrevMouse: { value: prevMouse },
-        uResolution: { value: new THREE.Vector2(simSize, simSize) },
-        uDecay: { value: 0.97 },
-        uIsMoving: { value: false },
-      },
-      vertexShader,
-      fragmentShader: fluidFragmentShader,
-    });
-
-    const displayMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        uFluid: { value: null },
-        uTopTexture: { value: topTexture },
-        uBottomTexture: { value: bottomTexture },
-        uResolution: { value: new THREE.Vector2(viewWidth, viewHeight) },
-        uDpr: { value: window.devicePixelRatio },
-        uTopTextureSize: { value: topTextureSize },
-        uBottomTextureSize: { value: bottomTextureSize },
-      },
-      vertexShader,
-      fragmentShader: displayFragmentShader,
-    });
-
-    const planeGeometry = new THREE.PlaneGeometry(2, 2);
-    const displayMesh = new THREE.Mesh(planeGeometry, displayMaterial);
-    scene.add(displayMesh);
-
-    const simMesh = new THREE.Mesh(planeGeometry, trailsMaterial);
-    const simScene = new THREE.Scene();
-    simScene.add(simMesh);
-
-    renderer.setRenderTarget(pingPongTargets[0]);
-    renderer.clear();
-    renderer.setRenderTarget(pingPongTargets[1]);
-    renderer.clear();
-    renderer.setRenderTarget(null);
-
-    const loadedTextures: THREE.Texture[] = [];
-
-    const loadImage = (
-      url: string,
-      uniformKey: "uTopTexture" | "uBottomTexture",
-      sizeUniformKey: "uTopTextureSize" | "uBottomTextureSize"
-    ) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        const maxSize = 4096;
-        let w = img.width;
-        let h = img.height;
-        if (w > maxSize || h > maxSize) {
-          if (w > h) {
-            h = Math.floor(h * (maxSize / w));
-            w = maxSize;
-          } else {
-            w = Math.floor(w * (maxSize / h));
-            h = maxSize;
+    /** One frame of paint: everything fades, then the path walked since the last frame is painted over. */
+    const simulate = (steps: number, path: Point[] | null) => {
+      const stride = cols + 1;
+      const keep = steps === 1 ? DECAY : Math.pow(DECAY, steps);
+      const worth = THRESHOLD / 4;
+      let i0 = cols + 1;
+      let j0 = rows + 1;
+      let i1 = -1;
+      let j1 = -1;
+      peak = 0;
+      for (let j = 0, n = 0; j <= rows; j++) {
+        for (let i = 0; i <= cols; i++, n++) {
+          const value = paint[n] * keep;
+          paint[n] = value;
+          if (value >= worth) {
+            if (value > peak) peak = value;
+            if (i < i0) i0 = i;
+            if (i > i1) i1 = i;
+            if (j < j0) j0 = j;
+            if (j > j1) j1 = j;
           }
         }
-        const c = document.createElement("canvas");
-        c.width = w;
-        c.height = h;
-        const ctx = c.getContext("2d");
-        if (!ctx) return;
-        ctx.drawImage(img, 0, 0, w, h);
+      }
 
-        const tex = new THREE.CanvasTexture(c);
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-
-        displayMaterial.uniforms[uniformKey].value = tex;
-        displayMaterial.uniforms[sizeUniformKey].value.set(img.width, img.height);
-        loadedTextures.push(tex);
-      };
-      img.onerror = (err) => {
-        console.error(`TeamCard: failed to load ${url}`, err);
-      };
-      img.src = url;
+      if (path && path.length > 1) {
+        let length = 0;
+        let uMin = path[0].u;
+        let uMax = uMin;
+        let vMin = path[0].v;
+        let vMax = vMin;
+        for (let s = 1; s < path.length; s++) {
+          length += Math.hypot(path[s].u - path[s - 1].u, path[s].v - path[s - 1].v);
+          uMin = Math.min(uMin, path[s].u);
+          uMax = Math.max(uMax, path[s].u);
+          vMin = Math.min(vMin, path[s].v);
+          vMax = Math.max(vMax, path[s].v);
+        }
+        if (length >= MIN_MOVE) {
+          const iFrom = Math.max(0, Math.floor(((uMin - REACH) * width) / CELL));
+          const iTo = Math.min(cols, Math.ceil(((uMax + REACH) * width) / CELL));
+          const jFrom = Math.max(0, Math.floor(((vMin - REACH) * height) / CELL));
+          const jTo = Math.min(rows, Math.ceil(((vMax + REACH) * height) / CELL));
+          for (let j = jFrom; j <= jTo; j++) {
+            const v = (j * CELL) / height;
+            for (let i = iFrom; i <= iTo; i++) {
+              const u = (i * CELL) / width;
+              // Distance to the nearest part of the path.
+              let nearest = Infinity;
+              for (let s = 1; s < path.length; s++) {
+                const ax = path[s - 1].u;
+                const ay = path[s - 1].v;
+                const dx = path[s].u - ax;
+                const dy = path[s].v - ay;
+                const along = dx * dx + dy * dy;
+                const t = along > 0 ? Math.min(1, Math.max(0, ((u - ax) * dx + (v - ay) * dy) / along)) : 0;
+                const d = Math.hypot(u - (ax + t * dx), v - (ay + t * dy));
+                if (d < nearest) nearest = d;
+              }
+              if (nearest >= REACH) continue;
+              const near = 1 - nearest / REACH;
+              const n = j * stride + i;
+              const value = paint[n] + PEAK * steps * near * near * (3 - 2 * near);
+              paint[n] = value;
+              if (value >= worth) {
+                if (value > peak) peak = value;
+                if (i < i0) i0 = i;
+                if (i > i1) i1 = i;
+                if (j < j0) j0 = j;
+                if (j > j1) j1 = j;
+              }
+            }
+          }
+        }
+      }
+      box = i1 >= 0 ? [i0, j0, i1, j1] : null;
     };
 
-    loadImage(topImage, "uTopTexture", "uTopTextureSize");
-    loadImage(bottomImage, "uBottomTexture", "uBottomTextureSize");
+    /** Turns the paint into a mask: opaque where the second portrait shows. */
+    const drawMask = () => {
+      if (!mask) return;
+      const data = mask.data;
+      // Wipe what the last frame drew.
+      if (maskBox) {
+        const [x0, y0, x1, y1] = maskBox;
+        for (let y = y0; y < y1; y++) data.fill(0, (y * width + x0) * 4, (y * width + x1) * 4);
+      }
+      let next: [number, number, number, number] | null = null;
+      if (box) {
+        const stride = cols + 1;
+        const soft = EDGE / (window.devicePixelRatio || 1);
+        const ciFrom = Math.max(0, box[0] - 1);
+        const ciTo = Math.min(cols - 1, box[2]);
+        const cjFrom = Math.max(0, box[1] - 1);
+        const cjTo = Math.min(rows - 1, box[3]);
+        for (let cj = cjFrom; cj <= cjTo; cj++) {
+          for (let ci = ciFrom; ci <= ciTo; ci++) {
+            const n = cj * stride + ci;
+            const a = paint[n];
+            const b = paint[n + 1];
+            const c = paint[n + stride];
+            const d = paint[n + stride + 1];
+            const high = Math.max(a, b, c, d);
+            if (high < THRESHOLD) continue;
+            const low = Math.min(a, b, c, d);
+            const px0 = ci * CELL;
+            const py0 = cj * CELL;
+            const px1 = Math.min(width, px0 + CELL);
+            const py1 = Math.min(height, py0 + CELL);
+            // Well inside the trail every pixel is opaque; only the squares the edge passes through need working out.
+            const solid = low - THRESHOLD >= Math.max(soft, (high - low) * 0.36);
+            for (let py = py0; py < py1; py++) {
+              const fy = (py + 0.5 - py0) / CELL;
+              const left = a + (c - a) * fy;
+              const right = b + (d - b) * fy;
+              let at = (py * width + px0) * 4 + 3;
+              for (let px = px0; px < px1; px++, at += 4) {
+                if (solid) {
+                  data[at] = 255;
+                  continue;
+                }
+                const fx = (px + 0.5 - px0) / CELL;
+                const value = left + (right - left) * fx;
+                // The edge is where the paint is THRESHOLD. It fades in over EDGE of paint, or over a whole
+                // pixel where the paint changes faster than that, so a sharp edge is not jagged.
+                const gx = ((b - a) * (1 - fy) + (d - c) * fy) / CELL;
+                const gy = ((c - a) * (1 - fx) + (d - b) * fx) / CELL;
+                const span = Math.max(soft, Math.sqrt(gx * gx + gy * gy));
+                const t = Math.min(1, Math.max(0, (value - THRESHOLD) / span));
+                data[at] = t * t * (3 - 2 * t) * 255;
+              }
+            }
+            if (!next) next = [px0, py0, px1, py1];
+            else {
+              next[0] = Math.min(next[0], px0);
+              next[1] = Math.min(next[1], py0);
+              next[2] = Math.max(next[2], px1);
+              next[3] = Math.max(next[3], py1);
+            }
+          }
+        }
+      }
+      const dirty = maskBox && next
+        ? [Math.min(maskBox[0], next[0]), Math.min(maskBox[1], next[1]), Math.max(maskBox[2], next[2]), Math.max(maskBox[3], next[3])]
+        : maskBox ?? next;
+      if (dirty) maskCtx.putImageData(mask, 0, 0, dirty[0], dirty[1], dirty[2] - dirty[0], dirty[3] - dirty[1]);
+      maskBox = next;
+    };
 
-    const updateMouseFromPoint = (clientX: number, clientY: number) => {
-      const rect = canvas.getBoundingClientRect();
-      if (
-        clientX < rect.left ||
-        clientX > rect.right ||
-        clientY < rect.top ||
-        clientY > rect.bottom
-      ) {
-        isMoving = false;
+    /** The second portrait (cropped to fill, like the first), kept only where the mask is opaque. */
+    const drawTrail = () => {
+      if (!photo || !photoReady) return;
+      drawMask();
+      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const scale = Math.max(canvas.width / photo.naturalWidth, canvas.height / photo.naturalHeight);
+      const w = photo.naturalWidth * scale;
+      const h = photo.naturalHeight * scale;
+      ctx.drawImage(photo, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.drawImage(maskCanvas, 0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "source-over";
+    };
+
+    const clearTrail = () => {
+      paint.fill(0);
+      box = null;
+      peak = 0;
+      drawMask();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    const frame = (now: number) => {
+      raf = 0;
+      const steps = lastFrameAt ? Math.min(4, Math.max(0.25, (now - lastFrameAt) / FRAME_MS)) : 1;
+      lastFrameAt = now;
+
+      // Walked since the last frame, or (for a moment after the last move) the same path again.
+      let path: Point[] | null = null;
+      if (pending.length > 0) {
+        path = last ? [last, ...pending] : pending;
+        last = pending[pending.length - 1];
+        pending = [];
+        hold = path;
+      } else if (hold && now - lastMoveAt <= HOLD_MS) {
+        path = hold;
+      } else {
+        hold = null;
+      }
+
+      simulate(steps, path);
+      if (peak >= THRESHOLD || path) {
+        drawTrail();
+        raf = requestAnimationFrame(frame);
+      } else {
+        clearTrail();
+        lastFrameAt = 0;
+      }
+    };
+
+    const start = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+
+    const stop = () => {
+      last = null;
+      pending = [];
+      hold = null;
+    };
+
+    const onMove = (event: PointerEvent) => {
+      if (!photoReady) {
+        loadPhoto();
         return;
       }
-      prevMouse.copy(mouse);
-      mouse.x = (clientX - rect.left) / rect.width;
-      mouse.y = 1 - (clientY - rect.top) / rect.height;
-      isMoving = true;
-      lastMoveTime = performance.now();
-    };
-
-    const onMouseMove = (event: MouseEvent) => {
-      updateMouseFromPoint(event.clientX, event.clientY);
-    };
-    const onTouchMove = (event: TouchEvent) => {
-      if (event.touches.length === 0) return;
-      const t = event.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      if (
-        t.clientX >= rect.left &&
-        t.clientX <= rect.right &&
-        t.clientY >= rect.top &&
-        t.clientY <= rect.bottom
-      ) {
-        event.preventDefault();
-        updateMouseFromPoint(t.clientX, t.clientY);
+      if (!armed) {
+        const across = event.clientX - downX;
+        if (Math.abs(across) < TOUCH_SLOP || Math.abs(across) < Math.abs(event.clientY - downY)) return;
+        armed = true;
+        last = null;
       }
-    };
-
-    const onResize = () => {
-      const size = getSize();
-      viewWidth = size.width;
-      viewHeight = size.height;
-      renderer.setSize(viewWidth, viewHeight, false);
-      displayMaterial.uniforms.uResolution.value.set(viewWidth, viewHeight);
-      displayMaterial.uniforms.uDpr.value = window.devicePixelRatio;
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("resize", onResize);
-
-    const ro =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(onResize) : null;
-    ro?.observe(cardEl);
-
-    let rafId = 0;
-    const animate = () => {
-      rafId = requestAnimationFrame(animate);
-
-      if (isMoving && performance.now() - lastMoveTime > 50) {
-        isMoving = false;
+      const rect = card.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const u = (event.clientX - rect.left) / rect.width;
+      const v = (event.clientY - rect.top) / rect.height;
+      if (u < 0 || u > 1 || v < 0 || v > 1) {
+        stop();
+        return;
       }
-
-      const prevTarget = pingPongTargets[currentTarget];
-      currentTarget = (currentTarget + 1) % 2;
-      const currentRenderTarget = pingPongTargets[currentTarget];
-
-      trailsMaterial.uniforms.uPrevTrails.value = prevTarget.texture;
-      trailsMaterial.uniforms.uMouse.value.copy(mouse);
-      trailsMaterial.uniforms.uPrevMouse.value.copy(prevMouse);
-      trailsMaterial.uniforms.uIsMoving.value = isMoving;
-
-      renderer.setRenderTarget(currentRenderTarget);
-      renderer.render(simScene, camera);
-
-      displayMaterial.uniforms.uFluid.value = currentRenderTarget.texture;
-
-      renderer.setRenderTarget(null);
-      renderer.render(scene, camera);
+      if (!setUp()) return;
+      pending.push({ u, v });
+      lastMoveAt = performance.now();
+      start();
     };
-    animate();
+    const onDown = (event: PointerEvent) => {
+      last = null;
+      armed = event.pointerType !== "touch";
+      downX = event.clientX;
+      downY = event.clientY;
+    };
+    const onEnd = () => {
+      last = null;
+      armed = true;
+    };
+
+    card.addEventListener("pointermove", onMove);
+    card.addEventListener("pointerdown", onDown);
+    card.addEventListener("pointerleave", stop);
+    card.addEventListener("pointerup", onEnd);
+    card.addEventListener("pointercancel", onEnd);
+
+    // Fetch the second portrait shortly before the card is reached, so the first touch already has it.
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          loadPhoto();
+          io.disconnect();
+        }
+      },
+      { rootMargin: "400px 0px" },
+    );
+    io.observe(card);
+
+    // A card that changes size starts its trail afresh.
+    const ro = new ResizeObserver(() => {
+      if (card.offsetWidth !== width || card.offsetHeight !== height) {
+        mask = null;
+        if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+          stop();
+          lastFrameAt = 0;
+          if (setUp()) clearTrail();
+        }
+      }
+    });
+    ro.observe(card);
 
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("resize", onResize);
-      ro?.disconnect();
-
-      pingPongTargets.forEach((rt) => rt.dispose());
-      planeGeometry.dispose();
-      trailsMaterial.dispose();
-      displayMaterial.dispose();
-      topTexture.dispose();
-      bottomTexture.dispose();
-      loadedTextures.forEach((t) => t.dispose());
-      renderer.dispose();
+      cancelAnimationFrame(raf);
+      card.removeEventListener("pointermove", onMove);
+      card.removeEventListener("pointerdown", onDown);
+      card.removeEventListener("pointerleave", stop);
+      card.removeEventListener("pointerup", onEnd);
+      card.removeEventListener("pointercancel", onEnd);
+      io.disconnect();
+      ro.disconnect();
+      if (photo) photo.onload = null;
     };
-  }, [topImage, bottomImage]);
+  }, [bottomImage, still]);
 
   return (
     <article
       ref={cardRef}
       className={[styles.card, className].filter(Boolean).join(" ")}
       style={{ aspectRatio }}
+      data-still={still ? "" : undefined}
     >
       <div className={styles.canvasWrap}>
-        <canvas ref={canvasRef} className={styles.canvas} />
+        <Image className={styles.photo} src={topImage} alt={name} fill sizes="(max-width: 640px) 92vw, 480px" />
+        <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       </div>
       <div className={styles.info}>
         <h3 className={styles.name}>{name}</h3>

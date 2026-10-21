@@ -1,9 +1,24 @@
-// PartnerCardsSection — GSAP sticky flip-card stack
+// PartnerCardsSection — sticky flip-card stack
+//
+// .pin is a tall wrapper; .section sticks to the top of the screen while the
+// page scrolls through it, and the scroll position moves the cards (see the
+// component). The wrapper's height is plain CSS, so the page is the right
+// height from the first paint:
+//   height = the stage + (cards that flip x --flip + --hold) screens of scrolling.
+
+.pin {
+  --flip: 0.75; // screens of scrolling for each card that flips away
+  --hold: 0.2;  // screens the last card stays before the page moves on
+  --stage: 100svh;
+  position: relative;
+  height: calc(var(--stage) + 100svh * (2 * var(--flip) + var(--hold)));
+}
 
 .section {
-  position: relative;
+  position: sticky;
+  top: 0;
   width: 100%;
-  height: 100svh;
+  height: var(--stage);
   overflow: hidden;
   perspective: 1200px;
   box-sizing: border-box;
@@ -11,9 +26,10 @@
 
 /* Shorter stage + higher card anchor — less empty space under world-map headline */
 @media (max-width: 768px) {
-  .section {
-    height: min(72dvh, 82svh, 520px);
-    min-height: min(72dvh, 82svh, 520px);
+  .pin {
+    --flip: 0.45;
+    --hold: 0.12;
+    --stage: min(72dvh, 82svh, 520px);
     margin-top: clamp(-20px, -3vw, -6px);
   }
 

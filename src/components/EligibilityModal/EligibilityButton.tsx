@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import EligibilityModal from "./EligibilityModal";
+import EligibilityModal, { preloadOnIntent } from "./index";
 
 type Props = {
   className?: string;
@@ -23,7 +23,7 @@ export default function EligibilityButton({ className, children, contactEmail, b
 
   return (
     <>
-      <button type="button" className={className} onClick={() => setOpen(true)}>
+      <button type="button" className={className} onClick={() => setOpen(true)} {...preloadOnIntent}>
         {children}
       </button>
       {open &&

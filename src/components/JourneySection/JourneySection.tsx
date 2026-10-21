@@ -15,6 +15,9 @@ import type { JourneyStep } from "@/lib/sanity/types";
 
 type Props = { steps?: JourneyStep[]; outputsLabel?: string };
 
+// Screens of scrolling each step takes while the section holds the screen.
+const STEP_SCROLL = 0.8;
+
 export default function JourneySection({ steps = [], outputsLabel }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -85,7 +88,7 @@ export default function JourneySection({ steps = [], outputsLabel }: Props) {
       ref={sectionRef}
       id="journey"
       className={styles.section}
-      style={{ height: `${(steps.length + 1) * 100}vh` }}
+      style={{ height: `${(steps.length * STEP_SCROLL + 1) * 100}vh` }}
     >
       <div className={styles.stickyViewport}>
 
