@@ -173,6 +173,8 @@ export type HomePage = Seo & {
   subHighlight?: string;
   subRest?: string;
   accreditationsLabel?: string;
+  /** Small heading above the university logos on the student cards ("Admits"). */
+  admitsLabel?: string;
   accreditations?: LogoItem[];
   primaryCtaLabel?: string;
   secondaryCtaLabel?: string;
@@ -262,6 +264,59 @@ export type ServicesPage = Seo & {
 export type StoriesPage = Seo & { title?: string };
 
 export type PolicySection = { _key?: string; title?: string; bodyRich?: PortableTextBlock[] };
+
+/** Contact page text. The email, booking link and social links come from SiteSettings. */
+export type ContactPage = Seo & {
+  eyebrow?: string;
+  titleLead?: string;
+  titleAccent?: string;
+  lead?: string;
+  emailLabel?: string;
+  bookingLabel?: string;
+  bookingLinkText?: string;
+  locationLabel?: string;
+  locationText?: string;
+  socialsLabel?: string;
+  eligTitle?: string;
+  eligText?: string;
+  eligButton?: string;
+  tabStudent?: string;
+  tabCollab?: string;
+  tabGeneral?: string;
+  nameLabel?: string;
+  emailFieldLabel?: string;
+  countryLabel?: string;
+  countries?: string[];
+  levelLabel?: string;
+  levels?: string[];
+  orgLabel?: string;
+  messageLabel?: string;
+  messageHintStudent?: string;
+  messageHintCollab?: string;
+  messageHintGeneral?: string;
+  sendButton?: string;
+  privacyNote?: string;
+  successTitle?: string;
+  successText?: string;
+  successLink?: string;
+};
+
+/** Jobs page (/recruitment) text. The roles are JobRole documents. */
+export type RecruitmentPage = Seo & {
+  eyebrow?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  byCountryLabel?: string;
+  emptyTitle?: string;
+  emptyText?: string;
+  howTitle?: string;
+  howIntro?: string;
+  steps?: { _key?: string; title?: string; text?: string }[];
+  contactTitle?: string;
+  contactText?: string;
+  emailButton?: string;
+  whatsappButton?: string;
+};
 
 export type PrivacyPage = Seo & {
   eyebrow?: string;

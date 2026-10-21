@@ -76,10 +76,14 @@ body {
   overflow-x: hidden;
 }
 
-// The bottom bar (MobileTabBar) shows on phones held upright. Its height is
-// 24px padding + 24px icon + 4px gap + 18px label + 24px padding (more if the
-// phone has a bottom safe area). The page leaves that much room at the bottom.
-@media (max-width: 640px) and (min-height: 480px) {
+// The phone layout runs up to 920px wide, so tablets held upright (iPads up to
+// 834px) get it too, as on the old site (its phone layout ends at 921px).
+// Laptops and desktops are wider and keep the desktop layout.
+//
+// The bottom bar (MobileTabBar) shows on phones and tablets held upright. Its
+// height is 24px padding + 24px icon + 4px gap + 18px label + 24px padding
+// (more if the device has a bottom safe area). The page leaves that much room.
+@media (max-width: 920px) and (min-height: 480px) {
   :root {
     --tabbar-h: calc(70px + max(24px, env(safe-area-inset-bottom, 0px)));
   }

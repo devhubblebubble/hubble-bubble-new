@@ -191,6 +191,12 @@ export default function NavBar() {
             const link = (event.target as Element).closest("a");
             const pill = pillRef.current;
             if (!link || !pill || !linksRef.current?.contains(link)) return;
+            // The Contact Us button lights up by itself: no pill under it.
+            if (link.dataset.cta !== undefined) {
+              pill.style.opacity = "0";
+              pillAt.current = null;
+              return;
+            }
             const next = { x: link.offsetLeft - PILL_PAD, w: link.offsetWidth + PILL_PAD * 2 };
             pill.style.opacity = "1";
             glide(pill, pillAt.current, next);
@@ -212,12 +218,16 @@ export default function NavBar() {
               {label}
             </Link>
           ))}
+          {/* A button, so it never looks like the page you are on (that is
+              the mint link with the dot under it). */}
           <Link
             href="/contact"
-            className={`${styles.cta} ${pathname === "/contact" ? styles.ctaActive : ""}`}
-            aria-current={pathname === "/contact" ? "page" : undefined}
+            className={`${styles.cta} ${isCurrent("/contact") ? styles.ctaActive : ""}`}
+            aria-current={isCurrent("/contact") ? "page" : undefined}
+            data-cta=""
+            data-glass="flat"
           >
-            Contact Us
+            Contact us
           </Link>
         </div>
 
@@ -262,7 +272,7 @@ export default function NavBar() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`${styles.menuLink} ${isCurrent(item.href) ? styles.menuCurrent : ""} ${item.href === "/contact" ? styles.menuContact : ""}`}
+                className={`${styles.menuLink} ${isCurrent(item.href) ? styles.menuCurrent : ""}`}
                 aria-current={isCurrent(item.href) ? "page" : undefined}
                 tabIndex={mobileOpen ? 0 : -1}
                 onClick={() => setMobileOpen(false)}

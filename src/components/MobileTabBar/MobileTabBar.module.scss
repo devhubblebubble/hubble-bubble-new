@@ -12,7 +12,8 @@
   display: none;
 }
 
-@media (max-width: 640px) and (min-height: 480px) {
+// Phones and tablets held upright (up to 920px wide; see globals.scss).
+@media (max-width: 920px) and (min-height: 480px) {
   .bar {
     position: fixed;
     left: 0;

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
+import type { CSSProperties } from "react";
 import EligibilityModal, { preloadOnIntent } from "@/components/EligibilityModal";
 import { useCarousel } from "@/hooks/useCarousel";
 import { countryCode, countryName, flagSrc } from "@/lib/flags";
@@ -27,7 +28,19 @@ const initials = (name: string | undefined) =>
     .map((w) => w[0]!.toUpperCase())
     .join("");
 
-type AdmitView = { text: string; fullName: string; src?: string; alt: string };
+type AdmitView = { text: string; fullName: string; src?: string; alt: string; scale: number };
+
+// University logos come in all shapes, and at one height a long, wide logo
+// looks much bigger than a compact crest. So each logo is sized to cover about
+// the same area as the others: wider logos are drawn shorter, taller ones a
+// little taller (within limits), relative to a typical logo three times as
+// wide as it is tall.
+const TYPICAL_RATIO = 3;
+const logoScale = (img: SanityImage | undefined) => {
+  const d = imageDims(img, { width: TYPICAL_RATIO, height: 1 });
+  const ratio = d.width / d.height;
+  return Math.min(1.15, Math.max(0.65, Math.sqrt(TYPICAL_RATIO / ratio)));
+};
 
 /**
  * What to show for one admit: the university picked from the Universities
@@ -42,7 +55,7 @@ function admitView(a: HeroAdmit): AdmitView | null {
   const logo = u ? u.logo : a.logo;
   const src = imageUrl(logo, { width: 320 });
   if (!src && !text) return null;
-  return { text, fullName: fullName || text, src, alt: logo?.alt || fullName || text };
+  return { text, fullName: fullName || text, src, alt: logo?.alt || fullName || text, scale: logoScale(logo) };
 }
 
 export default function HeroSection({ data, settings }: Props) {
@@ -50,6 +63,8 @@ export default function HeroSection({ data, settings }: Props) {
   const students = data.heroStudents ?? [];
   const { idx, setPaused } = useCarousel(Math.max(students.length, 1), 6500);
   const headlineRest = (data.headlineRest ?? "").split("\n").filter(Boolean);
+  const admitsLabel = data.admitsLabel?.trim() || "Admits:";
+  const idBase = useId();
 
   return (
     <>
@@ -126,7 +141,7 @@ export default function HeroSection({ data, settings }: Props) {
                   className={styles.track}
                   style={{ transform: `translateX(-${idx * 100}%)` }}
                 >
-                  {students.map((s) => {
+                  {students.map((s, si) => {
                     const photo = imageUrl(s.photo, { width: 320, height: 320 });
                     const code = countryCode(s.flag);
                     const admits = (s.admits ?? []).flatMap((a, i) => {
@@ -160,10 +175,17 @@ export default function HeroSection({ data, settings }: Props) {
                         <div className={styles.course}>{s.course}</div>
                         {admits.length > 0 && (
                           <>
-                            <div className={styles.admitsLabel}>Admits:</div>
-                            <div className={styles.admits}>
+                            <div className={styles.admitsLabel} id={`${idBase}-admits-${si}`}>
+                              {admitsLabel}
+                            </div>
+                            <ul className={styles.admits} aria-labelledby={`${idBase}-admits-${si}`}>
                               {admits.map((a) => (
-                                <div key={a.key} className={styles.admit} title={a.fullName}>
+                                <li
+                                  key={a.key}
+                                  className={styles.admit}
+                                  title={a.fullName}
+                                  style={a.src ? ({ "--logo-scale": a.scale.toFixed(3) } as CSSProperties) : undefined}
+                                >
                                   {a.src ? (
                                     <Image
                                       src={a.src}
@@ -175,9 +197,9 @@ export default function HeroSection({ data, settings }: Props) {
                                   ) : (
                                     <span className={styles.admitWordmark}>{a.text}</span>
                                   )}
-                                </div>
+                                </li>
                               ))}
-                            </div>
+                            </ul>
                           </>
                         )}
                       </article>

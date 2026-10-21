@@ -119,12 +119,47 @@
   &::after { opacity: 1 !important; }
 }
 
-.cta {
-  color: var(--orange) !important;
+// "Contact us" is a glass button with a bright rim. It used to be orange text,
+// which looked like the page you are on (the phone tab bar shows that in
+// orange). No blur of its own: it sits on the menu bar's glass.
+.links .cta {
+  @include glass-flat(rgba(255, 255, 255, 0.1));
+  box-shadow: glass-shadows(0 4px 14px rgba(0, 0, 0, 0.25), 0.6);
+  padding: 10px 22px;
+  border-radius: 999px;
+  color: var(--white);
+  font-weight: 600;
+  transition:
+    transform 0.6s var(--ease-spring),
+    --lg-glow 0.55s ease-out;
+
+  &:hover {
+    --glass-tint: rgba(255, 255, 255, 0.2);
+    color: var(--white);
+  }
+
+  &:active {
+    --lg-glow: 1;
+    transform: scale(1.05);
+    transition-duration: 0.14s;
+  }
+
+  &::after {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active {
+      transform: none;
+    }
+  }
 }
 
-.ctaActive {
-  opacity: 0.75;
+// On the contact page itself: mint, like the other links for the page you are on.
+.links .ctaActive,
+.links .ctaActive:hover {
+  --glass-tint: rgba(120, 225, 197, 0.14);
+  color: var(--mint);
 }
 
 .toggle,
@@ -277,14 +312,6 @@
   }
 }
 
-.menuContact {
-  color: var(--orange);
-
-  .menuIcon {
-    color: var(--orange);
-  }
-}
-
 .drawerFoot {
   margin-top: auto;
   padding: 20px 26px 0;
@@ -305,7 +332,8 @@
   }
 }
 
-@media (max-width: 900px) {
+// Phones and tablets (up to 920px wide, as the tab bar): the menu button.
+@media (max-width: 920px) {
   .nav {
     top: 12px;
     left: 12px;
