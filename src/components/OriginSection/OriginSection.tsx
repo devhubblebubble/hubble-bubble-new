@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { HomePage } from "@/lib/sanity/types";
+import OriginVideo from "./OriginVideo";
 import styles from "./OriginSection.module.scss";
 
 type Props = { data: HomePage };
@@ -8,14 +9,7 @@ export default function OriginSection({ data }: Props) {
   return (
     <section className={`${styles.section} reveal`} id="more">
       <div className={styles.bg}>
-        <video
-          src="/Video/brown.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className={styles.video}
-        />
+        <OriginVideo className={styles.video} />
       </div>
       <div className={styles.content}>
         <h2 className={styles.title}>
