@@ -1,5 +1,6 @@
 import { aboutPage, teamMember } from "./aboutPage";
 import { blockContent } from "./blockContent";
+import { blogTable, blogTopic, post } from "./blog";
 import { homePage } from "./homePage";
 import { jobRole } from "./jobRole";
 import { contactPage, privacyPage, recruitmentPage, servicesPage, storiesPage, story } from "./pages";
@@ -22,7 +23,10 @@ export const schemaTypes = [
   story,
   teamMember,
   university,
+  post,
+  blogTopic,
   // Reusable field types
+  blogTable,
   blockContent,
   styledText,
   richText,

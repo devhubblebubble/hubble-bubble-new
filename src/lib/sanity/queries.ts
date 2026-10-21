@@ -106,6 +106,45 @@ export const aboutPageQuery = /* groq */ `
   }
 `;
 
+// ── Blog ───────────────────────────────────────────────────────────────────
+
+export const blogTopicsQuery = /* groq */ `
+  *[_type == "blogTopic" && defined(slug.current)] | order(order asc, title asc) {
+    _id, title, "slug": slug.current, description, intro, order, seoTitle, seoDescription
+  }
+`;
+
+const postPerson = /* groq */ `{ name, title, aka }`;
+
+// Every visible post with everything its page needs (the blog is small, so
+// one query serves the index, the topic pages and the post pages).
+export const postsQuery = /* groq */ `
+  *[_type == "post" && hidden != true && defined(slug.current)]
+  | order(pillar desc, coalesce(reviewedAt, publishedAt) desc, title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    description,
+    seoTitle,
+    pillar,
+    countries,
+    keyPoints,
+    body,
+    faq[] { _key, question, answer },
+    sources[] { _key, title, url },
+    publishedAt,
+    reviewedAt,
+    "topic": topic->{ _id, title, "slug": slug.current },
+    "related": related[]->{
+      _id, title, "slug": slug.current, excerpt, pillar, hidden,
+      "topic": topic->{ title, "slug": slug.current }
+    },
+    "author": author->${postPerson},
+    "reviewedBy": reviewedBy->${postPerson}
+  }
+`;
+
 export const servicesPageQuery = /* groq */ `*[_type == "servicesPage"][0]`;
 export const storiesPageQuery = /* groq */ `*[_type == "storiesPage"][0]`;
 export const privacyPageQuery = /* groq */ `*[_type == "privacyPage"][0]`;

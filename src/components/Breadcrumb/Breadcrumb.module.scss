@@ -19,10 +19,18 @@
 
 .nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 0 8px;
   font-size: var(--fs-sm);
   color: var(--muted);
+}
+
+// A page between Home and the current one: its link and the arrow after it.
+.breadStep {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .breadLink {

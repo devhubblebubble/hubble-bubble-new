@@ -1,8 +1,10 @@
 // One-off import of the starting content into Sanity.
 //
-// Reads content/seed/*.json (at the repo root), uploads any images they point
-// at ({"_upload": "public/images/..."}), and writes the documents:
-//   - collections (job roles, stories, team members, universities): created only if missing
+// Reads content/seed/*.json and the blog posts in content/blog/*.md (at the
+// repo root), uploads any images they point at ({"_upload": "public/images/..."}),
+// and writes the documents:
+//   - collections (job roles, stories, team members, universities, blog topics,
+//     blog posts): created only if missing
 //   - single pages and site settings: created if missing; if they already
 //     exist, only fields that are still empty get the seed value
 // So re-running never overwrites edits made in the Studio.
@@ -14,6 +16,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@sanity/client";
+import { postsDir, readPostDocuments } from "../../content/seed/blog.mjs";
 import { convertMarkupFields } from "../../content/seed/markup.mjs";
 
 const PROJECT_ID = "qstbrsll";
@@ -112,15 +115,39 @@ function withKeys(value, prefix = "k") {
 
 const prepare = async (doc) => clean(withKeys(await uploadImages(convertMarkupFields(doc))));
 
+// What to import. SEED_ONLY=blog (the default for pushes, see the workflow)
+// writes only blog topics and posts. SEED_ONLY=all also writes the pages,
+// settings and the other collections. Pages and collections were imported
+// long ago and are edited in the Studio now; re-running them would bring back
+// any placeholder document someone deleted there (createIfNotExists) and
+// refill any field someone emptied on purpose (setIfMissing).
+const only = (process.env.SEED_ONLY || "all").trim().toLowerCase();
+if (!["all", "blog"].includes(only)) {
+  console.error(`SEED_ONLY must be "all" or "blog", not "${only}".`);
+  process.exit(1);
+}
+const pagesToo = only === "all";
+console.log(`Importing: ${pagesToo ? "everything" : "the blog only"}`);
+
 // ── Collections ────────────────────────────────────────────────────────
-const roles = await Promise.all(
-  (await readJson("job-roles.json")).map((r) =>
-    prepare({ ...r, slug: { _type: "slug", current: r.slug }, about: toBlocks(r.about) }),
+const roles = pagesToo
+  ? await Promise.all(
+      (await readJson("job-roles.json")).map((r) =>
+        prepare({ ...r, slug: { _type: "slug", current: r.slug }, about: toBlocks(r.about) }),
+      ),
+    )
+  : [];
+const stories = pagesToo ? await Promise.all((await readJson("stories.json")).map(prepare)) : [];
+const team = pagesToo ? await Promise.all((await readJson("team-members.json")).map(prepare)) : [];
+const universities = pagesToo ? await Promise.all((await readJson("universities.json")).map(prepare)) : [];
+// Blog: topics, then the posts (content/blog/*.md, or BLOG_SEED_DIR).
+const blogTopics = await Promise.all(
+  (await readJson("blog-topics.json")).map((t) =>
+    prepare({ ...t, slug: { _type: "slug", current: t.slug } }),
   ),
 );
-const stories = await Promise.all((await readJson("stories.json")).map(prepare));
-const team = await Promise.all((await readJson("team-members.json")).map(prepare));
-const universities = await Promise.all((await readJson("universities.json")).map(prepare));
+const blogPosts = await Promise.all(readPostDocuments(postsDir(repoRoot)).map(prepare));
+console.log(`blog: ${blogTopics.length} topic(s), ${blogPosts.length} post(s) in the seed`);
 
 // ── Single documents ───────────────────────────────────────────────────
 const singletonFiles = [
@@ -134,10 +161,14 @@ const singletonFiles = [
   "recruitment-page.json",
 ];
 const singletons = [];
-for (const file of singletonFiles) singletons.push(await prepare(await readJson(file)));
+if (pagesToo) {
+  for (const file of singletonFiles) singletons.push(await prepare(await readJson(file)));
+}
 
 const tx = client.transaction();
-for (const doc of [...roles, ...stories, ...team, ...universities]) tx.createIfNotExists(doc);
+for (const doc of [...roles, ...stories, ...team, ...universities, ...blogTopics, ...blogPosts]) {
+  tx.createIfNotExists(doc);
+}
 for (const doc of singletons) {
   const { _id, _type, ...fields } = doc;
   tx.createIfNotExists({ _id, _type, ...fields });

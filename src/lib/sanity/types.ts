@@ -325,3 +325,64 @@ export type PrivacyPage = Seo & {
   intro?: string;
   sections?: PolicySection[];
 };
+
+// ── Blog ───────────────────────────────────────────────────────────────────
+
+/** One of the blog's sections (/blog/topics/<slug>/). */
+export type BlogTopic = Seo & {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  intro?: string;
+  order?: number;
+};
+
+/** A table inside a post: the first row is the header. Cells may use **bold** and [links](url). */
+export type PostTable = {
+  _type: "table";
+  _key?: string;
+  rows?: { _key?: string; cells?: string[] }[];
+};
+
+export type PostBody = (PortableTextBlock | PostTable)[];
+
+/** A team member named on a post (writer or reviewer). Null when deleted. */
+export type PostPerson = { name?: string; title?: string; aka?: string } | null;
+
+/** The few fields a link to another post needs. */
+export type PostLink = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  pillar?: boolean;
+  hidden?: boolean;
+  topic?: { title?: string; slug?: string } | null;
+};
+
+export type FaqItem = { _key?: string; question?: string; answer?: string };
+export type SourceLink = { _key?: string; title?: string; url?: string };
+
+export type Post = {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  /** Meta description for search results. */
+  description?: string;
+  seoTitle?: string;
+  pillar?: boolean;
+  countries?: string[];
+  keyPoints?: string[];
+  body?: PostBody;
+  faq?: FaqItem[];
+  sources?: SourceLink[];
+  related?: (PostLink | null)[];
+  author?: PostPerson;
+  reviewedBy?: PostPerson;
+  publishedAt?: string; // YYYY-MM-DD
+  reviewedAt?: string; // YYYY-MM-DD
+  /** Null when the topic was deleted. */
+  topic?: { _id?: string; title: string; slug: string } | null;
+};

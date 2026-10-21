@@ -4,9 +4,11 @@ This folder is the content editor for the website. Editors use it in the
 browser at the hosted address; nobody needs to run code to change content.
 
 - Project: `qstbrsll`, dataset: `production`
-- Content types: Job role, Site settings
+- Content types: the pages (home, about, services, stories, jobs, contact, privacy),
+  Job role, Student story, Team member, University, Blog post, Blog topic, Site settings
 - Hosted by Sanity; deployed by the GitHub Action in `.github/workflows/sanity-studio.yml`
-- Starting content: `content/seed/*.json`, imported once by `.github/workflows/sanity-seed.yml`
+- Starting content: `content/seed/*.json` and the blog posts in `content/blog/*.md`,
+  imported once by `.github/workflows/sanity-seed.yml` (existing documents are never overwritten)
 
 Local development (optional, for developers):
 

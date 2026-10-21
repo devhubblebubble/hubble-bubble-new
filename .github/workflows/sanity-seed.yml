@@ -1,6 +1,10 @@
-# Imports the starting content (content/seed/*.json) into Sanity.
-# Safe to run more than once: documents that already exist are left untouched,
-# so edits made in the Studio are never overwritten.
+# Imports the starting content into Sanity.
+# A push imports only the blog (content/seed/blog-topics.json and content/blog/*.md):
+# new topics and posts are created, existing ones are never touched.
+# The pages, settings and other collections were imported long ago and are edited
+# in the Studio now. Importing them again would bring back any placeholder document
+# deleted in the Studio and refill any field emptied on purpose, so that only
+# happens when someone runs this workflow by hand and chooses "all".
 # Needs the repository secret SANITY_WRITE_TOKEN (a Sanity API token with Editor permission).
 
 name: Import starting content into Sanity
@@ -10,9 +14,17 @@ on:
     branches: [sanity-cms]
     paths:
       - "content/seed/**"
+      - "content/blog/**"
       - "studio/scripts/seed.mjs"
       - ".github/workflows/sanity-seed.yml"
   workflow_dispatch:
+    inputs:
+      only:
+        description: "What to import: blog (topics and posts only) or all (also pages, settings, roles, stories, team, universities)"
+        required: true
+        default: "blog"
+        type: choice
+        options: [blog, all]
 
 jobs:
   seed:
@@ -35,6 +47,7 @@ jobs:
       - name: Import content
         env:
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+          SEED_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.only || 'blog' }}
         run: |
           set -o pipefail
           npm run seed 2>&1 | tee seed-output.txt

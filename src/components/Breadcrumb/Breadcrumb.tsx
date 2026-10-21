@@ -8,6 +8,8 @@ type Props = {
   current: string;
   /** Optional page between Home and the current one, e.g. Jobs on a role page */
   parent?: Crumb;
+  /** Several pages between Home and the current one, e.g. Blog, then a topic */
+  parents?: Crumb[];
   /**
    * Set when the parent already applies horizontal padding (e.g. Stories `.page`,
    * Privacy `.inner`) so we do not double `--pad-x`.
@@ -20,12 +22,14 @@ type Props = {
 export default function Breadcrumb({
   current,
   parent,
+  parents,
   inset = false,
   flush = false,
 }: Props) {
   const rootClass = [styles.root, inset && styles.rootInset, flush && styles.rootFlush]
     .filter(Boolean)
     .join(" ");
+  const between = parents ?? (parent ? [parent] : []);
 
   return (
     <div className={rootClass}>
@@ -36,16 +40,16 @@ export default function Breadcrumb({
         <span className={styles.breadSep} aria-hidden="true">
           ›
         </span>
-        {parent && (
-          <>
-            <Link href={parent.href} className={styles.breadLink}>
-              {parent.label}
+        {between.map((crumb) => (
+          <span key={crumb.href} className={styles.breadStep}>
+            <Link href={crumb.href} className={styles.breadLink}>
+              {crumb.label}
             </Link>
             <span className={styles.breadSep} aria-hidden="true">
               ›
             </span>
-          </>
-        )}
+          </span>
+        ))}
         <span className={styles.breadCurrent}>{current}</span>
       </nav>
     </div>

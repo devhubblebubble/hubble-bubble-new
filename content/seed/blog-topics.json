@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "blogTopic-choosing",
+    "_type": "blogTopic",
+    "title": "Choosing a course and career",
+    "slug": "choosing",
+    "description": "Start with the work you want to do, then choose the course, the university and the country.",
+    "order": 1
+  },
+  {
+    "_id": "blogTopic-destinations",
+    "_type": "blogTopic",
+    "title": "Study destinations",
+    "slug": "destinations",
+    "description": "Country guides for international students: the UK, Ireland, Germany, Australia, Canada, South Korea, the UAE and more.",
+    "order": 2
+  },
+  {
+    "_id": "blogTopic-applying",
+    "_type": "blogTopic",
+    "title": "Applying to university",
+    "slug": "applying",
+    "description": "Applications, personal statements, offers and English tests, step by step.",
+    "order": 3
+  },
+  {
+    "_id": "blogTopic-money",
+    "_type": "blogTopic",
+    "title": "Costs, funding and scholarships",
+    "slug": "money",
+    "description": "What studying abroad really costs, how to show funds for a visa, and scholarships you can apply for.",
+    "order": 4
+  },
+  {
+    "_id": "blogTopic-visas",
+    "_type": "blogTopic",
+    "title": "Visas and work rights",
+    "slug": "visas",
+    "description": "Student visas, work hours, family and staying on after you graduate, from the official rules.",
+    "order": 5
+  },
+  {
+    "_id": "blogTopic-agents",
+    "_type": "blogTopic",
+    "title": "Agents and honest advice",
+    "slug": "agents",
+    "description": "How study abroad agents work, what they cost you, and where to get good advice for free.",
+    "order": 6
+  }
+]

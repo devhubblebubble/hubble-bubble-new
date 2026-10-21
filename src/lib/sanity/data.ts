@@ -3,8 +3,10 @@ import { sanityClient } from "./client";
 import { offline } from "./env";
 import {
   fixtureAboutPage,
+  fixtureBlogTopics,
   fixtureContactPage,
   fixtureHomePage,
+  fixturePosts,
   fixturePrivacyPage,
   fixtureRecruitmentPage,
   fixtureRoles,
@@ -16,9 +18,11 @@ import {
 } from "./fixture";
 import {
   aboutPageQuery,
+  blogTopicsQuery,
   contactPageQuery,
   homePageQuery,
   openRolesQuery,
+  postsQuery,
   privacyPageQuery,
   recruitmentPageQuery,
   servicesPageQuery,
@@ -29,9 +33,12 @@ import {
 } from "./queries";
 import type {
   AboutPage,
+  BlogTopic,
   ContactPage,
   HomePage,
   JobRole,
+  Post,
+  PostLink,
   PrivacyPage,
   RecruitmentPage,
   ServicesPage,
@@ -118,4 +125,33 @@ export const getContactPage = cache(async (): Promise<ContactPage> =>
 
 export const getRecruitmentPage = cache(async (): Promise<RecruitmentPage> =>
   (await fetchOr<RecruitmentPage | null>(recruitmentPageQuery, fixtureRecruitmentPage)) ?? {},
+);
+
+// ── Blog ───────────────────────────────────────────────────────────────────
+
+/** Blog topics in their order on /blog/. */
+export const getBlogTopics = cache(async (): Promise<BlogTopic[]> =>
+  ((await fetchOr<BlogTopic[] | null>(blogTopicsQuery, fixtureBlogTopics)) ?? []).filter((t) => t.slug),
+);
+
+/**
+ * Every visible post: main guides first, then the most recently checked.
+ * Links to deleted or hidden posts are dropped from "Read next".
+ */
+export const getPosts = cache(async (): Promise<Post[]> => {
+  const posts = (await fetchOr<Post[] | null>(postsQuery, fixturePosts)) ?? [];
+  return posts
+    .filter((p) => p.slug && p.title)
+    .map((p) => ({
+      ...p,
+      related: (p.related ?? []).filter((r): r is PostLink => Boolean(r && r.slug && !r.hidden && r.slug !== p.slug)),
+    }));
+});
+
+export const getPostBySlug = cache(async (slug: string): Promise<Post | undefined> =>
+  (await getPosts()).find((p) => p.slug === slug),
+);
+
+export const getPostsByTopic = cache(async (topicSlug: string): Promise<Post[]> =>
+  (await getPosts()).filter((p) => p.topic?.slug === topicSlug),
 );

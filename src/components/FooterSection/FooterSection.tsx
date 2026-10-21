@@ -40,6 +40,7 @@ export default async function FooterSection() {
           <Link href="/services">Services</Link>
           <Link href="/recruitment">Jobs</Link>
           <Link href="/stories">Stories</Link>
+          <Link href="/blog">Blog</Link>
           <Link href="/about">About Us</Link>
           <Link href="/contact">Contact Us</Link>
           <Link href="/contact?type=collab">Collaborate</Link>

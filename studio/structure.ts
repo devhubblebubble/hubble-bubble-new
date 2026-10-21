@@ -62,5 +62,31 @@ export const structure: StructureResolver = (S) =>
             .defaultOrdering([{ field: "name", direction: "asc" }]),
         ),
       S.divider(),
+      S.listItem()
+        .title("Blog")
+        .id("blog")
+        .child(
+          S.list()
+            .title("Blog")
+            .items([
+              S.listItem()
+                .title("Posts")
+                .schemaType("post")
+                .child(
+                  S.documentTypeList("post")
+                    .title("Blog posts")
+                    .defaultOrdering([{ field: "reviewedAt", direction: "desc" }]),
+                ),
+              S.listItem()
+                .title("Topics")
+                .schemaType("blogTopic")
+                .child(
+                  S.documentTypeList("blogTopic")
+                    .title("Blog topics")
+                    .defaultOrdering([{ field: "order", direction: "asc" }]),
+                ),
+            ]),
+        ),
+      S.divider(),
       page(S, "siteSettings", "Site settings"),
     ]);

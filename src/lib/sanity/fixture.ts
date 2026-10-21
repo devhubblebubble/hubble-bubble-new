@@ -6,12 +6,17 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { imageSize } from "image-size";
 import type { PortableTextBlock } from "@portabletext/types";
+import { postsDir, readPostDocuments } from "../../../content/seed/blog.mjs";
 import { convertMarkupFields } from "../../../content/seed/markup.mjs";
 import type {
   AboutPage,
+  BlogTopic,
   ContactPage,
   HomePage,
   JobRole,
+  Post,
+  PostBody,
+  PostLink,
   PrivacyPage,
   RecruitmentPage,
   ServicesPage,
@@ -139,3 +144,78 @@ export const fixturePrivacyPage = (): PrivacyPage => prepare<PrivacyPage>(readJs
 export const fixtureContactPage = (): ContactPage => prepare<ContactPage>(readJson("contact-page.json"));
 export const fixtureRecruitmentPage = (): RecruitmentPage =>
   prepare<RecruitmentPage>(readJson("recruitment-page.json"));
+
+// ── Blog ───────────────────────────────────────────────────────────────────
+
+type SeedTopic = Omit<BlogTopic, "slug"> & { slug: string };
+
+export const fixtureBlogTopics = (): BlogTopic[] =>
+  readJson<SeedTopic[]>("blog-topics.json").sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+type SeedPost = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  topic?: { _ref: string };
+  related?: { _ref: string }[];
+  pillar?: boolean;
+  excerpt?: string;
+  description?: string;
+  seoTitle?: string;
+  countries?: string[];
+  keyPoints?: string[];
+  body?: PostBody;
+  faq?: Post["faq"];
+  sources?: Post["sources"];
+  publishedAt?: string;
+  reviewedAt?: string;
+};
+
+/** The posts in content/blog (or BLOG_SEED_DIR), shaped like the live query's result. */
+export function fixturePosts(): Post[] {
+  const topics = fixtureBlogTopics();
+  const docs = (readPostDocuments(postsDir(root)) as SeedPost[]).map((d) => ({ ...d, slug: d.slug.current }));
+  const topicOf = (ref?: string) => {
+    const t = topics.find((topic) => topic._id === ref);
+    return t ? { _id: t._id, title: t.title, slug: t.slug } : null;
+  };
+  const posts: Post[] = docs.map((d) => ({
+    _id: d._id,
+    title: d.title,
+    slug: d.slug,
+    excerpt: d.excerpt,
+    description: d.description,
+    seoTitle: d.seoTitle,
+    pillar: d.pillar,
+    countries: d.countries,
+    keyPoints: d.keyPoints,
+    body: d.body,
+    faq: d.faq,
+    sources: d.sources,
+    publishedAt: d.publishedAt,
+    reviewedAt: d.reviewedAt,
+    topic: topicOf(d.topic?._ref),
+    author: null,
+    reviewedBy: null,
+    related: (d.related ?? []).map((r): PostLink | null => {
+      const target = docs.find((p) => p._id === r._ref);
+      return target
+        ? {
+            _id: target._id,
+            title: target.title,
+            slug: target.slug,
+            excerpt: target.excerpt,
+            pillar: target.pillar,
+            topic: topicOf(target.topic?._ref),
+          }
+        : null;
+    }),
+  }));
+  // Same order as the live query: main guides first, then newest checked, then title.
+  return posts.sort(
+    (a, b) =>
+      Number(Boolean(b.pillar)) - Number(Boolean(a.pillar)) ||
+      (b.reviewedAt ?? b.publishedAt ?? "").localeCompare(a.reviewedAt ?? a.publishedAt ?? "") ||
+      a.title.localeCompare(b.title),
+  );
+}

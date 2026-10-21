@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { href: "/services",    label: "Services" },
   { href: "/recruitment", label: "Jobs"     },
   { href: "/stories",     label: "Stories"  },
+  { href: "/blog",        label: "Blog"     },
   { href: "/about",       label: "About us" },
 ];
 
@@ -41,6 +42,16 @@ const MENU: MenuItem[] = [
   { href: "/services", label: "Services", icon: <Icon {...icons.services} /> },
   { href: "/journey", label: "Your journey", icon: <Icon {...icons.journey} /> },
   { href: "/stories", label: "Student stories", icon: <Icon {...icons.stories} /> },
+  {
+    href: "/blog",
+    label: "Blog",
+    icon: (
+      <Stroke>
+        <path d="M12 6.6C10.2 5.3 7.7 4.6 3.5 4.6v13.2c4.2 0 6.7.7 8.5 2 1.8-1.3 4.3-2 8.5-2V4.6c-4.2 0-6.7.7-8.5 2Z" />
+        <path d="M12 6.6v13.2" />
+      </Stroke>
+    ),
+  },
   { href: "/gallery", label: "Gallery", icon: <Icon {...icons.gallery} /> },
   {
     href: "/recruitment",

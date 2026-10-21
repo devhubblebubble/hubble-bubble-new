@@ -129,7 +129,17 @@ else say(`/recruitment/ matches Sanity exactly for all ${roles.length} roles (ch
 
 // ── 3. Every page ───────────────────────────────────────────────────────────
 const slugs = [...new Set([...listing.body.matchAll(/href="\/recruitment\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];
-const pages = ["/", "/recruitment/", "/about/", "/services/", "/journey/", "/gallery/", "/stories/", "/privacy/", "/contact/", ...slugs.map((s) => `/recruitment/${s}/`)];
+// The blog: every topic page and post linked from /blog/.
+const blogIndex = await get("/blog/");
+const blogTopics = [...new Set([...blogIndex.body.matchAll(/href="\/blog\/topics\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];
+const blogPosts = [...new Set([...blogIndex.body.matchAll(/href="\/blog\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))].filter((s) => s !== "topics");
+say(`/blog/ links to ${blogTopics.length} topic page(s) and ${blogPosts.length} post(s)`);
+const pages = [
+  "/", "/recruitment/", "/about/", "/services/", "/journey/", "/gallery/", "/stories/", "/blog/", "/privacy/", "/contact/",
+  ...slugs.map((s) => `/recruitment/${s}/`),
+  ...blogTopics.map((s) => `/blog/topics/${s}/`),
+  ...blogPosts.map((s) => `/blog/${s}/`),
+];
 
 // Every Hubble Bubble email address found in the pages, and which pages show it
 const emailPages = new Map();

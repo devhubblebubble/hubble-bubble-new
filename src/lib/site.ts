@@ -1,7 +1,8 @@
 // Public address of the site, used for canonical links and structured data.
-// Set NEXT_PUBLIC_SITE_URL in the hosting build settings; no trailing slash.
+// Jevin chose hubblebubble.club (21 October 2026). NEXT_PUBLIC_SITE_URL in the
+// hosting build settings overrides it; no trailing slash.
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.hubblebubble.london"
+  process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://hubblebubble.club"
 ).replace(/\/+$/, "");
 
 // Set NOINDEX=1 on test deployments so search engines and AI crawlers skip
