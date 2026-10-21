@@ -36,11 +36,13 @@
 }
 
 .heading {
-  font-size: clamp(2.5rem, 5vw, 6rem);
+  // Was up to 6rem (96px): five lines of very big type in half the screen.
+  font-size: clamp(2.25rem, min(3.6vw, 6.4vh), 4.25rem);
   font-weight: 700;
-  line-height: 1.05;
+  line-height: 1.08;
   color: var(--white);
-  margin-bottom: 48px;
+  margin-bottom: clamp(24px, 4vh, 48px);
+  text-wrap: balance;
 }
 
 .mint {
@@ -154,7 +156,7 @@
 
 // ── Text ──────────────────────────────────────────────────────────────────────
 .title {
-  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-size: clamp(1.4rem, min(2vw, 3.4vh), 2rem);
   font-weight: 600;
   color: var(--mint);
 }

@@ -66,7 +66,7 @@
 }
 
 .headline {
-  font-size: 48px;          // Figma: 48px
+  font-size: var(--fs-h2);  // Figma: 48px (smaller on short screens)
   font-weight: 400;         // Figma: 400
   line-height: 1.4;         // Figma: 140%
   color: #ffffff;
@@ -92,9 +92,9 @@
 }
 
 .body {
-  font-size: 24px;          // Figma: 24px
+  font-size: var(--fs-body); // Figma: 24px; running text now stops at 20px
   font-weight: 400;
-  line-height: 1.8;         // Figma: 180%
+  line-height: 1.7;
   color: #ffffff;
   margin: 0;
 }
@@ -102,9 +102,9 @@
 .link {
   display: inline-block;
   padding: 8px 0;
-  font-size: 24px;          // Figma: 24px
+  font-size: var(--fs-body);
   font-weight: 500;
-  line-height: 1.8;
+  line-height: 1.7;
   text-decoration: underline;
   color: #ff4f00;
   transition: opacity 0.2s;

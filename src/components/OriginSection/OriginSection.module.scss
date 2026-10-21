@@ -53,6 +53,7 @@
   font-weight: 500;
   max-width: min(700px, 90vw);
   margin: 0 auto clamp(14px, 2.2dvh, 28px);
+  text-wrap: balance;
 }
 
 .leadAccent {

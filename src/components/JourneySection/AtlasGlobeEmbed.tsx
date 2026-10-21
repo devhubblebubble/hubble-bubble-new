@@ -226,10 +226,15 @@ export default function AtlasGlobeEmbed({ rotation = 0, className }: Props) {
       ]);
     };
 
+    // Each city label's size, measured the first time it shows (it changes
+    // only with the screen size, when it is measured again).
+    const labelSize: ({ w: number; h: number } | null)[] = MARKERS.map(() => null);
+
     const resize = () => {
       const w = wrap.clientWidth;
       const h = wrap.clientHeight;
       if (w === 0 || h === 0) return;
+      labelSize.fill(null);
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = w;
       height = h;
@@ -332,6 +337,7 @@ export default function AtlasGlobeEmbed({ rotation = 0, className }: Props) {
       // City pins: project each one and move its label into place.
       const f = 1 / Math.tan((FOV * Math.PI) / 360);
       const aspect = width / height;
+      const shown: { i: number; x: number; y: number; facing: number }[] = [];
       for (let i = 0; i < ANCHORS.length; i++) {
         const el = markerRefs.current[i];
         if (!el) continue;
@@ -348,6 +354,34 @@ export default function AtlasGlobeEmbed({ rotation = 0, className }: Props) {
         const y = (1 - ((f * ay) / depth * 0.5 + 0.5)) * height;
         el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -100%)`;
         el.dataset.on = "1";
+        shown.push({ i, x, y, facing });
+      }
+
+      // Labels never pile up: the cities facing the camera most are labelled
+      // first, and a label that would overlap one already placed, or stick out
+      // of the globe's box, is hidden. Its pin stays.
+      shown.sort((a, b) => b.facing - a.facing);
+      const placed: number[][] = [];
+      for (const s of shown) {
+        const el = markerRefs.current[s.i]!;
+        let size = labelSize[s.i];
+        if (!size) {
+          size = { w: el.offsetWidth, h: el.offsetHeight };
+          if (size.w > 0) labelSize[s.i] = size;
+        }
+        // The chip is the top of the marker; the stem below it can overlap.
+        const box = [s.x - size.w / 2 - 4, s.y - size.h - 4, s.x + size.w / 2 + 4, s.y - size.h + 30];
+        const clash =
+          box[0] < 0 ||
+          box[1] < 0 ||
+          box[2] > width ||
+          placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1]);
+        if (clash) {
+          el.dataset.label = "off";
+        } else {
+          delete el.dataset.label;
+          placed.push(box);
+        }
       }
     };
 

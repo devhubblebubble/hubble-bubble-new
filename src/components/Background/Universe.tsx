@@ -403,6 +403,7 @@ export default function Universe() {
   return (
     <div
       aria-hidden="true"
+      data-universe=""
       style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", overflow: "hidden" }}
     >
       <canvas ref={canvasRef} style={{ display: "block" }} />

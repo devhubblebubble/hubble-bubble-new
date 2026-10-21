@@ -43,7 +43,7 @@
   top: 50%;
   left: 50%;
   width: min(calc(100% - 24px), 1280px);
-  min-height: clamp(250px, 34vw, 420px);
+  min-height: clamp(250px, min(34vw, 50vh), 420px);
   display: flex;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -135,7 +135,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(200px, min(40vw, 420px));
   gap: clamp(28px, 5vw, 88px);
   align-items: center;
-  padding: clamp(32px, 4.6vw, 80px);
+  padding: clamp(32px, min(4.6vw, 7vh), 80px);
 }
 
 .flip {
@@ -148,7 +148,7 @@
 }
 
 .heading {
-  font-size: clamp(2rem, 3.7vw, 4rem);
+  font-size: clamp(2rem, min(2.6vw, 4.6vh), 2.75rem);
   line-height: 1.05;
   color: var(--mint);
   font-weight: 500;
@@ -157,8 +157,8 @@
 }
 
 .text {
-  font-size: clamp(1rem, 1.75vw, 1.75rem);
-  line-height: 1.38;
+  font-size: clamp(1rem, min(1.25vw, 2.2vh), 1.3125rem);
+  line-height: 1.5;
   color: var(--white);
   min-width: 0;
   width: 100%;
@@ -174,7 +174,7 @@
 
 .partnerLogo {
   display: block;
-  width: min(100%, clamp(168px, 36vw, 460px));
+  width: min(100%, clamp(168px, min(26vw, 36vh), 380px));
   max-width: 100%;
   height: auto;
   object-fit: contain;
@@ -202,7 +202,7 @@
   gap: clamp(14px, 2.5vw, 28px);
   align-items: center;
   text-align: center;
-  padding: clamp(32px, 4.6vw, 80px);
+  padding: clamp(32px, min(4.6vw, 7vh), 80px);
 
   .heading {
     max-width: 900px;

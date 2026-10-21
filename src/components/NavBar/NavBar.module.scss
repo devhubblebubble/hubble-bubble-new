@@ -7,8 +7,10 @@
 .nav {
   position: fixed;
   top: 24px;
-  left: var(--pad-x);
-  right: var(--pad-x);
+  // On wide screens the bar lines up with the page's content column (the
+  // logo starts where the text starts) instead of running wider than it.
+  left: max(var(--pad-x), calc((100% - var(--max)) / 2 - 24px));
+  right: max(var(--pad-x), calc((100% - var(--max)) / 2 - 24px));
   z-index: 100;
   // No transform while shown: a transformed parent would pin the fixed drawer
   // and scrim to the bar instead of the screen.

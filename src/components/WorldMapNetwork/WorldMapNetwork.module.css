@@ -1,5 +1,5 @@
 .map {
-  --page-bg: #000000;
+  --page-bg: transparent;
   --land: #071f1a;
   --coast: #48d6c3;
   --border: rgba(72, 214, 195, 0.42);

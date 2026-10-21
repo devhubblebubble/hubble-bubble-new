@@ -33,6 +33,12 @@
   &[data-on] {
     display: block;
   }
+
+  // A label that would overlap another one: only its pin shows.
+  &[data-label="off"] .chip,
+  &[data-label="off"] .stem {
+    visibility: hidden;
+  }
 }
 
 .stem {

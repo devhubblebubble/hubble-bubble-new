@@ -2,7 +2,9 @@
 
 .hero {
   position: relative;
-  padding: 168px var(--pad-x) 96px;
+  // Room for the menu bar above; on short screens (1080p monitors, laptops)
+  // the spacing shrinks with the height so the buttons stay on the first screen.
+  padding: clamp(136px, 18vh, 168px) var(--pad-x) clamp(48px, 9vh, 96px);
   overflow: hidden;
   isolation: isolate;
 
@@ -33,10 +35,10 @@
 }
 
 .headline {
-  font-size: clamp(2.25rem, 3.7vw, 4rem);
+  font-size: var(--fs-h1);
   font-weight: 500;
-  line-height: 1.4;
-  margin-bottom: 24px;
+  line-height: 1.2;
+  margin-bottom: clamp(16px, 2.6vh, 28px);
   text-wrap: balance;
   word-break: break-word;
   hyphens: auto;
@@ -51,15 +53,18 @@
   width: clamp(160px, 22vw, 380px);
   height: 2px;
   background: var(--mint);
-  margin-bottom: 24px;
+  margin-bottom: clamp(16px, 2.6vh, 24px);
 }
 
+// Two lines on a desktop ("So stop guessing. Let's find the degree" / "that
+// fits your personality and passion!"): 40ch keeps each half on one line.
 .sub {
-  font-size: clamp(1.25rem, 1.85vw, 2rem);
+  font-size: clamp(1.125rem, min(1.4vw, 2.5vh), 1.5rem);
   line-height: 1.5;
-  margin-bottom: 24px;
-  max-width: 540px;
+  margin-bottom: clamp(16px, 2.6vh, 24px);
+  max-width: 40ch;
   word-break: break-word;
+  text-wrap: pretty;
 }
 
 .subMuted {
@@ -122,12 +127,12 @@
 
 .accred {
   max-width: 500px;
-  margin-bottom: 48px;
+  margin-bottom: clamp(24px, 4.5vh, 48px);
 }
 
 .accredLabel {
   font-size: var(--fs-sm);
-  margin-bottom: 14px;
+  margin-bottom: clamp(8px, 1.4vh, 14px);
   color: var(--muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -142,7 +147,7 @@
 }
 
 .accredLogo {
-  height: clamp(28px, 2.5vw, 38px);
+  height: clamp(28px, min(2.5vw, 4vh), 38px);
   width: auto;
   object-fit: contain;
   display: block;
@@ -182,8 +187,8 @@
 }
 
 .photo {
-  width: clamp(140px, 13.3vw, 230px);
-  height: clamp(140px, 13.3vw, 230px);
+  width: clamp(140px, min(13.3vw, 22vh), 230px);
+  height: clamp(140px, min(13.3vw, 22vh), 230px);
   border-radius: 50%;
   background-size: cover;
   background-position: center;
@@ -201,8 +206,8 @@
 }
 
 .flag {
-  width: clamp(70px, 6.5vw, 112px);
-  height: clamp(70px, 6.5vw, 112px);
+  width: clamp(70px, min(6.5vw, 11vh), 112px);
+  height: clamp(70px, min(6.5vw, 11vh), 112px);
   border-radius: 50%;
   margin-left: -32px;
   margin-top: 8px;
@@ -226,7 +231,7 @@
 }
 
 .name {
-  font-size: clamp(1.4rem, 1.85vw, 2rem);
+  font-size: clamp(1.4rem, min(1.85vw, 3.2vh), 2rem);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -266,7 +271,7 @@
   // Height of one university slot: logos are drawn at this height and a
   // typed name gets at least this much room. A long name wraps and its row
   // grows, so nothing spills out of the card.
-  --slot: clamp(36px, 4.6vw, 60px);
+  --slot: clamp(36px, min(4.6vw, 6.5vh), 60px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px 20px;
