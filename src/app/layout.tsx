@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import '../style/globals.scss';
 import Universe from '@/components/Background/Universe';
+import LiquidGlass from '@/components/LiquidGlass/LiquidGlass';
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
 import MobileTabBar from '@/components/MobileTabBar/MobileTabBar';
 import TransitionProvider from '@/providers/TransitionProvider';
@@ -55,6 +56,7 @@ export default function RootLayout({
         <a href="#main" className="skip-link" data-transition-ignore="true">Skip to content</a>
         {/* The universe behind every page: stars and bubbles that move with the finger, the mouse and the scroll. */}
         <Universe />
+        <LiquidGlass />
         <ScrollReveal />
         <TransitionProvider>{children}</TransitionProvider>
         {/* Phones only: the bottom tab bar (hidden by CSS on bigger screens). */}

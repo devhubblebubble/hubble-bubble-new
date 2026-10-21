@@ -68,7 +68,7 @@ export default function RecruitmentPage({ roles, settings }: Props) {
 
             <ul className={styles.cardGrid}>
               {list.map((role) => (
-                <li key={role._id} className={`${styles.card} reveal`}>
+                <li key={role._id} className={`${styles.card} reveal`} data-glass="flat">
                   <article aria-labelledby={`role-${role.slug}`}>
                     <h3 id={`role-${role.slug}`} className={styles.cardTitle}>
                       <Link href={`/recruitment/${role.slug}/`}>{role.title}</Link>

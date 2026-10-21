@@ -29,13 +29,12 @@
   justify-content: space-between;
   padding: 14px 24px;
   border-radius: 18px;
-  transition: background 0.3s ease;
+  transition: --glass-tint 0.3s ease;
 }
 
+// Darker once the page has scrolled under the bar (the rim stays).
 .scrolled .inner {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 35%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.04) 100%),
-    rgba(8, 8, 10, 0.62);
+  --glass-tint: rgba(8, 8, 10, 0.62);
 }
 
 .logoLink {
@@ -54,6 +53,7 @@
 }
 
 .links {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 32px;
@@ -67,6 +67,7 @@
     text-decoration: none;
     transition: color 0.2s;
     position: relative;
+    z-index: 1;
     border-radius: 6px;
 
     &:hover { color: var(--mint); }
@@ -91,6 +92,25 @@
       transition: opacity 0.2s;
     }
   }
+}
+
+// A glass pill under the link the mouse is on; it glides between links
+// (moved by the component) and fades away when the mouse leaves.
+.pill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 42px;
+  margin-top: -21px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+  box-shadow: glass-shadows(0 6px 18px rgba(0, 0, 0, 0.3), 0.6);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  will-change: transform;
 }
 
 .active {
@@ -167,9 +187,7 @@
   padding: max(16px, env(safe-area-inset-top, 0px)) 0 max(20px, env(safe-area-inset-bottom, 0px));
   border-width: 0 1px 0 0;
   border-radius: 0 28px 28px 0;
-  box-shadow:
-    inset -1px 0 0 rgba(255, 255, 255, 0.08),
-    24px 0 80px rgba(0, 0, 0, 0.55);
+  box-shadow: glass-shadows(24px 0 80px rgba(0, 0, 0, 0.55));
   transform: translateX(-104%);
   visibility: hidden;
   transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.38s;

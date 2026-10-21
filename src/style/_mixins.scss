@@ -91,44 +91,106 @@
 }
 
 // ── Liquid glass ─────────────────────────────────────────────────────────────
-// Translucent panes with a soft blur, a light rim and a highlight along the
-// top edge, so the universe behind the page shows through. Use `glass` for
-// the fixed chrome and overlays (menu, bars, pop-ups) and `glass-flat` for
-// cards inside the page: blurring many cards at once is heavy on phones, and
-// the tint alone already reads as glass.
-@mixin glass($tint: rgba(18, 18, 22, 0.55), $blur: 20px) {
+// Glass in the style of Apple's iOS 27: the page behind is blurred and a
+// little brighter, a thin darker line runs round the edge, and a bright
+// specular highlight sits on the edge facing the light, with a fainter
+// reflection on the opposite edge. On a computer the light is the mouse
+// (--lg-ox and --lg-oy, set by the LiquidGlass component), so the highlight
+// travels round the edge as the mouse moves. Pressed, glass lights up from the
+// touch point (--lg-glow, --lg-px, --lg-py). In Chrome and Edge the LiquidGlass
+// component also bends the page behind near the edges, like a lens, on
+// elements marked data-glass; other browsers get the same look without it.
+//
+// Use `glass` for the fixed chrome and overlays (menu, bars, pop-ups),
+// `glass-pill` for glass buttons and `glass-flat` for cards inside the page
+// (no blur: blurring many cards at once is heavy on phones). To change the
+// tint, set --glass-tint rather than the background. To add a shadow, use
+// glass-shadows() so the highlight stays.
+
+// The edge light, as box shadows: inset shadows follow the rounded corners,
+// and stay right over translucent glass (a gradient border would show
+// through it). $hi is the highlight's strength.
+@function glass-edge($hi: 0.55) {
+  @return (
+    inset calc(var(--lg-ox, 0.45) * 1.5px) calc(var(--lg-oy, 0.9) * 1.5px) 1px -0.5px rgba(255, 255, 255, $hi),
+    inset calc(var(--lg-ox, 0.45) * -1px) calc(var(--lg-oy, 0.9) * -1px) 1px -0.5px rgba(255, 255, 255, $hi * 0.32),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.32)
+  );
+}
+
+// The full shadow set: edge light, a faint glow through the bottom of the
+// pane, then any outer shadow ($outer).
+@function glass-shadows($outer: 0 14px 44px rgba(0, 0, 0, 0.38), $hi: 0.55) {
+  @return glass-edge($hi), inset 0 -10px 18px -12px rgba(255, 255, 255, 0.14), $outer;
+}
+
+@mixin -glass-layers {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 35%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.05) 100%),
-    $tint;
-  -webkit-backdrop-filter: blur($blur) saturate(170%);
-  backdrop-filter: blur($blur) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 12px 40px rgba(0, 0, 0, 0.35);
+    // Light from the touch point while pressed: it spreads out as --lg-glow
+    // goes from 0 (nothing) to 1. Only the size uses calc(), which every
+    // browser takes; a calc() inside the colour would drop the whole
+    // background in some.
+    radial-gradient(circle at var(--lg-px, 50%) var(--lg-py, 50%), rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0) calc(var(--lg-glow, 0) * 80%)),
+    // Sheen: brighter at the top, a little light coming through at the bottom.
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0) 62%, rgba(255, 255, 255, 0.04) 100%),
+    linear-gradient(var(--glass-tint), var(--glass-tint));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@mixin glass($tint: rgba(18, 18, 22, 0.55), $blur: 20px) {
+  --glass-tint: #{$tint};
+  @include -glass-layers;
+  -webkit-backdrop-filter: blur($blur) saturate(185%) brightness(1.06);
+  backdrop-filter: blur($blur) saturate(185%) brightness(1.06);
+  box-shadow: glass-shadows();
+
+  // Asked for more contrast: solid and clearly edged.
+  @media (prefers-contrast: more) {
+    --glass-tint: rgb(12, 12, 14);
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+
+  // Asked for less transparency (Chrome and Edge can tell): frostier.
+  @media (prefers-reduced-transparency: reduce) {
+    --glass-tint: rgba(16, 16, 20, 0.92);
+  }
 }
 
 @mixin glass-flat($tint: rgba(255, 255, 255, 0.05)) {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.04) 100%),
-    $tint;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    0 10px 30px rgba(0, 0, 0, 0.3);
+  --glass-tint: #{$tint};
+  @include -glass-layers;
+  box-shadow: glass-shadows(0 10px 30px rgba(0, 0, 0, 0.3), 0.4);
+
+  @media (prefers-contrast: more) {
+    --glass-tint: rgb(16, 16, 18);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
 }
 
-// A glass button or chip: a pill that lifts a little on hover.
+// A glass button or chip. Pressed, it swells a little and lights up from the
+// finger, then springs back.
 @mixin glass-pill($tint: rgba(255, 255, 255, 0.08)) {
   @include glass($tint, 14px);
   border-radius: 999px;
   color: var(--white);
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.6s var(--ease-spring),
+    --lg-glow 0.55s ease-out,
+    box-shadow 0.25s ease;
 
   &:hover {
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(255, 255, 255, 0.02) 60%, rgba(255, 255, 255, 0.08) 100%),
-      rgba(255, 255, 255, 0.12);
+    --glass-tint: #{rgba(255, 255, 255, 0.15)};
+  }
+
+  &:active {
+    --lg-glow: 1;
+    transform: scale(1.05);
+    transition-duration: 0.14s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active {
+      transform: none;
+    }
   }
 }

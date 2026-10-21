@@ -38,7 +38,7 @@ export default function CtaSection({ data, settings }: Props) {
               >
                 {data.ctaPrimaryLabel ?? "Take the eligibility Test"}
               </button>
-              <Link href="/contact" className={`${styles.btn} ${styles.btnGhost}`}>
+              <Link href="/contact" className={`${styles.btn} ${styles.btnGhost}`} data-glass="">
                 {data.ctaSecondaryLabel ?? "Book a call"}
               </Link>
             </div>

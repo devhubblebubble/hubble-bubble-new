@@ -109,7 +109,7 @@ export default function HeroSection({ data, settings }: Props) {
               >
                 {data.primaryCtaLabel ?? "Take the eligibility Test"}
               </button>
-              <Link href={data.secondaryCtaHref || "/contact"} className={`${styles.btn} ${styles.btnGhost}`}>
+              <Link href={data.secondaryCtaHref || "/contact"} className={`${styles.btn} ${styles.btnGhost}`} data-glass="">
                 {data.secondaryCtaLabel ?? "Book a call"}
               </Link>
             </div>

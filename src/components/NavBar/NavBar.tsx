@@ -6,7 +6,12 @@ import { useState, useEffect, useRef } from "react";
 import type { KeyboardEvent, ReactElement, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { icons } from "@/components/MobileTabBar/icons";
+import { glide } from "@/lib/glide";
+import type { Spot } from "@/lib/glide";
 import styles from "./NavBar.module.scss";
+
+// How far the hover pill reaches past a link, in px.
+const PILL_PAD = 14;
 
 const NAV_LINKS = [
   { href: "/services",    label: "Services" },
@@ -79,6 +84,9 @@ export default function NavBar() {
   const prevY = useRef(0);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+  const pillAt = useRef<Spot | null>(null);
   const pathname = usePathname();
   const mobileOpen = openOn === pathname;
   const setMobileOpen = (open: boolean) => setOpenOn(open ? pathname : null);
@@ -145,7 +153,7 @@ export default function NavBar() {
 
   return (
     <nav className={`${styles.nav} ${(scrolled || isInnerPage) ? styles.scrolled : ""} ${hidden && !mobileOpen ? styles.hidden : ""}`}>
-      <div className={styles.inner}>
+      <div className={styles.inner} data-glass="">
 
         {/* Phones: the menu button sits on the left, as on the old site. */}
         <button
@@ -174,8 +182,26 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Desktop links */}
-        <div className={styles.links}>
+        {/* Desktop links. A glass pill glides to the link under the mouse. */}
+        <div
+          ref={linksRef}
+          className={styles.links}
+          onPointerOver={(event) => {
+            if (event.pointerType !== "mouse") return;
+            const link = (event.target as Element).closest("a");
+            const pill = pillRef.current;
+            if (!link || !pill || !linksRef.current?.contains(link)) return;
+            const next = { x: link.offsetLeft - PILL_PAD, w: link.offsetWidth + PILL_PAD * 2 };
+            pill.style.opacity = "1";
+            glide(pill, pillAt.current, next);
+            pillAt.current = next;
+          }}
+          onPointerLeave={() => {
+            if (pillRef.current) pillRef.current.style.opacity = "0";
+            pillAt.current = null;
+          }}
+        >
+          <span ref={pillRef} className={styles.pill} aria-hidden="true" />
           {NAV_LINKS.map(({ href, label }) => (
             <Link
               key={href}
@@ -209,6 +235,7 @@ export default function NavBar() {
         id="site-menu"
         ref={drawerRef}
         className={`${styles.drawer} ${mobileOpen ? styles.drawerOpen : ""}`}
+        data-glass="frost"
         role="dialog"
         aria-modal="true"
         aria-label="Menu"

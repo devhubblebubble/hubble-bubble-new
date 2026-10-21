@@ -370,6 +370,7 @@ export default function EligibilityModal({ isOpen, onClose, contactEmail, bookin
     <div className={styles.overlay} onClick={closeModal}>
       <div
         className={styles.modal}
+        data-glass="frost"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"

@@ -111,7 +111,7 @@ export default function ContactPage({ settings }: Props) {
         </div>
 
         {/* Right — form */}
-        <div className={`${styles.formWrap} reveal`}>
+        <div className={`${styles.formWrap} reveal`} data-glass="flat">
           {/* The form needs the browser (it reads ?type= from the address), so it
               sits in its own Suspense boundary. The rest of the page is plain HTML. */}
           <Suspense fallback={null}>

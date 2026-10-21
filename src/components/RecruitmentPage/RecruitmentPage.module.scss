@@ -174,7 +174,7 @@
   @include glass-flat(rgba(255, 255, 255, 0.045));
   border-radius: 16px;
   padding: 32px 32px 36px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: glass-shadows(0 12px 40px rgba(0, 0, 0, 0.35), 0.4);
   transition: border-color 0.25s, transform 0.25s;
 
   &:hover {

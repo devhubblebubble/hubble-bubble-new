@@ -58,7 +58,7 @@ export default function ServicesPage({ data }: Props) {
 
         <div className={styles.cardGrid} role="tabpanel">
           {cards.map((card, i) => (
-            <article key={card._key ?? i} className={`${styles.card} reveal`}>
+            <article key={card._key ?? i} className={`${styles.card} reveal`} data-glass="flat">
               <div className={styles.cardBody}>
                 <h2>{card.title}</h2>
                 <p>{card.description}</p>
