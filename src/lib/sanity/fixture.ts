@@ -9,9 +9,11 @@ import type { PortableTextBlock } from "@portabletext/types";
 import { convertMarkupFields } from "../../../content/seed/markup.mjs";
 import type {
   AboutPage,
+  ContactPage,
   HomePage,
   JobRole,
   PrivacyPage,
+  RecruitmentPage,
   ServicesPage,
   SiteSettings,
   StoriesPage,
@@ -134,3 +136,6 @@ export function fixtureAboutPage(): AboutPage {
 export const fixtureServicesPage = (): ServicesPage => prepare<ServicesPage>(readJson("services-page.json"));
 export const fixtureStoriesPage = (): StoriesPage => prepare<StoriesPage>(readJson("stories-page.json"));
 export const fixturePrivacyPage = (): PrivacyPage => prepare<PrivacyPage>(readJson("privacy-page.json"));
+export const fixtureContactPage = (): ContactPage => prepare<ContactPage>(readJson("contact-page.json"));
+export const fixtureRecruitmentPage = (): RecruitmentPage =>
+  prepare<RecruitmentPage>(readJson("recruitment-page.json"));

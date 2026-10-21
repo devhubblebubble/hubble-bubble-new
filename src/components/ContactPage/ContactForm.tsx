@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import type { ContactCopy } from "./contactPage.data";
 import styles from "./ContactPage.module.scss";
 
 type FormType = "student" | "collab" | "general";
@@ -16,6 +17,8 @@ type Failure = "send" | "too_fast" | null;
 type Props = {
   /** Shown if sending fails, so nobody loses their message */
   contactEmail: string;
+  /** The form's text (tab names, labels, choices, button, thank-you message). */
+  copy: ContactCopy;
 };
 
 /**
@@ -27,7 +30,7 @@ type Props = {
  * Sending goes to /api/contact, handled by worker/index.ts, which emails the
  * team through Resend.
  */
-export default function ContactForm({ contactEmail }: Props) {
+export default function ContactForm({ contactEmail, copy }: Props) {
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type") as FormType | null;
   const initialType: FormType =
@@ -120,14 +123,10 @@ export default function ContactForm({ contactEmail }: Props) {
       {submitted ? (
         <div className={styles.success}>
           <p className={styles.successIcon}>🚀</p>
-          <h2 className={styles.successTitle}>Message received!</h2>
-          <p className={styles.successText}>
-            We&apos;ll get back to you within 48 hours. In the meantime, feel
-            free to explore our student stories or check out the eligibility
-            test.
-          </p>
+          <h2 className={styles.successTitle}>{copy.successTitle}</h2>
+          <p className={styles.successText}>{copy.successText}</p>
           <Link href="/stories" className={styles.successLink}>
-            Read student stories →
+            {copy.successLink}
           </Link>
         </div>
       ) : (
@@ -141,11 +140,7 @@ export default function ContactForm({ contactEmail }: Props) {
                 onClick={() => setFormType(t)}
                 type="button"
               >
-                {t === "student"
-                  ? "I'm a student"
-                  : t === "collab"
-                  ? "Collaboration"
-                  : "General"}
+                {t === "student" ? copy.tabStudent : t === "collab" ? copy.tabCollab : copy.tabGeneral}
               </button>
             ))}
           </div>
@@ -153,7 +148,7 @@ export default function ContactForm({ contactEmail }: Props) {
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             <div className={styles.row}>
               <label className={styles.fieldWrap}>
-                <span className={styles.label}>Full name</span>
+                <span className={styles.label}>{copy.nameLabel}</span>
                 <input
                   type="text"
                   name="name"
@@ -167,7 +162,7 @@ export default function ContactForm({ contactEmail }: Props) {
                 {fieldError("name")}
               </label>
               <label className={styles.fieldWrap}>
-                <span className={styles.label}>Email</span>
+                <span className={styles.label}>{copy.emailFieldLabel}</span>
                 <input
                   type="email"
                   name="email"
@@ -185,25 +180,21 @@ export default function ContactForm({ contactEmail }: Props) {
             {formType === "student" && (
               <div className={styles.row}>
                 <label className={styles.fieldWrap}>
-                  <span className={styles.label}>Interested in studying</span>
+                  <span className={styles.label}>{copy.countryLabel}</span>
                   <select name="destination" className={styles.input}>
                     <option value="">Select a country</option>
-                    <option>United Kingdom</option>
-                    <option>Canada</option>
-                    <option>Australia</option>
-                    <option>USA</option>
-                    <option>Europe</option>
-                    <option>Other</option>
+                    {copy.countries.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
                   </select>
                 </label>
                 <label className={styles.fieldWrap}>
-                  <span className={styles.label}>Study level</span>
+                  <span className={styles.label}>{copy.levelLabel}</span>
                   <select name="level" className={styles.input}>
                     <option value="">Select level</option>
-                    <option>Undergraduate</option>
-                    <option>Postgraduate</option>
-                    <option>PhD</option>
-                    <option>Foundation</option>
+                    {copy.levels.map((l) => (
+                      <option key={l}>{l}</option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -211,7 +202,7 @@ export default function ContactForm({ contactEmail }: Props) {
 
             {formType === "collab" && (
               <label className={styles.fieldWrap}>
-                <span className={styles.label}>Organisation / Project</span>
+                <span className={styles.label}>{copy.orgLabel}</span>
                 <input
                   type="text"
                   name="organisation"
@@ -223,7 +214,7 @@ export default function ContactForm({ contactEmail }: Props) {
             )}
 
             <label className={styles.fieldWrap}>
-              <span className={styles.label}>Message</span>
+              <span className={styles.label}>{copy.messageLabel}</span>
               <textarea
                 name="message"
                 rows={5}
@@ -231,10 +222,10 @@ export default function ContactForm({ contactEmail }: Props) {
                 maxLength={5000}
                 placeholder={
                   formType === "student"
-                    ? "What's on your mind? Tell us about your goals, worries, or just where you're at right now."
+                    ? copy.messageHintStudent
                     : formType === "collab"
-                    ? "Tell us about your idea. What are you working on and how do you think we could work together?"
-                    : "How can we help?"
+                    ? copy.messageHintCollab
+                    : copy.messageHintGeneral
                 }
                 className={`${styles.input} ${styles.textarea}`}
                 {...fieldProps("message")}
@@ -263,11 +254,11 @@ export default function ContactForm({ contactEmail }: Props) {
             )}
 
             <button type="submit" className={styles.submit} disabled={sending}>
-              {sending ? "Sending..." : "Send message"}
+              {sending ? "Sending..." : copy.sendButton}
             </button>
 
             <p className={styles.privacy}>
-              We respect your privacy. Your details are never shared or sold.{" "}
+              {copy.privacyNote}{" "}
               <Link href="/privacy" className={styles.privacyLink}>
                 Privacy policy
               </Link>

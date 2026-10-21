@@ -2,7 +2,7 @@ import { aboutPage, teamMember } from "./aboutPage";
 import { blockContent } from "./blockContent";
 import { homePage } from "./homePage";
 import { jobRole } from "./jobRole";
-import { privacyPage, servicesPage, storiesPage, story } from "./pages";
+import { contactPage, privacyPage, recruitmentPage, servicesPage, storiesPage, story } from "./pages";
 import { siteSettings } from "./siteSettings";
 import { richText, styledText } from "./text";
 import { university } from "./university";
@@ -13,6 +13,8 @@ export const schemaTypes = [
   aboutPage,
   servicesPage,
   storiesPage,
+  recruitmentPage,
+  contactPage,
   privacyPage,
   siteSettings,
   // Collections

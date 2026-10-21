@@ -1,8 +1,9 @@
-// Page copy for /recruitment. Moves into Sanity in a later stage.
+// The jobs page's built-in text. Each piece can be changed in the Studio
+// (Pages > Jobs page); an empty field there shows the text below.
 
 export const recruitmentPageCopy = {
-  metaTitle: "Job opportunities abroad | Hubble Bubble",
-  metaDescription:
+  seoTitle: "Job opportunities abroad | Hubble Bubble",
+  seoDescription:
     "Current job opportunities abroad with visa sponsorship, from Hubble Bubble. Each role shows the full job description, salary, the expected processing time and how to apply.",
   eyebrow: "Recruitment",
   heroTitle: "Job opportunities abroad",
@@ -35,3 +36,5 @@ export const recruitmentPageCopy = {
   emailButton: "Email us",
   whatsappButton: "Message us on WhatsApp",
 };
+
+export type RecruitmentCopy = typeof recruitmentPageCopy;

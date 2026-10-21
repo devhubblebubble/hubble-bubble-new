@@ -130,6 +130,8 @@ const singletonFiles = [
   "services-page.json",
   "stories-page.json",
   "privacy-page.json",
+  "contact-page.json",
+  "recruitment-page.json",
 ];
 const singletons = [];
 for (const file of singletonFiles) singletons.push(await prepare(await readJson(file)));

@@ -9,17 +9,19 @@ import {
 } from "@/lib/jobs/format";
 import type { JobRole, SiteSettings } from "@/lib/sanity/types";
 import styles from "./RecruitmentPage.module.scss";
-import { recruitmentPageCopy as copy } from "./recruitmentPage.data";
+import type { RecruitmentCopy } from "./recruitmentPage.data";
 
 type Props = {
   roles: JobRole[];
   settings: SiteSettings;
+  /** The page text (from the Studio, with the built-in text for empty fields). */
+  copy: RecruitmentCopy;
 };
 
 const countryId = (country: string) =>
   country.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-export default function RecruitmentPage({ roles, settings }: Props) {
+export default function RecruitmentPage({ roles, settings, copy }: Props) {
   const groups = groupByCountry(roles);
   const whatsappHref = settings.whatsappNumber
     ? `https://wa.me/${settings.whatsappNumber}`
@@ -130,7 +132,7 @@ export default function RecruitmentPage({ roles, settings }: Props) {
         <p className={styles.howIntro}>{copy.howIntro}</p>
         <ol className={styles.steps}>
           {copy.steps.map((step, i) => (
-            <li key={step.title} className="reveal">
+            <li key={`${i}-${step.title}`} className="reveal">
               <span className={styles.stepNum} aria-hidden="true">
                 {i + 1}
               </span>

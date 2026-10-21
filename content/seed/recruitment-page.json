@@ -1,0 +1,32 @@
+{
+  "_id": "recruitmentPage",
+  "_type": "recruitmentPage",
+  "eyebrow": "Recruitment",
+  "heroTitle": "Job opportunities abroad",
+  "heroSubtitle": "Every role shows the full job description, how long the process usually takes from applying to starting, and a direct way to apply. We add new roles as employers send them to us.",
+  "byCountryLabel": "Roles by country",
+  "emptyTitle": "No open roles right now",
+  "emptyText": "Tell us the kind of work you want and where you are now, and we will contact you when a matching role comes in.",
+  "howTitle": "What happens after you apply",
+  "howIntro": "The processing time on each role is the typical time from your application to your first day, including the visa stage. It is an estimate, not a guarantee: it depends on the country, the employer, the visa authorities and how quickly your documents are ready.",
+  "steps": [
+    {
+      "title": "Send your application",
+      "text": "Use the apply button on the role. Attach your CV and tell us where you are based now."
+    },
+    {
+      "title": "Eligibility check",
+      "text": "We go through the employer and visa requirements with you, so there are no surprises later."
+    },
+    {
+      "title": "Offer, visa and start date",
+      "text": "We guide you from the interview to your visa and your first day in the new role."
+    }
+  ],
+  "contactTitle": "Not seeing the right role?",
+  "contactText": "Tell us the kind of work you want and where you are now. We will contact you when a matching role comes in.",
+  "emailButton": "Email us",
+  "whatsappButton": "Message us on WhatsApp",
+  "seoTitle": "Job opportunities abroad | Hubble Bubble",
+  "seoDescription": "Current job opportunities abroad with visa sponsorship, from Hubble Bubble. Each role shows the full job description, salary, the expected processing time and how to apply."
+}

@@ -5,24 +5,27 @@ export const homePage = defineType({
   name: "homePage",
   title: "Home page",
   type: "document",
+  // The groups follow the order of the sections on the page, top to bottom.
   groups: [
-    { name: "hero", title: "Top of page", default: true },
-    { name: "trust", title: "Trust cards" },
-    { name: "journey", title: "Journey steps" },
-    { name: "stories", title: "Stories and testimonials" },
-    { name: "gallery", title: "Gallery (round bubbles)" },
-    { name: "bottom", title: "Bottom of page" },
-    { name: "seo", title: "Search" },
+    { name: "hero", title: "1. Top of page", default: true },
+    { name: "trust", title: "2. World map and trust cards" },
+    { name: "stories", title: "3. Student stories" },
+    { name: "journey", title: "4. Journey" },
+    { name: "testimonials", title: "5. Testimonials" },
+    { name: "gallery", title: "6. Gallery (round bubbles)" },
+    { name: "origin", title: "7. How it all began" },
+    { name: "cta", title: "8. Final call" },
+    { name: "seo", title: "Search (Google)" },
   ],
   fields: [
-    // ── Hero ───────────────────────────────────────────────────────────
+    // ── 1. Top of page ────────────────────────────────────────────────
     str("headlineLead", "Headline, first line", 'e.g. "We are the"', { group: "hero" }),
-    str("headlineAccent", "Headline, orange line", 'e.g. "Anti-Agent Agents!"', { group: "hero" }),
+    str("headlineAccent", "Headline, green line", 'e.g. "Anti-Agent Agents!"', { group: "hero" }),
     text("headlineRest", "Headline, remaining lines", "One line per row.", { group: "hero" }),
     str("subLead", "Subtitle, grey part", 'e.g. "So stop guessing."', { group: "hero" }),
     str("subHighlight", "Subtitle, white part", 'e.g. "Let\'s find the degree"', { group: "hero" }),
     str("subRest", "Subtitle, last line (grey)", undefined, { group: "hero" }),
-    str("accreditationsLabel", "Accreditations label", 'e.g. "Accredited by:"', { group: "hero" }),
+    str("accreditationsLabel", "Accreditation logos: small heading", 'e.g. "Accredited by:"', { group: "hero" }),
     defineField({
       name: "accreditations",
       title: "Accreditation logos",
@@ -40,9 +43,15 @@ export const homePage = defineType({
     str("primaryCtaLabel", "Main button", 'Opens the eligibility test. e.g. "Take the eligibility Test"', { group: "hero" }),
     str("secondaryCtaLabel", "Second button", 'e.g. "Book a call"', { group: "hero" }),
     str("secondaryCtaHref", "Second button link", "e.g. /contact", { group: "hero" }),
+    str(
+      "admitsLabel",
+      "Student cards: small heading above the university logos",
+      'e.g. "Admits:"',
+      { group: "hero" },
+    ),
     defineField({
       name: "heroStudents",
-      title: "Student cards (next to the headline)",
+      title: "Student cards (right of the headline; below it on phones)",
       description:
         "One card per student; the cards rotate every few seconds. Upload the student's photo here and pick their university admits from the Universities list (left menu), where each logo is uploaded once.",
       type: "array",
@@ -121,9 +130,9 @@ export const homePage = defineType({
         }),
       ],
     }),
-    str("worldMapHeadline", "Headline under the world map", undefined, { group: "hero" }),
 
-    // ── Trust cards ────────────────────────────────────────────────────
+    // ── 2. World map and trust cards ──────────────────────────────────
+    str("worldMapHeadline", "Headline under the world map", undefined, { group: "trust" }),
     text("backingText", "Card 1: text", undefined, { group: "trust" }),
     text("backingHeading", "Card 1: heading", "One line per row.", { group: "trust" }),
     imageField("backingLogo", "Card 1: logo", undefined, { group: "trust" }),
@@ -161,7 +170,19 @@ export const homePage = defineType({
       ],
     }),
 
-    // ── Journey ────────────────────────────────────────────────────────
+    // ── 3. Student stories ────────────────────────────────────────────
+    str("storiesTitle", "Stories section title", 'e.g. "Student Stories"', { group: "stories" }),
+    str("storiesViewAllLabel", "View all link text", undefined, { group: "stories" }),
+    defineField({
+      name: "featuredStories",
+      title: "Stories shown on the home page",
+      description: "Pick from the Stories list. Leave empty to show the first two.",
+      type: "array",
+      group: "stories",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "story" }] })],
+    }),
+
+    // ── 4. Journey ────────────────────────────────────────────────────
     defineField({
       name: "journeySteps",
       title: "Journey steps",
@@ -184,24 +205,14 @@ export const homePage = defineType({
     }),
     str("journeyOutputsLabel", "Label above the key outputs", 'e.g. "Key Outputs"', { group: "journey" }),
 
-    // ── Stories and testimonials ───────────────────────────────────────
-    str("storiesTitle", "Stories section title", 'e.g. "Student Stories"', { group: "stories" }),
-    str("storiesViewAllLabel", "View all link text", undefined, { group: "stories" }),
-    defineField({
-      name: "featuredStories",
-      title: "Stories shown on the home page",
-      description: "Pick from the Stories list. Leave empty to show the first two.",
-      type: "array",
-      group: "stories",
-      of: [defineArrayMember({ type: "reference", to: [{ type: "story" }] })],
-    }),
-    str("testimonialsTitle", "Testimonials title", undefined, { group: "stories" }),
-    text("testimonialsLead", "Testimonials intro", undefined, { group: "stories" }),
+    // ── 5. Testimonials ───────────────────────────────────────────────
+    str("testimonialsTitle", "Testimonials title", undefined, { group: "testimonials" }),
+    text("testimonialsLead", "Testimonials intro", undefined, { group: "testimonials" }),
     defineField({
       name: "testimonials",
       title: "Testimonials",
       type: "array",
-      group: "stories",
+      group: "testimonials",
       of: [
         defineArrayMember({
           type: "object",
@@ -225,7 +236,7 @@ export const homePage = defineType({
       ],
     }),
 
-    // ── Gallery ────────────────────────────────────────────────────────
+    // ── 6. Gallery ────────────────────────────────────────────────────
     str("galleryTitle", "Title", 'e.g. "Look Who\'ve Noticed Us!"', { group: "gallery" }),
     str("galleryLead", "Line under the title", undefined, { group: "gallery" }),
     str("galleryHint", "Line under the bubbles", 'e.g. "Tap a bubble to read the story behind it."', {
@@ -319,18 +330,21 @@ export const homePage = defineType({
       ],
     }),
 
-    // ── Bottom ─────────────────────────────────────────────────────────
-    str("originTitleLead", "Origin: title (white part)", 'e.g. "How It All"', { group: "bottom" }),
-    str("originTitleAccent", "Origin: title (orange part)", 'e.g. "Began"', { group: "bottom" }),
-    str("originLead", "Origin: line under the title", undefined, { group: "bottom" }),
-    str("originLeadAccent", "Origin: highlighted words", 'e.g. "Big Bang Theory"', { group: "bottom" }),
-    str("originButtonLabel", "Origin: button text", 'e.g. "Read now!"', { group: "bottom" }),
-    str("originButtonHref", "Origin: button link", "e.g. /about", { group: "bottom" }),
-    text("ctaTitleLead", "Final call: title (white part)", "One line per row.", { group: "bottom" }),
-    str("ctaTitleAccent", "Final call: title (orange part)", undefined, { group: "bottom" }),
-    text("ctaText", "Final call: text", undefined, { group: "bottom" }),
-    str("ctaPrimaryLabel", "Final call: main button", "Opens the eligibility test.", { group: "bottom" }),
-    str("ctaSecondaryLabel", "Final call: second button", "Links to the contact page.", { group: "bottom" }),
+    // ── 7. How it all began ───────────────────────────────────────────
+    str("originTitleLead", "Title (white part)", 'e.g. "How It All"', { group: "origin" }),
+    str("originTitleAccent", "Title (orange part)", 'e.g. "Began"', { group: "origin" }),
+    str("originLead", "Line under the title", undefined, { group: "origin" }),
+    str("originLeadAccent", "Line under the title: green words at the end", 'e.g. "Big Bang Theory"', { group: "origin" }),
+    str("originButtonLabel", "Link text", 'e.g. "Read now!"', { group: "origin" }),
+    str("originButtonHref", "Link target", "e.g. /about", { group: "origin" }),
+
+    // ── 8. Final call ─────────────────────────────────────────────────
+    text("ctaTitleLead", "Title (white part)", "One line per row.", { group: "cta" }),
+    str("ctaTitleAccent", "Title (green part)", undefined, { group: "cta" }),
+    text("ctaText", "Text", undefined, { group: "cta" }),
+    str("ctaPrimaryLabel", "Main button", "Opens the eligibility test.", { group: "cta" }),
+    str("ctaSecondaryLabel", "Second button", "Links to the contact page.", { group: "cta" }),
+
 
     ...seoFields("seo"),
   ],

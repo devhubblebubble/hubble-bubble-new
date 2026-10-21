@@ -3,11 +3,16 @@ import Breadcrumb from "@/components/Breadcrumb/Breadcrumb";
 import type { SiteSettings } from "@/lib/sanity/types";
 import EligibilityButton from "@/components/EligibilityModal/EligibilityButton";
 import ContactForm from "./ContactForm";
+import type { ContactCopy } from "./contactPage.data";
 import styles from "./ContactPage.module.scss";
 
-type Props = { settings: SiteSettings };
+type Props = {
+  settings: SiteSettings;
+  /** The page text (from the Studio, with the built-in text for empty fields). */
+  copy: ContactCopy;
+};
 
-export default function ContactPage({ settings }: Props) {
+export default function ContactPage({ settings, copy }: Props) {
   const socials = [
     ["Instagram", settings.instagram],
     ["LinkedIn", settings.linkedin],
@@ -23,15 +28,12 @@ export default function ContactPage({ settings }: Props) {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className={styles.hero}>
         <div className="reveal">
-          <p className={styles.eyebrow}>Get in touch</p>
+          <p className={styles.eyebrow}>{copy.eyebrow}</p>
           <h1 className={styles.heroTitle}>
-            Let&apos;s find your{" "}
-            <em className={styles.orange}>right direction.</em>
+            {copy.titleLead}{" "}
+            <em className={styles.orange}>{copy.titleAccent}</em>
           </h1>
-          <p className={styles.heroLead}>
-            No bots. No templates. A real person reads every message and
-            responds within 48 hours.
-          </p>
+          <p className={styles.heroLead}>{copy.lead}</p>
         </div>
       </section>
 
@@ -43,7 +45,7 @@ export default function ContactPage({ settings }: Props) {
           <div className={styles.infoCard}>
             <span className={styles.infoIcon}>✉</span>
             <div>
-              <p className={styles.infoLabel}>Email us directly</p>
+              <p className={styles.infoLabel}>{copy.emailLabel}</p>
               <a href={`mailto:${settings.contactEmail}`} className={styles.infoLink}>
                 {settings.contactEmail}
               </a>
@@ -54,14 +56,14 @@ export default function ContactPage({ settings }: Props) {
             <div className={styles.infoCard}>
               <span className={styles.infoIcon}>📅</span>
               <div>
-                <p className={styles.infoLabel}>Book a call</p>
+                <p className={styles.infoLabel}>{copy.bookingLabel}</p>
                 <a
                   href={settings.bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.infoLink}
                 >
-                  Schedule a call
+                  {copy.bookingLinkText}
                 </a>
               </div>
             </div>
@@ -70,14 +72,14 @@ export default function ContactPage({ settings }: Props) {
           <div className={styles.infoCard}>
             <span className={styles.infoIcon}>📍</span>
             <div>
-              <p className={styles.infoLabel}>Based in</p>
-              <p className={styles.infoText}>Edinburgh, Scotland, UK</p>
+              <p className={styles.infoLabel}>{copy.locationLabel}</p>
+              <p className={styles.infoText}>{copy.locationText}</p>
             </div>
           </div>
 
           {socials.length > 0 && (
             <div className={styles.socialRow}>
-              <p className={styles.infoLabel}>Follow us</p>
+              <p className={styles.infoLabel}>{copy.socialsLabel}</p>
               <div className={styles.socialLinks}>
                 {socials.map(([label, href]) => (
                   <a
@@ -95,17 +97,14 @@ export default function ContactPage({ settings }: Props) {
           )}
 
           <div className={styles.eligBox}>
-            <p className={styles.eligTitle}>Not sure where to start?</p>
-            <p className={styles.eligText}>
-              Take our free eligibility check. It takes 3 minutes and gives you
-              a clear picture of your options.
-            </p>
+            <p className={styles.eligTitle}>{copy.eligTitle}</p>
+            <p className={styles.eligText}>{copy.eligText}</p>
             <EligibilityButton
               className={styles.eligBtn}
               contactEmail={settings.contactEmail}
               bookingUrl={settings.bookingUrl}
             >
-              Take the eligibility Test →
+              {copy.eligButton}
             </EligibilityButton>
           </div>
         </div>
@@ -115,7 +114,7 @@ export default function ContactPage({ settings }: Props) {
           {/* The form needs the browser (it reads ?type= from the address), so it
               sits in its own Suspense boundary. The rest of the page is plain HTML. */}
           <Suspense fallback={null}>
-            <ContactForm contactEmail={settings.contactEmail} />
+            <ContactForm contactEmail={settings.contactEmail} copy={copy} />
           </Suspense>
         </div>
       </section>

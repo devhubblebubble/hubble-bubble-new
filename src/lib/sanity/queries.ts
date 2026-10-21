@@ -109,3 +109,5 @@ export const aboutPageQuery = /* groq */ `
 export const servicesPageQuery = /* groq */ `*[_type == "servicesPage"][0]`;
 export const storiesPageQuery = /* groq */ `*[_type == "storiesPage"][0]`;
 export const privacyPageQuery = /* groq */ `*[_type == "privacyPage"][0]`;
+export const contactPageQuery = /* groq */ `*[_type == "contactPage"][0]`;
+export const recruitmentPageQuery = /* groq */ `*[_type == "recruitmentPage"][0]`;

@@ -20,6 +20,8 @@ export const structure: StructureResolver = (S) =>
               page(S, "aboutPage", "About page"),
               page(S, "servicesPage", "Services page"),
               page(S, "storiesPage", "Stories page"),
+              page(S, "recruitmentPage", "Jobs page"),
+              page(S, "contactPage", "Contact page"),
               page(S, "privacyPage", "Privacy policy page"),
             ]),
         ),

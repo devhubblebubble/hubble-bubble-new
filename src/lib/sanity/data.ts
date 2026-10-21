@@ -3,8 +3,10 @@ import { sanityClient } from "./client";
 import { offline } from "./env";
 import {
   fixtureAboutPage,
+  fixtureContactPage,
   fixtureHomePage,
   fixturePrivacyPage,
+  fixtureRecruitmentPage,
   fixtureRoles,
   fixtureServicesPage,
   fixtureSettings,
@@ -14,9 +16,11 @@ import {
 } from "./fixture";
 import {
   aboutPageQuery,
+  contactPageQuery,
   homePageQuery,
   openRolesQuery,
   privacyPageQuery,
+  recruitmentPageQuery,
   servicesPageQuery,
   siteSettingsQuery,
   storiesPageQuery,
@@ -25,9 +29,11 @@ import {
 } from "./queries";
 import type {
   AboutPage,
+  ContactPage,
   HomePage,
   JobRole,
   PrivacyPage,
+  RecruitmentPage,
   ServicesPage,
   SiteSettings,
   StoriesPage,
@@ -104,4 +110,12 @@ export const getStoriesPage = cache(async (): Promise<StoriesPage> =>
 
 export const getPrivacyPage = cache(async (): Promise<PrivacyPage> =>
   (await fetchOr<PrivacyPage | null>(privacyPageQuery, fixturePrivacyPage)) ?? {},
+);
+
+export const getContactPage = cache(async (): Promise<ContactPage> =>
+  (await fetchOr<ContactPage | null>(contactPageQuery, fixtureContactPage)) ?? {},
+);
+
+export const getRecruitmentPage = cache(async (): Promise<RecruitmentPage> =>
+  (await fetchOr<RecruitmentPage | null>(recruitmentPageQuery, fixtureRecruitmentPage)) ?? {},
 );

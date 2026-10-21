@@ -25,7 +25,7 @@ export const university = defineType({
     imageField(
       "logo",
       "Logo",
-      "Best as a PNG or SVG with a transparent background. Logos are shown in white on the dark site, so any colour works.",
+      "Best as an SVG, or a PNG at least 600 pixels wide, with a transparent background and no empty space around the logo. Logos are shown in white on the dark site, so any colour works. Small images look blurry on big screens.",
     ),
   ],
   orderings: [{ title: "Name", name: "nameAsc", by: [{ field: "name", direction: "asc" }] }],
