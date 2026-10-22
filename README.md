@@ -66,6 +66,10 @@ The starting posts live in `content/blog/<slug>.md`: JSON front matter between t
 is not there yet; it never overwrites a post that already exists, so edits made in
 the Studio are safe. After the first import, change posts in the Studio, not in
 these files. The converter is `content/seed/blog.mjs` (tests: `npm run test:blog`).
+Before adding a post file, run `npm run lint:blog` (`scripts/blog-lint.mjs`): it checks the
+front matter, the Markdown the converter supports, links, sources and the house style (no
+em dashes, no banned words). It cannot check facts: every post still needs a second person
+to open each source and check each claim.
 
 ### How the blog is arranged
 
