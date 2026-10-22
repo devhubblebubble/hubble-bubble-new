@@ -19,7 +19,7 @@
   "faq": [
     {
       "q": "Can Indian students apply for Chevening?",
-      "a": "Yes. India has a Chevening country page, and it shows applications for 2027-2028 as closed. You need an undergraduate degree, at least two years of work experience and a commitment to return home for two years after the award. Check chevening.org for the next round."
+      "a": "Yes. India has a Chevening country page, and it shows applications for 2027-2028 as closed. You need an undergraduate degree, at least two years of work experience gained after it, and a commitment to return home for two years after the award. Check chevening.org for the next round."
     },
     {
       "q": "Which countries can apply for Commonwealth Scholarships?",
@@ -72,7 +72,7 @@ Each row comes from the scheme's official site, as of October 2026.
 
 | Scheme | Who can apply | What it pays | 2027 entry window |
 |---|---|---|---|
-| Chevening (UK) | Citizens of eligible countries with 2 years' work experience | Tuition, monthly stipend, flights, visa fee | Opened August 2026, closed October 2026 |
+| Chevening (UK) | Citizens of eligible countries with 2 years' work experience after their degree | Tuition, monthly stipend, flights, visa fee | Opened August 2026, closed October 2026 |
 | Commonwealth Master's (UK) | Citizens of 43 eligible Commonwealth countries | Tuition, £1,712 a month (£2,000 in London), airfare | Closed 20 October 2026 |
 | Commonwealth Shared (UK) | The same 43 countries, through a UK university | Tuition, £1,712 a month (£2,000 in London), airfare | 10 November to 8 December 2026 |
 | GREAT (UK) | Citizens of 18 listed countries | £10,000 towards tuition | Set by each university |
@@ -94,7 +94,7 @@ To apply, you must:
 
 - be a citizen of a Chevening-eligible country or territory
 - have an undergraduate degree that lets you enter a UK master's
-- have at least two years of work experience, equivalent to 2,800 hours
+- have at least two years of work experience gained after your undergraduate degree, equivalent to 2,800 hours
 - apply to three different eligible UK courses and get an unconditional offer from at least one by the deadline
 - commit to return to your home country for at least two years after the scholarship ends
 

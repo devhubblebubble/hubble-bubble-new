@@ -48,6 +48,7 @@
     {"title": "Graduate visa (GOV.UK)", "url": "https://www.gov.uk/graduate-visa"},
     {"title": "Graduate visa: eligibility (GOV.UK)", "url": "https://www.gov.uk/graduate-visa/eligibility"},
     {"title": "Student visa: your partner and children (GOV.UK)", "url": "https://www.gov.uk/student-visa/family-members"},
+    {"title": "Visa brake: changes to the UK visa system (GOV.UK)", "url": "https://www.gov.uk/guidance/visa-brake-changes-to-the-uk-visa-system"},
     {"title": "Data Science & Artificial Intelligence MSc (University of Glasgow)", "url": "https://www.gla.ac.uk/postgraduate/taught/datascience/"},
     {"title": "Cost of living (University of Glasgow)", "url": "https://www.gla.ac.uk/study/studentlife/costofliving/"},
     {"title": "Information on student finances (Immigration Service Delivery)", "url": "https://www.irishimmigration.ie/information-on-student-finances/"},
@@ -124,6 +125,8 @@ A few notes on the table:
 ### The UK
 
 A UK master's can take one year: Glasgow's MSc Data Science & Artificial Intelligence, for example, is 12 months full-time. As of October 2026, the Student visa costs £558 from outside the UK, plus a health surcharge of £776 a year. Scotland uses the same visa and the outside-London money figure, so read the [UK Student visa guide](/blog/uk-student-visa-guide/) and [studying in Scotland](/blog/study-in-scotland/).
+
+If you are a national of Afghanistan, Cameroon, Myanmar or Sudan, check the UK's [visa brake](https://www.gov.uk/guidance/visa-brake-changes-to-the-uk-visa-system) first. Since 26 March 2026, Student visa applications made outside the UK by main applicants of those nationalities are refused, even with a CAS.
 
 ### Ireland
 

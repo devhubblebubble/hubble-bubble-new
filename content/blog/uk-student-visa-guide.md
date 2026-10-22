@@ -35,7 +35,7 @@
     },
     {
       "q": "Does every applicant have to send bank statements?",
-      "a": "Not always. Nationals of countries on the gov.uk differential evidence list, which includes the UAE, Qatar, Bahrain, Oman and Kuwait, may not need to send proof of money with the application. UK Visas and Immigration can still ask for it, so keep the money ready. India, Pakistan, Nigeria and Saudi Arabia are not on the list as of October 2026."
+      "a": "Not always. Nationals of countries on the gov.uk differential evidence list, which includes the UAE, Qatar, Bahrain, Oman and Kuwait, may not need to send proof of money or the documents used to get their offer. This only applies if they apply from the country where they live, or from inside the UK. UK Visas and Immigration can still ask for the evidence, so keep it ready. India, Pakistan, Nigeria and Saudi Arabia are not on the list as of October 2026."
     }
   ],
   "sources": [
@@ -58,7 +58,8 @@
     {"title": "Register of licensed sponsors: students", "url": "https://www.gov.uk/government/publications/register-of-licensed-sponsors-students"},
     {"title": "Get a faster decision on your visa, settlement or citizenship application", "url": "https://www.gov.uk/faster-decision-visa-settlement"},
     {"title": "Student route: eligibility and requirements (UKCISA)", "url": "https://www.ukcisa.org.uk/student-advice/visas-and-immigration/student-route-eligibility-and-requirements/"},
-    {"title": "Applying for a Student route visa outside of the UK (UKCISA)", "url": "https://www.ukcisa.org.uk/student-advice/visas-and-immigration/student-route-applying-outside-of-the-uk/"}
+    {"title": "Applying for a Student route visa outside of the UK (UKCISA)", "url": "https://www.ukcisa.org.uk/student-advice/visas-and-immigration/student-route-applying-outside-of-the-uk/"},
+    {"title": "Visa brake: changes to the UK visa system", "url": "https://www.gov.uk/guidance/visa-brake-changes-to-the-uk-visa-system"}
   ],
   "related": ["what-is-a-cas", "uk-student-visa-bank-statements", "uk-graduate-visa-18-months-or-2-years", "student-work-hours-by-country"]
 }
@@ -72,6 +73,8 @@ You can apply if you are 16 or over and have an unconditional offer from a licen
 Check that your university or college is on the [register of licensed student sponsors](https://www.gov.uk/government/publications/register-of-licensed-sponsors-students). Only a licensed sponsor can issue the CAS you need.
 
 Full-time courses at degree level or above can lead to a Student visa. A part-time course only counts if it is above degree level, such as a master's. Full-time courses below degree level need at least 15 hours a week of organised daytime study.
+
+Since 26 March 2026, the UK's [visa brake](https://www.gov.uk/guidance/visa-brake-changes-to-the-uk-visa-system) has applied to Student visa applications from four nationalities: Afghanistan, Cameroon, Myanmar and Sudan. If the main applicant is a national of one of them and applies from outside the UK, the application is refused, even with a CAS. Visas already granted are not cancelled, and GOV.UK says the brake will be reviewed regularly.
 
 ## What is a CAS, and why do you need it first?
 
@@ -119,6 +122,8 @@ If you apply in December for a January course, plan for the higher amount. Each 
 ## Do all nationalities have to send bank statements?
 
 No. Some nationalities may not need to send proof of money with the application. Their countries are on the gov.uk [differential evidence list](https://www.gov.uk/student-visa/money). As of October 2026, the list includes the UAE, Qatar, Bahrain, Oman, Kuwait, Malaysia, China and the EU countries. India, Pakistan, Nigeria and Saudi Arabia are not on it.
+
+This only applies if you apply from the country where you live, or from inside the UK. If you live in one country and apply from another, send the evidence. The same rule covers the documents you used to get your offer, such as your certificates.
 
 Even if you are on the list, UK Visas and Immigration (UKVI) can ask for the evidence before it decides. Keep the money in place and your statements ready.
 

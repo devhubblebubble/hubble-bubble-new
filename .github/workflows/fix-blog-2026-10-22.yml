@@ -1,0 +1,47 @@
+# One-off helper, not part of the site. Copies four corrections Jevin approved on
+# 22 October 2026 into blog content that is already in Sanity (see
+# studio/scripts/fix-blog-2026-10-22.mjs). It starts by itself only when this file
+# or that script changes. Delete both once it has run.
+# Needs the repository secret SANITY_WRITE_TOKEN (a Sanity API token with Editor permission).
+
+name: Fix blog text in Sanity (one-off)
+
+on:
+  push:
+    branches: [sanity-cms]
+    paths:
+      - ".github/workflows/fix-blog-2026-10-22.yml"
+      - "studio/scripts/fix-blog-2026-10-22.mjs"
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # the script reads the post files as they were at the import
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Make the corrections
+        env:
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+        run: |
+          set -o pipefail
+          node scripts/fix-blog-2026-10-22.mjs 2>&1 | tee fix-output.txt
+
+      - name: Report result
+        if: always()
+        run: |
+          tail -c 2500 fix-output.txt | tr '\r\n' '  ' > tail.txt || true
+          echo "::notice title=Blog fixes::$(cat tail.txt)"
