@@ -4,7 +4,7 @@
 // repo root), uploads any images they point at ({"_upload": "public/images/..."}),
 // and writes the documents:
 //   - collections (job roles, stories, team members, universities, blog topics,
-//     blog posts): created only if missing
+//     Study in and Students from pages, blog posts): created only if missing
 //   - single pages and site settings: created if missing; if they already
 //     exist, only fields that are still empty get the seed value
 // So re-running never overwrites edits made in the Studio.
@@ -116,7 +116,7 @@ function withKeys(value, prefix = "k") {
 const prepare = async (doc) => clean(withKeys(await uploadImages(convertMarkupFields(doc))));
 
 // What to import. SEED_ONLY=blog (the default for pushes, see the workflow)
-// writes only blog topics and posts. SEED_ONLY=all also writes the pages,
+// writes only the blog: topics, Study in and Students from pages, and posts. SEED_ONLY=all also writes the pages,
 // settings and the other collections. Pages and collections were imported
 // long ago and are edited in the Studio now; re-running them would bring back
 // any placeholder document someone deleted there (createIfNotExists) and
@@ -140,14 +140,20 @@ const roles = pagesToo
 const stories = pagesToo ? await Promise.all((await readJson("stories.json")).map(prepare)) : [];
 const team = pagesToo ? await Promise.all((await readJson("team-members.json")).map(prepare)) : [];
 const universities = pagesToo ? await Promise.all((await readJson("universities.json")).map(prepare)) : [];
-// Blog: topics, then the posts (content/blog/*.md, or BLOG_SEED_DIR).
-const blogTopics = await Promise.all(
-  (await readJson("blog-topics.json")).map((t) =>
-    prepare({ ...t, slug: { _type: "slug", current: t.slug } }),
-  ),
-);
+// Blog: topics, the Study in and Students from pages, then the posts
+// (content/blog/*.md, or BLOG_SEED_DIR). References between them are weak, so
+// the order inside the transaction does not matter.
+const withSlug = (file) =>
+  readJson(file).then((docs) =>
+    Promise.all(docs.map((d) => prepare({ ...d, slug: { _type: "slug", current: d.slug } }))),
+  );
+const blogTopics = await withSlug("blog-topics.json");
+const blogDestinations = await withSlug("blog-destinations.json");
+const blogOrigins = await withSlug("blog-origins.json");
 const blogPosts = await Promise.all(readPostDocuments(postsDir(repoRoot)).map(prepare));
-console.log(`blog: ${blogTopics.length} topic(s), ${blogPosts.length} post(s) in the seed`);
+console.log(
+  `blog: ${blogTopics.length} topic(s), ${blogDestinations.length} Study in page(s), ${blogOrigins.length} Students from page(s), ${blogPosts.length} post(s) in the seed`,
+);
 
 // ── Single documents ───────────────────────────────────────────────────
 const singletonFiles = [
@@ -166,7 +172,16 @@ if (pagesToo) {
 }
 
 const tx = client.transaction();
-for (const doc of [...roles, ...stories, ...team, ...universities, ...blogTopics, ...blogPosts]) {
+for (const doc of [
+  ...roles,
+  ...stories,
+  ...team,
+  ...universities,
+  ...blogTopics,
+  ...blogDestinations,
+  ...blogOrigins,
+  ...blogPosts,
+]) {
   tx.createIfNotExists(doc);
 }
 for (const doc of singletons) {

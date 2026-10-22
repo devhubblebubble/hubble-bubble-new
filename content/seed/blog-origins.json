@@ -1,0 +1,608 @@
+[
+  {
+    "_id": "blogOrigin-india",
+    "_type": "blogOrigin",
+    "name": "India",
+    "nameInSentence": "India",
+    "slug": "india",
+    "flag": "in",
+    "region": "south-asia",
+    "intro": "Visas, qualifications, money and scholarships for students from India.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-india"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-education-loan-uk-student-visa"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-germany"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      }
+    ],
+    "order": 1
+  },
+  {
+    "_id": "blogOrigin-pakistan",
+    "_type": "blogOrigin",
+    "name": "Pakistan",
+    "nameInSentence": "Pakistan",
+    "slug": "pakistan",
+    "flag": "pk",
+    "region": "south-asia",
+    "intro": "Visas, qualifications, money and scholarships for students from Pakistan.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-pakistan"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-education-loan-uk-student-visa"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      }
+    ],
+    "order": 2
+  },
+  {
+    "_id": "blogOrigin-sri-lanka",
+    "_type": "blogOrigin",
+    "name": "Sri Lanka",
+    "nameInSentence": "Sri Lanka",
+    "slug": "sri-lanka",
+    "flag": "lk",
+    "region": "south-asia",
+    "intro": "Visas, qualifications, money and scholarships for students from Sri Lanka.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-sri-lanka"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 3
+  },
+  {
+    "_id": "blogOrigin-bangladesh",
+    "_type": "blogOrigin",
+    "name": "Bangladesh",
+    "nameInSentence": "Bangladesh",
+    "slug": "bangladesh",
+    "flag": "bd",
+    "region": "south-asia",
+    "intro": "Visas, qualifications, money and scholarships for students from Bangladesh.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-bangladesh"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 4
+  },
+  {
+    "_id": "blogOrigin-uae",
+    "_type": "blogOrigin",
+    "name": "UAE",
+    "nameInSentence": "the UAE",
+    "slug": "uae",
+    "flag": "ae",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from the UAE.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-the-uae"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-branch-campuses-in-dubai"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      }
+    ],
+    "order": 5
+  },
+  {
+    "_id": "blogOrigin-saudi-arabia",
+    "_type": "blogOrigin",
+    "name": "Saudi Arabia",
+    "nameInSentence": "Saudi Arabia",
+    "slug": "saudi-arabia",
+    "flag": "sa",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Saudi Arabia.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-saudi-arabia"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-branch-campuses-in-dubai"
+      }
+    ],
+    "order": 6
+  },
+  {
+    "_id": "blogOrigin-qatar",
+    "_type": "blogOrigin",
+    "name": "Qatar",
+    "nameInSentence": "Qatar",
+    "slug": "qatar",
+    "flag": "qa",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Qatar.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-qatar"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 7
+  },
+  {
+    "_id": "blogOrigin-bahrain",
+    "_type": "blogOrigin",
+    "name": "Bahrain",
+    "nameInSentence": "Bahrain",
+    "slug": "bahrain",
+    "flag": "bh",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Bahrain.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-bahrain"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 8
+  },
+  {
+    "_id": "blogOrigin-oman",
+    "_type": "blogOrigin",
+    "name": "Oman",
+    "nameInSentence": "Oman",
+    "slug": "oman",
+    "flag": "om",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Oman.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-oman"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 9
+  },
+  {
+    "_id": "blogOrigin-kuwait",
+    "_type": "blogOrigin",
+    "name": "Kuwait",
+    "nameInSentence": "Kuwait",
+    "slug": "kuwait",
+    "flag": "kw",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Kuwait.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-kuwait"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 10
+  },
+  {
+    "_id": "blogOrigin-iraq",
+    "_type": "blogOrigin",
+    "name": "Iraq",
+    "nameInSentence": "Iraq",
+    "slug": "iraq",
+    "flag": "iq",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Iraq.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-iraq"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      }
+    ],
+    "order": 11
+  },
+  {
+    "_id": "blogOrigin-iran",
+    "_type": "blogOrigin",
+    "name": "Iran",
+    "nameInSentence": "Iran",
+    "slug": "iran",
+    "flag": "ir",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Iran.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-iran"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-germany"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      }
+    ],
+    "order": 12
+  },
+  {
+    "_id": "blogOrigin-afghanistan",
+    "_type": "blogOrigin",
+    "name": "Afghanistan",
+    "nameInSentence": "Afghanistan",
+    "slug": "afghanistan",
+    "flag": "af",
+    "region": "middle-east",
+    "intro": "Visas, qualifications, money and scholarships for students from Afghanistan.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-afghanistan"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-how-to-check-a-study-abroad-agent"
+      }
+    ],
+    "order": 13
+  },
+  {
+    "_id": "blogOrigin-egypt",
+    "_type": "blogOrigin",
+    "name": "Egypt",
+    "nameInSentence": "Egypt",
+    "slug": "egypt",
+    "flag": "eg",
+    "region": "africa",
+    "intro": "Visas, qualifications, money and scholarships for students from Egypt.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-egypt"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-germany"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      }
+    ],
+    "order": 14
+  },
+  {
+    "_id": "blogOrigin-nigeria",
+    "_type": "blogOrigin",
+    "name": "Nigeria",
+    "nameInSentence": "Nigeria",
+    "slug": "nigeria",
+    "flag": "ng",
+    "region": "africa",
+    "intro": "Visas, qualifications, money and scholarships for students from Nigeria.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-nigeria"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-canada"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-how-to-check-a-study-abroad-agent"
+      }
+    ],
+    "order": 15
+  },
+  {
+    "_id": "blogOrigin-kenya",
+    "_type": "blogOrigin",
+    "name": "Kenya",
+    "nameInSentence": "Kenya",
+    "slug": "kenya",
+    "flag": "ke",
+    "region": "africa",
+    "intro": "Visas, qualifications, money and scholarships for students from Kenya.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-kenya"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-bank-statements"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-government-scholarships-for-international-students"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-canada"
+      }
+    ],
+    "order": 16
+  },
+  {
+    "_id": "blogOrigin-turkey",
+    "_type": "blogOrigin",
+    "name": "Turkey",
+    "nameInSentence": "Turkey",
+    "slug": "turkey",
+    "flag": "tr",
+    "region": "europe",
+    "intro": "Visas, qualifications, money and scholarships for students from Turkey.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-abroad-from-turkey"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-germany"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-uk-student-visa-guide"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-english-tests-for-study-abroad"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      }
+    ],
+    "order": 17
+  },
+  {
+    "_id": "blogOrigin-uk",
+    "_type": "blogOrigin",
+    "name": "United Kingdom",
+    "nameInSentence": "the UK",
+    "slug": "uk",
+    "flag": "gb",
+    "region": "europe",
+    "intro": "Applying to university in the UK, and studying abroad, for students from the UK.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-guide-for-uk-students"
+    },
+    "featured": [
+      {
+        "_type": "reference",
+        "_ref": "post-apply-to-uk-university-without-an-agent"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-masters-personal-statement"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-choose-a-masters-that-leads-to-a-job"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-study-in-ireland"
+      },
+      {
+        "_type": "reference",
+        "_ref": "post-which-country-should-you-study-in"
+      }
+    ],
+    "order": 18
+  }
+]

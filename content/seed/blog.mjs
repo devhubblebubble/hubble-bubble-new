@@ -15,6 +15,8 @@ import path from "node:path";
 
 export const TOPIC_ID_PREFIX = "blogTopic-";
 export const POST_ID_PREFIX = "post-";
+export const DESTINATION_ID_PREFIX = "blogDestination-";
+export const ORIGIN_ID_PREFIX = "blogOrigin-";
 
 /**
  * Split a post file into its front matter (parsed JSON) and Markdown body.
@@ -223,6 +225,16 @@ export function postDocument(meta, body) {
     excerpt: meta.excerpt,
     description: meta.description,
     countries: Array.isArray(meta.countries) ? meta.countries : [],
+    // Home countries the post is written for (front matter "origins": ["nigeria"]).
+    ...(Array.isArray(meta.origins) && meta.origins.length
+      ? {
+          origins: meta.origins.map((o, i) => ({
+            _type: "reference",
+            _key: `${slug}-org${i + 1}`,
+            _ref: ORIGIN_ID_PREFIX + String(o).trim(),
+          })),
+        }
+      : {}),
     keyPoints: Array.isArray(meta.keyPoints) ? meta.keyPoints : [],
     body: markdownToBlocks(body, slug),
     faq: (meta.faq ?? []).map((f, i) => ({

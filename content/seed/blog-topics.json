@@ -12,8 +12,16 @@
     "_type": "blogTopic",
     "title": "Study destinations",
     "slug": "destinations",
-    "description": "Country guides for international students: the UK, Ireland, Germany, Australia, Canada, South Korea, the UAE and more.",
+    "description": "Country guides for international students: the UK, Ireland, the USA, Canada, Europe, Singapore, Malaysia, Dubai, Australia, New Zealand and more.",
     "order": 2
+  },
+  {
+    "_id": "blogTopic-home-country",
+    "_type": "blogTopic",
+    "title": "Advice by home country",
+    "slug": "home-country",
+    "description": "What changes for students from your country: visas, documents, money, scholarships and how your qualifications are recognised.",
+    "order": 2.5
   },
   {
     "_id": "blogTopic-applying",

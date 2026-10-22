@@ -4,7 +4,7 @@ import NavBar from "@/components/NavBar/NavBar";
 import FooterSection from "@/components/FooterSection/FooterSection";
 import BlogTopicPage from "@/components/Blog/BlogTopicPage";
 import { topicPath } from "@/lib/blog/jsonld";
-import { getBlogTopics, getPosts, getPostsByTopic } from "@/lib/sanity/data";
+import { getBlogHubs, getBlogTopics, getPosts, getPostsByTopic } from "@/lib/sanity/data";
 import { noIndex, siteUrl } from "@/lib/site";
 
 type Params = { topic: string };
@@ -42,11 +42,12 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 export default async function BlogTopicRoute({ params }: { params: Promise<Params> }) {
   const { topic: slug } = await params;
-  const [topic, topics, posts, allPosts] = await Promise.all([
+  const [topic, topics, posts, allPosts, { guides }] = await Promise.all([
     findTopic(slug),
     getBlogTopics(),
     getPostsByTopic(slug),
     getPosts(),
+    getBlogHubs(),
   ]);
   if (!topic) notFound();
   // "Other topics" only lists topics that have posts.
@@ -55,7 +56,7 @@ export default async function BlogTopicRoute({ params }: { params: Promise<Param
   return (
     <main id="main" tabIndex={-1}>
       <NavBar />
-      <BlogTopicPage topic={topic} posts={posts} topics={withPosts} />
+      <BlogTopicPage topic={topic} posts={posts} topics={withPosts} guides={guides} />
       <FooterSection />
     </main>
   );

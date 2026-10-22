@@ -1,8 +1,11 @@
 import { cache } from "react";
+import { tidyHubs } from "@/lib/blog/hubs.mjs";
 import { sanityClient } from "./client";
 import { offline } from "./env";
 import {
   fixtureAboutPage,
+  fixtureBlogDestinations,
+  fixtureBlogOrigins,
   fixtureBlogTopics,
   fixtureContactPage,
   fixtureHomePage,
@@ -18,6 +21,8 @@ import {
 } from "./fixture";
 import {
   aboutPageQuery,
+  blogDestinationsQuery,
+  blogOriginsQuery,
   blogTopicsQuery,
   contactPageQuery,
   homePageQuery,
@@ -33,6 +38,8 @@ import {
 } from "./queries";
 import type {
   AboutPage,
+  BlogDestination,
+  BlogOrigin,
   BlogTopic,
   ContactPage,
   HomePage,
@@ -145,6 +152,7 @@ export const getPosts = cache(async (): Promise<Post[]> => {
     .map((p) => ({
       ...p,
       related: (p.related ?? []).filter((r): r is PostLink => Boolean(r && r.slug && !r.hidden && r.slug !== p.slug)),
+      origins: (p.origins ?? []).filter((o): o is string => Boolean(o)),
     }));
 });
 
@@ -155,3 +163,30 @@ export const getPostBySlug = cache(async (slug: string): Promise<Post | undefine
 export const getPostsByTopic = cache(async (topicSlug: string): Promise<Post[]> =>
   (await getPosts()).filter((p) => p.topic?.slug === topicSlug),
 );
+
+export type BlogHubs = {
+  /** Study in pages, in their order on /blog/. */
+  destinations: BlogDestination[];
+  /** Students from pages, in their order on /blog/. */
+  origins: BlogOrigin[];
+  /** Post slug -> hub address, for every post that is a hub's main guide. */
+  guides: Map<string, string>;
+};
+
+/**
+ * The Study in and Students from pages, checked against the visible posts (a
+ * main guide or listed post that is missing or hidden is dropped), and the
+ * guide map every link to a post goes through (see src/lib/blog/urls.mjs).
+ */
+export const getBlogHubs = cache(async (): Promise<BlogHubs> => {
+  const [destinations, origins, posts] = await Promise.all([
+    fetchOr<BlogDestination[] | null>(blogDestinationsQuery, fixtureBlogDestinations),
+    fetchOr<BlogOrigin[] | null>(blogOriginsQuery, fixtureBlogOrigins),
+    getPosts(),
+  ]);
+  return tidyHubs(
+    (destinations ?? []).filter((d) => d.slug && d.name),
+    (origins ?? []).filter((o) => o.slug && o.name),
+    posts.map((p) => p.slug),
+  );
+});

@@ -141,8 +141,25 @@ export const postsQuery = /* groq */ `
       "topic": topic->{ title, "slug": slug.current }
     },
     "author": author->${postPerson},
-    "reviewedBy": reviewedBy->${postPerson}
+    "reviewedBy": reviewedBy->${postPerson},
+    "origins": origins[]->slug.current
   }
+`;
+
+// The Study in and Students from pages. The posts themselves come from
+// postsQuery; these only name them.
+const hubFields = /* groq */ `
+  _id, name, nameInSentence, "slug": slug.current, flag, intro, order,
+  "guideSlug": guide->slug.current,
+  "featuredSlugs": featured[]->slug.current
+`;
+
+export const blogDestinationsQuery = /* groq */ `
+  *[_type == "blogDestination" && defined(slug.current)] | order(order asc, name asc) { ${hubFields}, isoCodes }
+`;
+
+export const blogOriginsQuery = /* groq */ `
+  *[_type == "blogOrigin" && defined(slug.current)] | order(order asc, name asc) { ${hubFields}, region }
 `;
 
 export const servicesPageQuery = /* groq */ `*[_type == "servicesPage"][0]`;

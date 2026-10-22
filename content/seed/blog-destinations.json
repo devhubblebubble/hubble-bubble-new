@@ -1,0 +1,198 @@
+[
+  {
+    "_id": "blogDestination-uk",
+    "_type": "blogDestination",
+    "name": "United Kingdom",
+    "nameInSentence": "the UK",
+    "slug": "uk",
+    "flag": "gb",
+    "isoCodes": [
+      "GB"
+    ],
+    "intro": "Visas, costs, applications and staying on to work, for international students choosing a UK university.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-the-uk"
+    },
+    "order": 1
+  },
+  {
+    "_id": "blogDestination-ireland",
+    "_type": "blogDestination",
+    "name": "Ireland",
+    "nameInSentence": "Ireland",
+    "slug": "ireland",
+    "flag": "ie",
+    "isoCodes": [
+      "IE"
+    ],
+    "intro": "Visas, costs, applications and staying on to work, for international students choosing Ireland.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-ireland"
+    },
+    "order": 2
+  },
+  {
+    "_id": "blogDestination-usa",
+    "_type": "blogDestination",
+    "name": "United States",
+    "nameInSentence": "the USA",
+    "slug": "usa",
+    "flag": "us",
+    "isoCodes": [
+      "US"
+    ],
+    "intro": "Visas, costs, applications and work after study, for international students choosing the United States.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-the-usa"
+    },
+    "order": 3
+  },
+  {
+    "_id": "blogDestination-canada",
+    "_type": "blogDestination",
+    "name": "Canada",
+    "nameInSentence": "Canada",
+    "slug": "canada",
+    "flag": "ca",
+    "isoCodes": [
+      "CA"
+    ],
+    "intro": "Study permits, costs, applications and work after study, for international students choosing Canada.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-canada"
+    },
+    "order": 4
+  },
+  {
+    "_id": "blogDestination-europe",
+    "_type": "blogDestination",
+    "name": "Europe",
+    "nameInSentence": "Europe",
+    "slug": "europe",
+    "flag": "eu",
+    "isoCodes": [
+      "AT",
+      "BE",
+      "BG",
+      "HR",
+      "CY",
+      "CZ",
+      "DK",
+      "EE",
+      "FI",
+      "FR",
+      "DE",
+      "GR",
+      "HU",
+      "IT",
+      "LV",
+      "LT",
+      "LU",
+      "MT",
+      "NL",
+      "PL",
+      "PT",
+      "RO",
+      "SK",
+      "SI",
+      "ES",
+      "SE",
+      "EU"
+    ],
+    "intro": "Tuition, visas, language and work rules across European countries, for international students.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-europe"
+    },
+    "order": 5
+  },
+  {
+    "_id": "blogDestination-singapore",
+    "_type": "blogDestination",
+    "name": "Singapore",
+    "nameInSentence": "Singapore",
+    "slug": "singapore",
+    "flag": "sg",
+    "isoCodes": [
+      "SG"
+    ],
+    "intro": "Student passes, costs, applications and work rules, for international students choosing Singapore.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-singapore"
+    },
+    "order": 6
+  },
+  {
+    "_id": "blogDestination-malaysia",
+    "_type": "blogDestination",
+    "name": "Malaysia",
+    "nameInSentence": "Malaysia",
+    "slug": "malaysia",
+    "flag": "my",
+    "isoCodes": [
+      "MY"
+    ],
+    "intro": "Student passes, costs, and the campuses of UK and Australian universities in Malaysia.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-malaysia"
+    },
+    "order": 7
+  },
+  {
+    "_id": "blogDestination-dubai",
+    "_type": "blogDestination",
+    "name": "Dubai (UAE)",
+    "nameInSentence": "Dubai",
+    "slug": "dubai",
+    "flag": "ae",
+    "isoCodes": [
+      "AE"
+    ],
+    "intro": "The campuses of UK and Australian universities in Dubai: degrees, visas and costs.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-branch-campuses-in-dubai"
+    },
+    "order": 8
+  },
+  {
+    "_id": "blogDestination-australia",
+    "_type": "blogDestination",
+    "name": "Australia",
+    "nameInSentence": "Australia",
+    "slug": "australia",
+    "flag": "au",
+    "isoCodes": [
+      "AU"
+    ],
+    "intro": "Visas, costs, applications and work after study, for international students choosing Australia.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-australia"
+    },
+    "order": 9
+  },
+  {
+    "_id": "blogDestination-new-zealand",
+    "_type": "blogDestination",
+    "name": "New Zealand",
+    "nameInSentence": "New Zealand",
+    "slug": "new-zealand",
+    "flag": "nz",
+    "isoCodes": [
+      "NZ"
+    ],
+    "intro": "Visas, costs, applications and work after study, for international students choosing New Zealand.",
+    "guide": {
+      "_type": "reference",
+      "_ref": "post-study-in-new-zealand"
+    },
+    "order": 10
+  }
+]

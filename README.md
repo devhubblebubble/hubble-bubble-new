@@ -16,11 +16,13 @@ dataset is public.
 ## Folders
 
 - `src/app` - pages (App Router). `src/app/recruitment/[slug]` is one page per job role;
-  `src/app/blog` is the blog (`/blog/`, `/blog/topics/<topic>/`, `/blog/<post>/`).
+  `src/app/blog` is the blog (`/blog/`, `/blog/topics/<topic>/`, `/blog/study-in/<country>/`,
+  `/blog/students-from/<country>/`, `/blog/<post>/`). `src/app/%5Fredirects` writes
+  Cloudflare's `_redirects` file at build time (see Blog below).
 - `src/components` - page sections and components (SCSS modules).
 - `src/lib/sanity` - Sanity client, GROQ queries, types and the offline fixture.
 - `src/lib/jobs` - formatting helpers and Google JobPosting structured data.
-- `src/lib/blog` - blog helpers (reading time, heading anchors) and its structured data.
+- `src/lib/blog` - blog helpers (addresses, country pages, reading time, heading anchors) and its structured data.
 - `studio/` - Sanity Studio: schema, editor layout, import script. See `studio/README.md`.
 - `content/seed/` - starting content imported into Sanity once; also used by offline test builds.
 - `content/blog/` - the starting blog posts, one Markdown file each (see Blog below).
@@ -51,8 +53,8 @@ Settings read from the environment (all optional):
 
 ## Blog
 
-Posts are edited in the Studio under **Blog**: **Posts** and **Topics** (the six
-sections on `/blog/`). To add a post: Blog, Posts, the pencil button, then fill in
+Posts are edited in the Studio under **Blog**: **Posts**, **Topics**, **Study
+destinations** and **Home countries**. To add a post: Blog, Posts, the pencil button, then fill in
 the title, the web address (press Generate), the topic, the card text, "In short"
 and the post text; add the questions, sources and "Read next" posts, set
 "Last checked", and press Publish. The site rebuilds by itself.
@@ -64,6 +66,50 @@ The starting posts live in `content/blog/<slug>.md`: JSON front matter between t
 is not there yet; it never overwrites a post that already exists, so edits made in
 the Studio are safe. After the first import, change posts in the Studio, not in
 these files. The converter is `content/seed/blog.mjs` (tests: `npm run test:blog`).
+
+### How the blog is arranged
+
+`/blog/` has three ways in:
+
+1. **Where do you want to study?** One page per study destination,
+   `/blog/study-in/<country>/` (Studio: Blog, Study destinations).
+2. **Where are you from?** One page per home country, grouped by region,
+   `/blog/students-from/<country>/` (Studio: Blog, Home countries).
+3. **Guides by topic.** Every other post, under its topic. Each topic also has its
+   own page, `/blog/topics/<topic>/`.
+
+Each country page shows its **main guide** (a post picked in the Studio) in full,
+then more posts, then links to country pages of the other kind:
+
+- A Study in page lists every post whose "Countries this post covers" includes one
+  of its countries (Europe's page takes every EU country and "EU"), except posts
+  written for particular home countries. It links to the Students from pages whose
+  main guide covers it.
+- A Students from page lists the posts picked under "List these posts first" and
+  every post whose "Written for students from" includes it. It links to the Study
+  in pages its main guide covers.
+- In front matter, `"origins": ["nigeria"]` is "Written for students from".
+
+A main guide lives only at its country page's address. Its own
+`/blog/<post>/` page is not built: every link to it (cards, "Read next", links in
+post text) goes to the country page, and the old address redirects there with a
+301, through the `_redirects` file that `src/app/%5Fredirects/route.ts` writes into
+`out/` at build time. Cloudflare reads that file and does not serve it. Browsers
+and search engines remember a 301, so pick a post as a main guide only when it is
+written as the guide to that country, and treat the choice as permanent.
+
+A country page with no main guide still works (links to it never break) but shows
+only a short list, so it is left off `/blog/` and the sitemap and asks search
+engines not to index it.
+
+`/blog/study-in/` and `/blog/students-from/` have no page of their own; they
+redirect (302) to their lists on `/blog/`.
+
+The starting country pages are in `content/seed/blog-destinations.json` and
+`content/seed/blog-origins.json`, imported once like the posts. The rules above
+are in `src/lib/blog/hubs.mjs` and `urls.mjs` (tests: `npm run test:blog`).
+
+### Importing
 
 A push imports the blog only (`SEED_ONLY=blog`). The pages, settings, roles, stories,
 team and universities in `content/seed/*.json` were imported long ago and are edited in

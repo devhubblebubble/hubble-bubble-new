@@ -129,15 +129,29 @@ else say(`/recruitment/ matches Sanity exactly for all ${roles.length} roles (ch
 
 // ── 3. Every page ───────────────────────────────────────────────────────────
 const slugs = [...new Set([...listing.body.matchAll(/href="\/recruitment\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];
-// The blog: every topic page and post linked from /blog/.
+// The blog: every topic page, Study in and Students from page linked from
+// /blog/, and every post linked from /blog/ or a topic page (the blog page
+// shows the country guides as their country pages, so some posts are only on
+// their topic page).
 const blogIndex = await get("/blog/");
-const blogTopics = [...new Set([...blogIndex.body.matchAll(/href="\/blog\/topics\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))];
-const blogPosts = [...new Set([...blogIndex.body.matchAll(/href="\/blog\/([a-z0-9-]+)\/"/g)].map((m) => m[1]))].filter((s) => s !== "topics");
-say(`/blog/ links to ${blogTopics.length} topic page(s) and ${blogPosts.length} post(s)`);
+const linksIn = (html, re) => [...new Set([...html.matchAll(re)].map((m) => m[1]))];
+const blogTopics = linksIn(blogIndex.body, /href="\/blog\/topics\/([a-z0-9-]+)\/"/g);
+const blogHubs = linksIn(blogIndex.body, /href="\/blog\/((?:study-in|students-from)\/[a-z0-9-]+)\/"/g);
+const RESERVED = new Set(["topics", "study-in", "students-from"]);
+const topicPages = await Promise.all(blogTopics.map((t) => get(`/blog/topics/${t}/`)));
+const blogPosts = [
+  ...new Set(
+    [blogIndex, ...topicPages].flatMap(({ body }) => linksIn(body, /href="\/blog\/([a-z0-9-]+)\/"/g)),
+  ),
+].filter((s) => !RESERVED.has(s));
+say(
+  `/blog/ links to ${blogTopics.length} topic page(s) and ${blogHubs.length} country page(s); with the topic pages, ${blogPosts.length} post(s)`,
+);
 const pages = [
   "/", "/recruitment/", "/about/", "/services/", "/journey/", "/gallery/", "/stories/", "/blog/", "/privacy/", "/contact/",
   ...slugs.map((s) => `/recruitment/${s}/`),
   ...blogTopics.map((s) => `/blog/topics/${s}/`),
+  ...blogHubs.map((s) => `/blog/${s}/`),
   ...blogPosts.map((s) => `/blog/${s}/`),
 ];
 
@@ -177,6 +191,26 @@ const otherEmails = [...emailPages.keys()].filter((address) => address.toLowerCa
 if (settingsEmail && otherEmails.length) {
   fail(`email addresses that are not the Site settings one (${settingsEmail}): ${otherEmails.map((a) => `${a} on ${[...emailPages.get(a)].join(" ")}`).join(" | ")}`);
 }
+
+// ── 3b. Old addresses of the country pages' main guides ────────────────────
+// A post that is the main guide of a Study in or Students from page lives at
+// that page's address; its own /blog/<post>/ address must redirect there (301),
+// through the _redirects file made at build time.
+const hubQuery =
+  '*[_type in ["blogDestination", "blogOrigin"] && defined(slug.current) && defined(guide->slug.current) && guide->hidden != true]{_type, "slug": slug.current, "guide": guide->slug.current}';
+const hubRes = await fetch(`${SANITY}?query=${encodeURIComponent(hubQuery)}`);
+const hubGuides = (await hubRes.json()).result ?? [];
+const hubPath = (h) => `/blog/${h._type === "blogDestination" ? "study-in" : "students-from"}/${h.slug}/`;
+const guideTargets = new Map();
+for (const h of hubGuides) guideTargets.set(h.guide, [...(guideTargets.get(h.guide) ?? []), hubPath(h)]);
+let redirectsOk = 0;
+for (const [guide, hubs] of guideTargets) {
+  const res = await fetch(`${site}/blog/${guide}/`, { redirect: "manual", headers: { "cache-control": "no-cache" } });
+  const location = (res.headers.get("location") ?? "").replace(site, "");
+  if (res.status === 301 && hubs.includes(location)) redirectsOk += 1;
+  else fail(`/blog/${guide}/ should redirect (301) to ${hubs.join(" or ")}, got ${res.status} ${location || "-"}`);
+}
+say(`${redirectsOk} of ${guideTargets.size} main guides' old addresses redirect to their country page`);
 
 // ── 4. robots.txt, sitemap, and a missing page ──────────────────────────────
 const robotsTxt = await get("/robots.txt");

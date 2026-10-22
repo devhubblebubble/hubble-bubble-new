@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import NavBar from "@/components/NavBar/NavBar";
 import FooterSection from "@/components/FooterSection/FooterSection";
 import BlogIndex from "@/components/Blog/BlogIndex";
-import { getBlogTopics, getPosts } from "@/lib/sanity/data";
+import { getBlogHubs, getBlogTopics, getPosts } from "@/lib/sanity/data";
 import { siteUrl } from "@/lib/site";
 
 const title = "Study abroad guides for international students | Hubble Bubble";
 const description =
-  "Free guides for international students on choosing a course, applying, visas, costs and agents. Plain English, checked against official sources.";
+  "Free guides for international students: country guides, advice for your home country, applying, visas, costs and agents. Checked against official sources.";
 
 export const metadata: Metadata = {
   title,
@@ -17,12 +17,18 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogRoute() {
-  const [topics, posts] = await Promise.all([getBlogTopics(), getPosts()]);
+  const [topics, posts, hubs] = await Promise.all([getBlogTopics(), getPosts(), getBlogHubs()]);
 
   return (
     <main id="main" tabIndex={-1}>
       <NavBar />
-      <BlogIndex topics={topics} posts={posts} />
+      <BlogIndex
+        topics={topics}
+        posts={posts}
+        destinations={hubs.destinations}
+        origins={hubs.origins}
+        guides={hubs.guides}
+      />
       <FooterSection />
     </main>
   );

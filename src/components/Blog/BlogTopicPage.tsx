@@ -6,9 +6,15 @@ import type { BlogTopic, Post } from "@/lib/sanity/types";
 import PostCard from "./PostCard";
 import styles from "./Blog.module.scss";
 
-type Props = { topic: BlogTopic; posts: Post[]; topics: BlogTopic[] };
+type Props = {
+  topic: BlogTopic;
+  posts: Post[];
+  topics: BlogTopic[];
+  /** Post slug -> hub address, so a hub's main guide links to the hub. */
+  guides?: Map<string, string>;
+};
 
-export default function BlogTopicPage({ topic, posts, topics }: Props) {
+export default function BlogTopicPage({ topic, posts, topics, guides }: Props) {
   const main = posts.find((p) => p.pillar);
   const others = posts.filter((p) => p !== main);
   const otherTopics = topics.filter((t) => t.slug !== topic.slug);
@@ -24,6 +30,7 @@ export default function BlogTopicPage({ topic, posts, topics }: Props) {
               description: topic.description,
               path: topicPath(topic.slug),
               posts,
+              guides,
             }),
             breadcrumbJsonLd(topicCrumbs(topic)),
           ]),
@@ -57,7 +64,7 @@ export default function BlogTopicPage({ topic, posts, topics }: Props) {
               Start here
             </h2>
             <ul className={styles.gridOne}>
-              <PostCard post={main} large />
+              <PostCard post={main} large guides={guides} />
             </ul>
           </section>
         )}
@@ -69,7 +76,7 @@ export default function BlogTopicPage({ topic, posts, topics }: Props) {
             </h2>
             <ul className={styles.grid}>
               {others.map((post) => (
-                <PostCard key={post._id} post={post} />
+                <PostCard key={post._id} post={post} guides={guides} />
               ))}
             </ul>
           </section>

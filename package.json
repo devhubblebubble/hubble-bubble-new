@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:worker": "node --test \"worker/*.test.ts\"",
-    "test:blog": "node --test content/seed/blog.test.mjs",
+    "test:blog": "node --test content/seed/blog.test.mjs src/lib/blog/urls.test.mjs src/lib/blog/hubs.test.mjs",
     "check:worker": "tsc -p worker/tsconfig.json",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

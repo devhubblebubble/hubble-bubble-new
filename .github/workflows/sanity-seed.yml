@@ -1,6 +1,7 @@
 # Imports the starting content into Sanity.
-# A push imports only the blog (content/seed/blog-topics.json and content/blog/*.md):
-# new topics and posts are created, existing ones are never touched.
+# A push imports only the blog (content/seed/blog-topics.json, blog-destinations.json,
+# blog-origins.json and content/blog/*.md): new topics, Study in and Students from
+# pages and posts are created; existing ones are never touched.
 # The pages, settings and other collections were imported long ago and are edited
 # in the Studio now. Importing them again would bring back any placeholder document
 # deleted in the Studio and refill any field emptied on purpose, so that only
@@ -20,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: "What to import: blog (topics and posts only) or all (also pages, settings, roles, stories, team, universities)"
+        description: "What to import: blog (topics, country pages and posts only) or all (also pages, settings, roles, stories, team, universities)"
         required: true
         default: "blog"
         type: choice

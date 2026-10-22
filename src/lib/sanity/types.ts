@@ -385,4 +385,36 @@ export type Post = {
   reviewedAt?: string; // YYYY-MM-DD
   /** Null when the topic was deleted. */
   topic?: { _id?: string; title: string; slug: string } | null;
+  /** Home countries the post is written for (Students from page slugs). */
+  origins?: string[];
+};
+
+/**
+ * A Study in page (/blog/study-in/<slug>/) or a Students from page
+ * (/blog/students-from/<slug>/). Shows its main guide in full, then more posts.
+ */
+export type BlogHub = {
+  _id: string;
+  name: string;
+  /** How the name reads in a sentence, e.g. "the UK". */
+  nameInSentence?: string;
+  slug: string;
+  /** Flag code, e.g. "gb", or "eu" for the EU flag. */
+  flag?: string;
+  intro?: string;
+  order?: number;
+  /** The post shown in full. Null when not picked, or when that post is missing or hidden. */
+  guideSlug?: string | null;
+  /** Posts listed first. */
+  featuredSlugs?: (string | null)[];
+};
+
+export type BlogDestination = BlogHub & {
+  /** Posts covering any of these countries are listed ("GB", "DE", "EU"...). */
+  isoCodes?: string[];
+};
+
+export type BlogOrigin = BlogHub & {
+  /** The group on /blog/ ("south-asia", "middle-east"...). */
+  region?: string;
 };

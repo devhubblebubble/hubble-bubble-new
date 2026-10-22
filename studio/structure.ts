@@ -85,6 +85,24 @@ export const structure: StructureResolver = (S) =>
                     .title("Blog topics")
                     .defaultOrdering([{ field: "order", direction: "asc" }]),
                 ),
+              S.divider(),
+              // The Study in and Students from pages.
+              S.listItem()
+                .title("Study destinations")
+                .schemaType("blogDestination")
+                .child(
+                  S.documentTypeList("blogDestination")
+                    .title("Study destinations (/blog/study-in/...)")
+                    .defaultOrdering([{ field: "order", direction: "asc" }]),
+                ),
+              S.listItem()
+                .title("Home countries")
+                .schemaType("blogOrigin")
+                .child(
+                  S.documentTypeList("blogOrigin")
+                    .title("Home countries (/blog/students-from/...)")
+                    .defaultOrdering([{ field: "order", direction: "asc" }]),
+                ),
             ]),
         ),
       S.divider(),

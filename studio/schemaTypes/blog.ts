@@ -1,27 +1,60 @@
 import { defineArrayMember, defineField, defineType, type Rule } from "sanity";
 import { seoFields, str, text } from "./helpers";
 
-// The blog: topics (the six sections on /blog/) and posts.
+// The blog: topics (the sections on /blog/) and posts. The Study in and
+// Students from pages are in blogHubs.ts.
 // Starting posts come from content/blog/*.md and are imported once; after
 // that, everything is edited here.
 
-const COUNTRY_OPTIONS = [
+// Destinations a post can cover. A post is listed on the Study in page of
+// every country picked (Europe's page takes all the EU countries and "EU").
+export const COUNTRY_OPTIONS = [
   { title: "United Kingdom", value: "GB" },
   { title: "Ireland", value: "IE" },
-  { title: "Germany", value: "DE" },
-  { title: "Netherlands", value: "NL" },
-  { title: "France", value: "FR" },
-  { title: "Rest of Europe", value: "EU" },
-  { title: "Australia", value: "AU" },
-  { title: "New Zealand", value: "NZ" },
-  { title: "Canada", value: "CA" },
   { title: "United States", value: "US" },
-  { title: "South Korea", value: "KR" },
-  { title: "Japan", value: "JP" },
-  { title: "United Arab Emirates", value: "AE" },
+  { title: "Canada", value: "CA" },
+  { title: "Austria", value: "AT" },
+  { title: "Belgium", value: "BE" },
+  { title: "Bulgaria", value: "BG" },
+  { title: "Croatia", value: "HR" },
+  { title: "Cyprus", value: "CY" },
+  { title: "Czechia", value: "CZ" },
+  { title: "Denmark", value: "DK" },
+  { title: "Estonia", value: "EE" },
+  { title: "Finland", value: "FI" },
+  { title: "France", value: "FR" },
+  { title: "Germany", value: "DE" },
+  { title: "Greece", value: "GR" },
+  { title: "Hungary", value: "HU" },
+  { title: "Italy", value: "IT" },
+  { title: "Latvia", value: "LV" },
+  { title: "Lithuania", value: "LT" },
+  { title: "Luxembourg", value: "LU" },
+  { title: "Malta", value: "MT" },
+  { title: "Netherlands", value: "NL" },
+  { title: "Poland", value: "PL" },
+  { title: "Portugal", value: "PT" },
+  { title: "Romania", value: "RO" },
+  { title: "Slovakia", value: "SK" },
+  { title: "Slovenia", value: "SI" },
+  { title: "Spain", value: "ES" },
+  { title: "Sweden", value: "SE" },
+  { title: "Europe in general, or several EU countries", value: "EU" },
   { title: "Singapore", value: "SG" },
   { title: "Malaysia", value: "MY" },
+  { title: "United Arab Emirates", value: "AE" },
+  { title: "Australia", value: "AU" },
+  { title: "New Zealand", value: "NZ" },
+  { title: "South Korea", value: "KR" },
+  { title: "Japan", value: "JP" },
 ];
+
+// Post addresses that are taken by other blog pages.
+const RESERVED_SLUGS: Record<string, string> = {
+  topics: "the topic pages (/blog/topics/...)",
+  "study-in": "the Study in pages (/blog/study-in/...)",
+  "students-from": "the Students from pages (/blog/students-from/...)",
+};
 
 // A simple table in a post: rows of plain text cells.
 export const blogTable = defineType({
@@ -118,11 +151,11 @@ export const post = defineType({
       group: "content",
       description: "The post address, e.g. uk-student-visa-guide gives /blog/uk-student-visa-guide/. Click Generate after typing the title. Changing it later breaks links people already have.",
       options: { source: "title", maxLength: 80 },
-      // "topics" is taken by the topic pages (/blog/topics/...).
       validation: (rule) =>
-        rule.required().custom((value) =>
-          value?.current === "topics" ? 'The address "topics" is taken by the topic pages. Pick another.' : true,
-        ),
+        rule.required().custom((value) => {
+          const taken = value?.current ? RESERVED_SLUGS[value.current] : undefined;
+          return taken ? `The address "${value?.current}" is taken by ${taken}. Pick another.` : true;
+        }),
     }),
     defineField({
       name: "topic",
@@ -140,6 +173,16 @@ export const post = defineType({
       group: "content",
       description: "Main guides are shown first and highlighted on the topic page. Usually one per topic.",
       initialValue: false,
+    }),
+    defineField({
+      name: "origins",
+      title: "Written for students from (optional)",
+      type: "array",
+      group: "content",
+      description:
+        "The home countries this post is written for. It is then listed on those countries' Students from pages. Leave empty when the post is for everyone.",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "blogOrigin" }], weak: true })],
+      validation: (rule) => rule.unique(),
     }),
     text("excerpt", "Card text", "One or two sentences shown on the post's card. 200 characters or fewer.", {
       group: "content",
@@ -311,8 +354,9 @@ export const post = defineType({
       title: "Countries this post covers",
       type: "array",
       group: "seo",
+      description: "The destinations this post gives facts for. The post is listed on the Study in page of each one.",
       of: [{ type: "string" }],
-      options: { list: COUNTRY_OPTIONS },
+      options: { list: COUNTRY_OPTIONS, layout: "grid" },
     }),
   ],
   orderings: [

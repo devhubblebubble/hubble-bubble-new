@@ -3,6 +3,7 @@
 // and https://developers.google.com/search/docs/appearance/structured-data/breadcrumb
 import { siteUrl } from "@/lib/site";
 import type { BlogTopic, Post, PostLink } from "@/lib/sanity/types";
+import { postHref, postPath, topicPath } from "./urls.mjs";
 
 const ORG_ID = `${siteUrl}/#organization`;
 const SOCIAL_IMAGE = `${siteUrl}/images/social/og-default.jpg`;
@@ -16,8 +17,8 @@ const organisation = {
   logo: `${siteUrl}/images/logos/footer-hubblebubble.png`,
 };
 
-export const postPath = (slug: string) => `/blog/${slug}/`;
-export const topicPath = (slug: string) => `/blog/topics/${slug}/`;
+// The addresses live in urls.mjs; these are here too for older imports.
+export { postPath, topicPath };
 
 export type Crumb = { name: string; path: string };
 
@@ -32,8 +33,9 @@ export const breadcrumbJsonLd = (crumbs: Crumb[]) => ({
   })),
 });
 
-export function blogPostingJsonLd(post: Post) {
-  const url = `${siteUrl}${postPath(post.slug)}`;
+/** A post. `path` is where it lives: a hub's address for a hub's main guide. */
+export function blogPostingJsonLd(post: Post, path: string = postPath(post.slug)) {
+  const url = `${siteUrl}${path}`;
   const author = post.author?.name
     ? { "@type": "Person", name: post.author.name, ...(post.author.title ? { jobTitle: post.author.title } : {}), worksFor: { "@id": ORG_ID } }
     : organisation;
@@ -69,17 +71,20 @@ export function faqJsonLd(post: Post) {
   };
 }
 
-/** The blog page or a topic page, with its posts as a list. */
+/** The blog page, a topic page or a hub without a guide, with its posts as a list. */
 export function collectionJsonLd({
   name,
   description,
   path,
   posts,
+  guides,
 }: {
   name: string;
   description?: string;
   path: string;
   posts: (Post | PostLink)[];
+  /** Post slug -> hub address, so a hub's main guide is listed at the hub. */
+  guides?: Map<string, string>;
 }) {
   return {
     "@context": "https://schema.org",
@@ -95,7 +100,7 @@ export function collectionJsonLd({
       itemListElement: posts.map((p, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        url: `${siteUrl}${postPath(p.slug)}`,
+        url: `${siteUrl}${postHref(p.slug, guides)}`,
         name: p.title,
       })),
     },

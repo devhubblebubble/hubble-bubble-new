@@ -1,7 +1,8 @@
 @use '../../style/mixins' as *;
 
-// The blog: /blog/, /blog/topics/<topic>/ and /blog/<post>/. Same tokens,
-// glass cards and orange buttons as the Jobs pages.
+// The blog: /blog/, /blog/topics/<topic>/, /blog/<post>/, and the Study in
+// and Students from pages (/blog/study-in/<country>/, /blog/students-from/<country>/).
+// Same tokens, glass cards and orange buttons as the Jobs pages.
 
 .page {
   width: 100%;
@@ -94,6 +95,12 @@
   justify-content: flex-start;
 }
 
+// Topic chips inside a left-aligned section.
+.chipsStart {
+  justify-content: flex-start;
+  margin: 0 0 40px;
+}
+
 .chip {
   min-height: 44px;
   display: inline-flex;
@@ -146,12 +153,18 @@
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-  h2 {
+  h2,
+  h3 {
     font-size: var(--fs-h2);
     font-weight: 600;
     line-height: 1.2;
     color: var(--white);
     margin-bottom: 10px;
+  }
+
+  // A topic inside "Guides by topic" on /blog/.
+  h3 {
+    font-size: var(--fs-h3);
   }
 
   p {
@@ -344,6 +357,162 @@
 .otherTopics {
   padding-top: 40px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+// ── Countries: the Study in tiles, Students from chips and their flags ──────
+.flag {
+  flex: none;
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.flagSmall {
+  width: 22px;
+  height: 22px;
+}
+
+// An eyebrow line that starts with a flag.
+.eyebrowFlag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hubGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.hubTile {
+  position: relative;
+  @include glass-flat(rgba(255, 255, 255, 0.045));
+  border-radius: 14px;
+  transition: border-color 0.2s;
+
+  &:hover {
+    --glass-tint: rgba(255, 79, 0, 0.1);
+    border-color: var(--orange);
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 72px;
+    padding: 14px 18px;
+    border-radius: inherit;
+    color: var(--white);
+    font-size: var(--fs-body);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+}
+
+// A chip that starts with a flag.
+.flagChip {
+  padding-left: 8px;
+}
+
+// Home countries by region on /blog/.
+.regions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 48px;
+}
+
+.region h3 {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+// "More country guides" under the tiles.
+.subGroup {
+  margin-top: 40px;
+}
+
+.subLabel {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+
+.topicGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+// Posts as a short list of links (after the cards of a long list).
+.linkList {
+  list-style: none;
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 52px;
+    padding: 12px 4px;
+    color: var(--white);
+    font-size: var(--fs-body);
+    font-weight: 500;
+    line-height: 1.4;
+
+    span {
+      flex: none;
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    &:hover {
+      color: var(--orange);
+    }
+  }
+}
+
+// Links to the other kind of country page, at the end of a Study in or
+// Students from page.
+.hubLinks {
+  margin-top: 64px;
+  scroll-margin-top: 110px;
+
+  > p {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
 }
 
 // ── A post ───────────────────────────────────────────────────────────────────
@@ -677,6 +846,7 @@
 
 .related {
   margin-top: 72px;
+  scroll-margin-top: 110px;
 }
 
 // ── Phones and small tablets ─────────────────────────────────────────────────
@@ -697,6 +867,36 @@
   .grid,
   .gridTwo {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hubGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .hubTile a {
+    min-height: 64px;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .flag {
+    width: 32px;
+    height: 32px;
+  }
+
+  .flagSmall {
+    width: 22px;
+    height: 22px;
+  }
+
+  .regions {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .topicGroups {
+    gap: 48px;
   }
 
   .card {

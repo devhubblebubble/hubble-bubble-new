@@ -6,10 +6,12 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { imageSize } from "image-size";
 import type { PortableTextBlock } from "@portabletext/types";
-import { postsDir, readPostDocuments } from "../../../content/seed/blog.mjs";
+import { ORIGIN_ID_PREFIX, POST_ID_PREFIX, postsDir, readPostDocuments } from "../../../content/seed/blog.mjs";
 import { convertMarkupFields } from "../../../content/seed/markup.mjs";
 import type {
   AboutPage,
+  BlogDestination,
+  BlogOrigin,
   BlogTopic,
   ContactPage,
   HomePage,
@@ -158,6 +160,7 @@ type SeedPost = {
   slug: { current: string };
   topic?: { _ref: string };
   related?: { _ref: string }[];
+  origins?: { _ref: string }[];
   pillar?: boolean;
   excerpt?: string;
   description?: string;
@@ -195,6 +198,7 @@ export function fixturePosts(): Post[] {
     publishedAt: d.publishedAt,
     reviewedAt: d.reviewedAt,
     topic: topicOf(d.topic?._ref),
+    origins: (d.origins ?? []).map((r) => r._ref.replace(ORIGIN_ID_PREFIX, "")),
     author: null,
     reviewedBy: null,
     related: (d.related ?? []).map((r): PostLink | null => {
@@ -219,3 +223,24 @@ export function fixturePosts(): Post[] {
       a.title.localeCompare(b.title),
   );
 }
+
+// The Study in and Students from pages. References become post slugs, as in
+// the live query (data.ts drops the ones that point at no post).
+type SeedHub = Omit<BlogDestination & BlogOrigin, "guideSlug" | "featuredSlugs"> & {
+  guide?: { _ref: string };
+  featured?: { _ref: string }[];
+};
+
+const postSlug = (ref?: string) => (ref?.startsWith(POST_ID_PREFIX) ? ref.slice(POST_ID_PREFIX.length) : null);
+
+const fixtureHubs = (file: string) =>
+  readJson<SeedHub[]>(file)
+    .map(({ guide, featured, ...hub }) => ({
+      ...hub,
+      guideSlug: postSlug(guide?._ref),
+      featuredSlugs: (featured ?? []).map((r) => postSlug(r._ref)),
+    }))
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+export const fixtureBlogDestinations = (): BlogDestination[] => fixtureHubs("blog-destinations.json");
+export const fixtureBlogOrigins = (): BlogOrigin[] => fixtureHubs("blog-origins.json");

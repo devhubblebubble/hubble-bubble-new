@@ -91,6 +91,20 @@ test("post document has ids, references and keys", () => {
   assert.equal(doc.pillar, true);
 });
 
+test("home countries in the front matter become references", () => {
+  const { meta, body } = parsePostFile(sample.replace('"related": ["other-post"]', '"related": ["other-post"], "origins": ["nigeria", "kenya"]'));
+  const doc = postDocument(meta, body);
+  assert.deepEqual(
+    doc.origins.map((o) => [o._type, o._ref, o._key]),
+    [
+      ["reference", "blogOrigin-nigeria", "sample-post-org1"],
+      ["reference", "blogOrigin-kenya", "sample-post-org2"],
+    ],
+  );
+  // No origins: no field at all (the post is for everyone).
+  assert.equal("origins" in postDocument(parsePostFile(sample).meta, body), false);
+});
+
 test("a folder of posts is read in slug order, skipping drafts", () => {
   const dir = mkdtempSync(path.join(tmpdir(), "blog-"));
   try {
